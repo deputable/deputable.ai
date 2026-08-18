@@ -613,7 +613,6 @@ about_body = f"""
         </div>
       </div>''' for n, r, li, b in team)}
     </div>
-    <p class="note">draft bios &mdash; LinkedIn blocks automated reading, so please correct titles, employers and years; portraits still needed</p>
   </div>
 </section>
 """
@@ -644,7 +643,6 @@ trust_body = f"""
 <section>
   <div class="trust-list">
     {"".join(f'<div class="trust-item"><h2>{q}</h2><p>{a}</p></div>' for q, a in trust)}
-    <p class="note" style="margin-top:28px">confirm each statement before publishing &mdash; certifications and DPA wording need your sign-off</p>
   </div>
 </section>
 """
