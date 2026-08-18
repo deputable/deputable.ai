@@ -15,3 +15,6 @@ __pycache__/
 .envrc
 .venv/
 venv/
+
+# Claude Code local config
+.claude/
