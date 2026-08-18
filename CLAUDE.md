@@ -19,8 +19,6 @@ Hand-maintained: `css/style.css`, `js/main.js`, `assets/`, `CNAME`, `.nojekyll`,
 
 ## Notes and pending items
 
-- A Pricing page exists in history/`_to_delete/` but is deliberately unpublished; its content was removed
-  from the generator. Re-add it there if pricing goes live again.
 - The contact form (`contact.html` + `js/main.js`) is front-end only — shows a confirmation, sends nothing.
   Wire to Formspree or similar before relying on it.
 - Placeholders remaining: team/workshop photo (home), founder portraits (about); founder bios are drafts;

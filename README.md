@@ -1,11 +1,10 @@
 # Deputable AI — website
 
-Plain HTML/CSS/JS site, no build step. Seven static pages sharing `css/style.css` and `js/main.js`:
+Plain HTML/CSS/JS site, no build step. Six static pages sharing `css/style.css` and `js/main.js`:
 
 - `index.html` — Home
 - `services.html` — What We Do (includes the interactive workflow demo)
 - `how-it-works.html` — process/timeline
-- `pricing.html` — inbound call plans
 - `about.html` — company, sectors, founders
 - `trust.html` — trust & security Q&A
 - `contact.html` — demo request form (currently front-end only, see below)
@@ -42,4 +41,4 @@ then open `http://localhost:8000`.
 
 ## Editing content
 
-There's no CMS or templating at runtime — each page is a self-contained HTML file. If you're making the same change across all seven pages (e.g. nav wording, footer), it's easiest to edit `/tmp`-style via a regenerate script rather than by hand; ask Claude to regenerate from the shared source if you have it, or just edit the repeated header/footer markup in each file.
+There's no CMS or templating at runtime — each page is a self-contained HTML file. If you're making the same change across all six pages (e.g. nav wording, footer), it's easiest to edit `/tmp`-style via a regenerate script rather than by hand; ask Claude to regenerate from the shared source if you have it, or just edit the repeated header/footer markup in each file.
