@@ -43,9 +43,14 @@
       </div>
     </div>
     <div class="contact-panel">
+      <div data-contact-confirm class="confirm-box hidden">
+        <div class="title">Thanks &mdash; We&rsquo;ll Be in Touch.</div>
+        <div class="sub">Usually within one working day.</div>
+      </div>
       <!-- Demo-request form is a Zoho Forms embed; submissions are stored in
-           Zoho Forms and emailed to the team. Edit the form at forms.zoho.eu. -->
-      <iframe class="contact-form-embed" aria-label="Demo Request" frameborder="0"
+           Zoho Forms and emailed to the team. Edit the form at forms.zoho.eu.
+           On submit, js/main.js swaps the iframe for the confirmation above. -->
+      <iframe data-zoho-form class="contact-form-embed" aria-label="Demo Request" frameborder="0"
         src="https://forms.zohopublic.eu/prashantdepu1/form/DemoRequest/formperma/NZOvPlQ0DNGZdgDLAsVXU9CWqtnsvX2yJ9xcpn_Qs24"></iframe>
     </div>
   </div>
