@@ -98,17 +98,20 @@ function initFlowDemo() {
   render();
 }
 
-/* ---------------- Contact form ---------------- */
+/* ---------------- Contact form (Zoho Forms embed) ---------------- */
 function initContactForm() {
-  const form = document.querySelector('[data-contact-form]');
-  if (!form) return;
+  const frame = document.querySelector('[data-zoho-form]');
+  if (!frame) return;
   const confirmBox = document.querySelector('[data-contact-confirm]');
-
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    // No backend wired up yet — swap this for a real submit (e.g. Formspree,
-    // a serverless function, or mailto) when ready to go live.
-    form.classList.add('hidden');
-    if (confirmBox) confirmBox.classList.remove('hidden');
+  // The iframe loads once with the blank form; any later load is the
+  // post-submit page, so we swap in our own confirmation instead of
+  // showing Zoho's thank-you screen.
+  let loads = 0;
+  frame.addEventListener('load', () => {
+    loads += 1;
+    if (loads > 1 && confirmBox) {
+      frame.classList.add('hidden');
+      confirmBox.classList.remove('hidden');
+    }
   });
 }
