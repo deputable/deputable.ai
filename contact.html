@@ -49,9 +49,14 @@
       </div>
       <!-- Demo-request form is a Zoho Forms embed; submissions are stored in
            Zoho Forms and emailed to the team. Edit the form at forms.zoho.eu.
-           On submit, js/main.js swaps the iframe for the confirmation above. -->
-      <iframe data-zoho-form class="contact-form-embed" aria-label="Demo Request" frameborder="0"
-        src="https://forms.zohopublic.eu/prashantdepu1/form/DemoRequest/formperma/NZOvPlQ0DNGZdgDLAsVXU9CWqtnsvX2yJ9xcpn_Qs24"></iframe>
+           zf_rszfm=1 makes Zoho postMessage its content height; js/main.js
+           sizes the iframe to fit (no inner scrolling) and the clip wrapper
+           hides Zoho's footer strip. On submit the embed is swapped for the
+           confirmation above. -->
+      <div data-zoho-clip class="contact-form-clip">
+        <iframe data-zoho-form class="contact-form-embed" aria-label="Demo Request" frameborder="0" scrolling="no"
+          src="https://forms.zohopublic.eu/prashantdepu1/form/DemoRequest/formperma/NZOvPlQ0DNGZdgDLAsVXU9CWqtnsvX2yJ9xcpn_Qs24?zf_rszfm=1"></iframe>
+      </div>
     </div>
   </div>
 </section>

@@ -102,7 +102,21 @@ function initFlowDemo() {
 function initContactForm() {
   const frame = document.querySelector('[data-zoho-form]');
   if (!frame) return;
+  const clip = document.querySelector('[data-zoho-clip]');
   const confirmBox = document.querySelector('[data-contact-confirm]');
+  const FOOTER_CROP = 208; // hides Zoho's disclaimer/branding strip
+
+  // Zoho (with zf_rszfm=1) posts "<perma>|<height>" whenever the form's
+  // content height changes. Size the iframe to fit and clip the footer.
+  window.addEventListener('message', (evt) => {
+    if (typeof evt.data !== 'string' || evt.data.indexOf('|') === -1) return;
+    if (frame.src.indexOf(evt.data.split('|')[0]) === -1) return;
+    const h = parseInt(evt.data.split('|')[1], 10);
+    if (!h || h < 300) return;
+    frame.style.height = (h + 15) + 'px';
+    if (clip) clip.style.height = Math.max(h + 15 - FOOTER_CROP, 300) + 'px';
+  });
+
   // The iframe loads once with the blank form; any later load is the
   // post-submit page, so we swap in our own confirmation instead of
   // showing Zoho's thank-you screen.
@@ -110,6 +124,7 @@ function initContactForm() {
   frame.addEventListener('load', () => {
     loads += 1;
     if (loads > 1 && confirmBox) {
+      if (clip) clip.classList.add('hidden');
       frame.classList.add('hidden');
       confirmBox.classList.remove('hidden');
     }
