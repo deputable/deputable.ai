@@ -15,7 +15,10 @@ To change anything:
 3. Preview: `python3 -m http.server 8000` from the repo root.
 
 Generated pages: `index.html`, `services.html`, `how-it-works.html`, `about.html`, `trust.html`, `contact.html`.
-Hand-maintained: `css/style.css`, `js/main.js`, `assets/`, `CNAME`, `.nojekyll`, `README.md`.
+Hand-maintained: `css/style.css`, `js/main.js`, `assets/deputable-logo.png`, `CNAME`, `.nojekyll`, `README.md`.
+
+Favicons and the social share image (`assets/favicon.ico`, `favicon-32.png`, `apple-touch-icon.png`,
+`og-image.png`) are derived from the logo by `scripts/generate_icons.py` — rerun it if the logo changes.
 
 ## Notes and pending items
 
