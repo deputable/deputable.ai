@@ -20,11 +20,13 @@ NAV_ITEMS = [
     ("contact.html", "contact", "Contact"),
 ]
 
+SITE_URL = "https://deputable.ai/"
 SITE_TITLE = "Deputable AI — Human Centric AI Solutions for UK SMEs"
 SITE_DESC = "Deputable AI builds practical AI automation for small and medium businesses across the UK — telephone agents, workflow automation, internal knowledge assistants and governance built in from day one."
 
 
-def head(title, desc, active_id, relpath_prefix=""):
+def head(title, desc, active_id, relpath_prefix="", filename="index.html"):
+    page_url = SITE_URL + ("" if filename == "index.html" else filename)
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,7 +34,23 @@ def head(title, desc, active_id, relpath_prefix=""):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title}</title>
 <meta name="description" content="{desc}">
-<link rel="icon" href="{relpath_prefix}assets/deputable-logo.png">
+<link rel="icon" href="{relpath_prefix}assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="{relpath_prefix}assets/favicon-32.png">
+<link rel="apple-touch-icon" href="{relpath_prefix}assets/apple-touch-icon.png">
+<link rel="canonical" href="{page_url}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Deputable AI">
+<meta property="og:url" content="{page_url}">
+<meta property="og:title" content="{title}">
+<meta property="og:description" content="{desc}">
+<meta property="og:image" content="{SITE_URL}assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Deputable AI — Simplify Work. Amplify People.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{title}">
+<meta name="twitter:description" content="{desc}">
+<meta name="twitter:image" content="{SITE_URL}assets/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -106,7 +124,7 @@ def tail(relpath_prefix=""):
 
 
 def write_page(filename, title, desc, active_id, body):
-    html = head(title, desc, active_id) + body + tail()
+    html = head(title, desc, active_id, filename=filename) + body + tail()
     with open(os.path.join(OUT, filename), "w") as f:
         f.write(html)
 
