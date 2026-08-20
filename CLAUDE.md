@@ -24,7 +24,7 @@ Favicons and the social share image (`assets/favicon.ico`, `favicon-32.png`, `ap
 
 - The contact form (`contact.html` + `js/main.js`) is front-end only — shows a confirmation, sends nothing.
   Wire to Formspree or similar before relying on it.
-- Placeholders remaining: team/workshop photo (home), founder portraits (about); founder bios are drafts;
+- Placeholders remaining: founder portraits (about); founder bios are drafts;
   Trust & Security answers need sign-off before being treated as final.
 - The interactive workflow demo on `services.html` is driven by `FLOW_MODES` in `js/main.js`.
 - Repo is public (GitHub Pages): never commit secrets, keys, or the `_to_delete/` and `.idea/` folders

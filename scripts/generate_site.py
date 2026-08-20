@@ -210,15 +210,10 @@ home_body = f"""
 </section>
 
 <section class="border-t">
-  <div class="wrap split">
-    <div>
-      <h2>Built for the Way UK SMEs Actually Operate</h2>
-      <p>Small teams, mixed systems, no spare capacity for a year-long programme. We scope work in weeks, integrate with the tools you already pay for, and hand over documentation your team can maintain.</p>
-      <p>Data stays in the UK or EU. We are equally comfortable working with enterprise IT functions and public sector procurement.</p>
-    </div>
-    <div class="placeholder-img">
-      <span>team photo / workshop shot<span class="sub">drop image here</span></span>
-    </div>
+  <div class="wrap" style="padding:84px 32px">
+    <h2 style="font-size:34px;margin-bottom:18px">Built for the Way UK SMEs Actually Operate</h2>
+    <p style="font-size:17px;line-height:1.65;color:#43535F;margin-bottom:16px;max-width:46em">Small teams, mixed systems, no spare capacity for a year-long programme. We scope work in weeks, integrate with the tools you already pay for, and hand over documentation your team can maintain.</p>
+    <p style="font-size:17px;line-height:1.65;color:#43535F;max-width:46em">Data stays in the UK or EU. We are equally comfortable working with enterprise IT functions and public sector procurement.</p>
   </div>
 </section>
 
