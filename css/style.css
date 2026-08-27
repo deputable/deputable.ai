@@ -57,6 +57,22 @@ img{ max-width:100%; }
 section[id]{ scroll-margin-top:90px; }
 
 /* ===================== Utilities ===================== */
+/* Justified body text (Prashant 2026-08-27): multi-line paragraphs
+   justify with hyphenation; headings, list items and short captions
+   don't. Inside centred sections the last line re-centres so the
+   composition stays symmetric. */
+.prose, .lede, .hero-sub,
+.split p, .card p, .mode-card p, .panel p,
+.trust-item p, .process-body p, .founder p, .mission-box p,
+.booking-fallback p{
+  text-align:justify;
+  -webkit-hyphens:auto;
+  hyphens:auto;
+}
+.section-center .prose, .page-hero .lede, .hero-sub, .contact-head .prose{
+  text-align-last:center;
+}
+
 /* Centred section intros: headings/subs centre, components re-left */
 .section-center{ text-align:center; }
 .section-center .section-sub{ margin-left:auto; margin-right:auto; }
