@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<!--
+  Social-share image source (1200x630). Regenerate assets/og-image.png with:
+
+  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless \
+    --screenshot=assets/og-image.png --window-size=1200,630 \
+    --hide-scrollbars "file://$PWD/scripts/og-template.html"
+
+  (run from the repo root; needs network for Google Fonts)
+-->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; }
+  body {
+    width: 1200px; height: 630px; overflow: hidden; box-sizing: border-box;
+    background: #FBFBF9;
+    font-family: "Schibsted Grotesk", Helvetica, Arial, sans-serif;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 34px;
+    border-bottom: 14px solid #0E2A4A;
+  }
+  .logo { height: 170px; width: auto; }
+  .line {
+    font-size: 34px; font-weight: 600; letter-spacing: -0.02em;
+    color: #0E2A4A; text-align: center; max-width: 900px; line-height: 1.25;
+  }
+  .kicker {
+    font-family: "IBM Plex Mono", monospace; font-size: 17px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: #0C6B58;
+  }
+</style>
+</head>
+<body>
+  <img class="logo" src="../assets/deputable-logo.png" alt="">
+  <div class="line">Depute the busywork. Keep the judgment.</div>
+  <div class="kicker">Smart Call Handling &middot; AI Operations &middot; London</div>
+</body>
+</html>
