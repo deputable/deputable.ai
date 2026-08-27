@@ -3,7 +3,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   initMobileNav();
   initFlowDemo();
-  initDemoFlow();
   initConsent();
 });
 
@@ -198,75 +197,6 @@ function initFlowDemo() {
   buildMode(0);
   if (reduceMotion.matches) selectLane(Math.min(1, laneEls.length - 1));
   // autoplay starts when the observer reports the diagram in view
-}
-
-/* ---------------- Contact: two-step demo flow ----------------
-   FORM (Zoho iframe) -> BOOK (calendar link + skip) -> DONE.
-   Submission is signalled deterministically by zoho-thanks.html
-   (the form's post-submission redirect) posting
-   'deputable:form-submitted'; counting iframe loads remains as a
-   fallback until that redirect is configured at forms.zoho.eu. */
-function initDemoFlow() {
-  const root = document.querySelector('[data-demo-flow]');
-  if (!root) return;
-  const frame = root.querySelector('[data-zoho-form]');
-  const clip = root.querySelector('[data-zoho-clip]');
-  if (!frame) return;
-
-  const FOOTER_CROP = 208; // hides Zoho's disclaimer/branding strip
-  const panels = { FORM: '[data-df-form]', BOOK: '[data-df-book]', DONE: '[data-df-done]' };
-  let state = 'FORM';
-
-  function go(next) {
-    state = next;
-    for (const [name, sel] of Object.entries(panels)) {
-      const el = root.querySelector(sel);
-      if (el) el.classList.toggle('hidden', name !== next);
-    }
-    root.querySelectorAll('[data-step-dot]').forEach(d =>
-      d.classList.toggle('active', (next === 'FORM') === (d.dataset.stepDot === '1')));
-    if (next === 'BOOK') {
-      // Lazy-load the booking calendar only when the visitor gets here.
-      const embed = root.querySelector('[data-df-embed]');
-      if (embed && !embed.getAttribute('src')) embed.src = embed.dataset.embedSrc;
-    }
-  }
-
-  function done(title, sub) {
-    const t = root.querySelector('[data-df-done-title]');
-    const s = root.querySelector('[data-df-done-sub]');
-    if (t && title) t.textContent = title;
-    if (s && sub) s.textContent = sub;
-    go('DONE');
-  }
-
-  function submitted() {
-    if (state !== 'FORM') return; // idempotent: message + fallback can both fire
-    const book = root.querySelector('[data-df-book-link]');
-    const noUrl = !book || book.getAttribute('href') === '#';
-    if (noUrl) done('Thanks — we’ll be in touch.', 'Usually within one working day.');
-    else go('BOOK');
-  }
-
-  window.addEventListener('message', (evt) => {
-    if (evt.data === 'deputable:form-submitted') { submitted(); return; }
-    // Zoho (zf_rszfm=1) posts "<perma>|<height>" on content-height change.
-    if (typeof evt.data !== 'string' || evt.data.indexOf('|') === -1) return;
-    if (frame.src.indexOf(evt.data.split('|')[0]) === -1) return;
-    const h = parseInt(evt.data.split('|')[1], 10);
-    if (!h || h < 300) return;
-    frame.style.height = (h + 15) + 'px';
-    if (clip) clip.style.height = Math.max(h + 15 - FOOTER_CROP, 300) + 'px';
-  });
-
-  let loads = 0;
-  frame.addEventListener('load', () => { loads += 1; if (loads > 1) submitted(); });
-
-  const skip = root.querySelector('[data-df-skip]');
-  if (skip) skip.addEventListener('click', () =>
-    done('Thanks — we’ll ring you.', 'Usually within one working day.'));
-  // The new-tab calendar link deliberately does NOT change state: the
-  // visitor may come back to the inline calendar or still choose Skip.
 }
 
 /* ---------------- Analytics consent (only rendered when GA is set) ---- */

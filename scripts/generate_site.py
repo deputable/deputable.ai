@@ -15,7 +15,6 @@ ASSET_VER = "2"                     # bump to cache-bust icons/logo
 GA_MEASUREMENT_ID = "G-XXXXXXXXXX"  # FOUNDER TO-DO: create GA4 property, paste id
 ZOHO_BOOKINGS_URL = "https://deputableai.zohobookings.eu/264805000000037050"  # Demo Call, 45 min
 ZOHO_BOOKINGS_EMBED_URL = "https://deputableai.zohobookings.eu/portal-embed#/264805000000037050"
-ZOHO_FORM_URL = "https://forms.zohopublic.eu/prashantdepu1/form/DemoRequest/formperma/NZOvPlQ0DNGZdgDLAsVXU9CWqtnsvX2yJ9xcpn_Qs24?zf_rszfm=1"
 TAGLINE = "Simplify Work. Amplify People."
 
 GA_IS_SET = not GA_MEASUREMENT_ID.endswith("XXXXXXXXXX")
@@ -244,47 +243,21 @@ def flow_demo_html():
     </div>"""
 
 
-def demo_flow_html():
-    """Two-step demo flow: Zoho form (step 1) -> book a 45-minute slot /
-    skip (step 2). Submission is detected by a postMessage from
-    zoho-thanks.html (set as the form's post-submission redirect at
-    forms.zoho.eu); the old load-count heuristic remains as fallback.
-    With ZOHO_BOOKINGS_URL set, step 2 embeds the booking calendar
-    inline (lazy-loaded on entry — see initDemoFlow); without it the
-    flow degrades to a plain confirmation."""
-    booking_href = ZOHO_BOOKINGS_URL or "#"
-    embed = ""
-    if ZOHO_BOOKINGS_URL:
-        # The portal-embed variant is Zoho's frameable URL; the public
-        # page sends X-Frame-Options and is for the new-tab link only.
-        embed_src = ZOHO_BOOKINGS_EMBED_URL or ZOHO_BOOKINGS_URL
-        embed = f"""
-        <iframe data-df-embed data-embed-src="{embed_src}" class="booking-embed" title="Book a 45-minute demo call" frameborder="0"></iframe>"""
-    return f"""
-    <div class="demo-flow" data-demo-flow>
-      <div class="demo-steps">
-        <span class="demo-step-dot active" data-step-dot="1">1 &middot; Your details</span>
-        <span class="demo-step-dot" data-step-dot="2">2 &middot; Book a call</span>
-      </div>
-      <div data-df-form>
-        <div data-zoho-clip class="contact-form-clip">
-          <iframe data-zoho-form class="contact-form-embed" aria-label="Demo Request" frameborder="0" scrolling="no"
-            src="{ZOHO_FORM_URL}"></iframe>
-        </div>
-      </div>
-      <div data-df-book class="confirm-box book-step hidden">
-        <div class="title">Thanks &mdash; one more step.</div>
-        <div class="sub">Pick a 45-minute slot that suits you, or skip and we&rsquo;ll ring you.</div>{embed}
-        <div class="confirm-actions">
-          <a class="link-arrow" data-df-book-link target="_blank" rel="noopener" href="{booking_href}">Open the calendar in a new tab &rarr;</a>
-          <button type="button" class="btn btn-secondary" data-df-skip>Skip &mdash; we&rsquo;ll call you back</button>
-        </div>
-      </div>
-      <div data-df-done class="confirm-box hidden">
-        <div class="title" data-df-done-title>Thanks &mdash; we&rsquo;ll ring you.</div>
-        <div class="sub" data-df-done-sub>Usually within one working day.</div>
-      </div>
+def booking_html():
+    """One-form booking: the Zoho Bookings calendar embedded directly.
+    Its booking form collects everything (name, email, phone, company,
+    the process to discuss), so there is no separate enquiry form.
+    The portal-embed variant is Zoho's frameable URL; the public page
+    sends X-Frame-Options and is used for the new-tab link only."""
+    if not ZOHO_BOOKINGS_URL:
+        return """
+    <div class="booking-fallback">
+      <p class="prose">Write to <a href="mailto:hello@deputable.ai">hello@deputable.ai</a> with a line about the business and the process you'd like handled, and we'll ring you back — usually within one working day.</p>
     </div>"""
+    embed_src = ZOHO_BOOKINGS_EMBED_URL or ZOHO_BOOKINGS_URL
+    return f"""
+    <iframe class="booking-embed" src="{embed_src}" title="Book a 45-minute demo call" frameborder="0"></iframe>
+    <p class="prose small booking-foot">Prefer a new tab? <a class="link-arrow" href="{ZOHO_BOOKINGS_URL}" target="_blank" rel="noopener">Open the calendar &rarr;</a></p>"""
 
 
 # ==================================================================
@@ -750,19 +723,13 @@ write_page(
 # ==================================================================
 contact_body = f"""
 <section class="bg-white contact-min">
-  <div class="wrap contact-grid">
-    <div class="contact-info">
-      <div class="eyebrow">Book a Demo</div>
-      <h1>Tell us what's eating the day.</h1>
-      <p>Forty-five minutes, no deck. Tell us a little about the business, then pick a time &mdash; or skip that and we'll ring you.</p>
-      <div class="contact-details">
-        <a href="mailto:hello@deputable.ai">hello@deputable.ai</a>
-        <div>London, United Kingdom</div>
-      </div>
-    </div>
-    <div class="contact-panel">
-      {demo_flow_html()}
-    </div>
+  <div class="wrap contact-head">
+    <div class="eyebrow">Book a Demo</div>
+    <h1>Tell us what's eating the day.</h1>
+    <p class="prose">Pick a 45-minute slot below. The booking asks for a line or two about the business and the process you'd like handled &mdash; so we arrive having read it. No deck, no pitch.</p>
+  </div>
+  <div class="wrap booking-wrap">
+    {booking_html()}
   </div>
 </section>
 """
@@ -770,7 +737,7 @@ contact_body = f"""
 write_page(
     "contact.html",
     "Book a Demo Call | Deputable AI",
-    "Tell us the process that wastes the most time. Forty-five minutes, no deck — pick a time, or skip it and we'll call you back.",
+    "Pick a 45-minute slot and tell us the process that wastes the most time. No deck, no pitch — we arrive having read what you wrote.",
     "contact", contact_body)
 
 # ==================================================================
@@ -778,10 +745,10 @@ write_page(
 # ==================================================================
 privacy_sections = [
     ("Who we are", "Deputable AI, based in London. We build AI call handling and workflow automation for businesses. For anything in this notice, write to <a href=\"mailto:hello@deputable.ai\">hello@deputable.ai</a>."),
-    ("What we collect", "If you request a demo, we collect what you type into the form — your name, company, contact details and what you hope to get out of it. The form is provided by Zoho Forms and hosted in the EU; submissions are stored there and emailed to us. If you email us directly, we keep the correspondence."),
+    ("What we collect", "If you book a demo call, we collect what you type into the booking form — your name, company, contact details and the process you'd like to discuss. Booking is provided by Zoho Bookings and hosted in the EU; bookings are stored there and appear in our calendar. If you email us directly, we keep the correspondence."),
     ("Cookies and analytics", "This site sets no analytics cookies unless you accept them. If you accept, we use Google Analytics to understand how the site is used — page views and rough journey, not identity. Declining changes nothing about how the site works."),
     ("How we use it", "To reply to you, to prepare for the call you asked for, and to keep a record of the conversation. We do not sell or share your details for marketing, and we do not use them to train AI models."),
-    ("Where it lives", "Form submissions are processed by Zoho (EU hosting). If analytics are accepted, usage data is processed by Google. Client project data is governed separately by each client agreement — see our <a href=\"trust.html\">Trust &amp; Security</a> page."),
+    ("Where it lives", "Bookings are processed by Zoho (EU hosting). If analytics are accepted, usage data is processed by Google. Client project data is governed separately by each client agreement — see our <a href=\"trust.html\">Trust &amp; Security</a> page."),
     ("Your rights", "Under UK GDPR you can ask what we hold about you, ask us to correct it, or ask us to delete it. Email <a href=\"mailto:hello@deputable.ai\">hello@deputable.ai</a> and we'll do it. If you're not satisfied, you can complain to the ICO."),
 ]
 
@@ -805,34 +772,6 @@ write_page(
     "Privacy Notice | Deputable AI",
     "What the deputable.ai website collects, why, and your rights under UK GDPR — in plain English.",
     "privacy", privacy_body)
-
-# ==================================================================
-# ZOHO POST-SUBMIT REDIRECT TARGET (not in sitemap, no site chrome)
-# ==================================================================
-zoho_thanks = """<!DOCTYPE html>
-<html lang="en-GB">
-<head>
-<meta charset="utf-8">
-<meta name="robots" content="noindex">
-<title>Thanks</title>
-</head>
-<body>
-<script>
-// Set as the Zoho form's post-submission redirect (forms.zoho.eu).
-// Loaded inside the contact-page iframe it is same-origin with the
-// parent, so this message is an unambiguous submit signal.
-if (window.parent !== window) {
-  window.parent.postMessage('deputable:form-submitted', '*');
-} else {
-  location.replace('contact.html');
-}
-</script>
-</body>
-</html>
-"""
-with open(os.path.join(OUT, "zoho-thanks.html"), "w") as f:
-    f.write(zoho_thanks)
-print("Generated: zoho-thanks.html")
 
 # ==================================================================
 # SITEMAP + LLMS.TXT (regenerated every run — cannot drift from pages)
