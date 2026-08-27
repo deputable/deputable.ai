@@ -231,11 +231,18 @@ def flow_demo_html():
 
 
 def demo_flow_html():
-    """Two-step demo flow: Zoho form (step 1) -> book a call / skip
-    (step 2). Submission is detected by a postMessage from
+    """Two-step demo flow: Zoho form (step 1) -> book a 45-minute slot /
+    skip (step 2). Submission is detected by a postMessage from
     zoho-thanks.html (set as the form's post-submission redirect at
-    forms.zoho.eu); the old load-count heuristic remains as fallback."""
+    forms.zoho.eu); the old load-count heuristic remains as fallback.
+    With ZOHO_BOOKINGS_URL set, step 2 embeds the booking calendar
+    inline (lazy-loaded on entry — see initDemoFlow); without it the
+    flow degrades to a plain confirmation."""
     booking_href = ZOHO_BOOKINGS_URL or "#"
+    embed = ""
+    if ZOHO_BOOKINGS_URL:
+        embed = f"""
+        <iframe data-df-embed data-embed-src="{ZOHO_BOOKINGS_URL}" class="booking-embed" title="Book a 45-minute demo call" frameborder="0"></iframe>"""
     return f"""
     <div class="demo-flow" data-demo-flow>
       <div class="demo-steps">
@@ -248,12 +255,12 @@ def demo_flow_html():
             src="{ZOHO_FORM_URL}"></iframe>
         </div>
       </div>
-      <div data-df-book class="confirm-box hidden">
+      <div data-df-book class="confirm-box book-step hidden">
         <div class="title">Thanks &mdash; one more step.</div>
-        <div class="sub">Pick a slot that suits you, or skip and we&rsquo;ll ring you.</div>
+        <div class="sub">Pick a 45-minute slot that suits you, or skip and we&rsquo;ll ring you.</div>{embed}
         <div class="confirm-actions">
-          <a class="btn btn-primary" data-df-book-link target="_blank" rel="noopener" href="{booking_href}">Book a Call</a>
-          <button type="button" class="btn btn-secondary" data-df-skip>Skip this &mdash; we&rsquo;ll call you back instead</button>
+          <a class="link-arrow" data-df-book-link target="_blank" rel="noopener" href="{booking_href}">Open the calendar in a new tab &rarr;</a>
+          <button type="button" class="btn btn-secondary" data-df-skip>Skip &mdash; we&rsquo;ll call you back</button>
         </div>
       </div>
       <div data-df-done class="confirm-box hidden">
