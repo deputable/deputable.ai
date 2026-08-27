@@ -326,7 +326,7 @@ home_body = f"""
 </section>
 
 <section class="bg-white border-b">
-  <div class="wrap section-pad">
+  <div class="wrap section-pad section-center">
     <div class="eyebrow">Smart Call Handling</div>
     <h2>The phone, handled. Three ways.</h2>
     <p class="prose section-sub">One system, fitted to how your day actually runs — not a machine that takes your team's place, but one that covers for it and backs it up.</p>
@@ -338,22 +338,18 @@ home_body = f"""
 </section>
 
 <section>
-  <div class="wrap section-pad">
-    <div class="section-head-row">
-      <div>
-        <h2>More than the phone.</h2>
-        <p class="prose section-sub">An AI operations partner for UK small and mid-sized businesses — three more ways we take on the busywork.</p>
-      </div>
-      <a class="link-arrow" href="services.html">All services &rarr;</a>
-    </div>
+  <div class="wrap section-pad section-center">
+    <h2>More than the phone.</h2>
+    <p class="prose section-sub">An AI operations partner for UK small and mid-sized businesses — three more ways we take on the busywork.</p>
     <div class="grid-3">
       {"".join(f'<div class="card"><div class="accent" style="background:{a}"></div><h3>{t}</h3><p>{b}</p><a class="link-arrow card-link" href="services.html#{anchor}">Learn more &rarr;</a></div>' for a, anchor, t, b in services_home)}
     </div>
+    <div class="section-foot"><a class="link-arrow" href="services.html">All services &rarr;</a></div>
   </div>
 </section>
 
 <section class="bg-white border-t border-b">
-  <div class="wrap section-pad">
+  <div class="wrap section-pad section-center">
     <h2>Watch a job run end to end.</h2>
     <p class="prose section-sub">Every flow below has a step only a person can pass — it's marked. That's not a limitation we apologise for; it's the design.</p>
     {flow_demo_html()}
@@ -362,7 +358,7 @@ home_body = f"""
 </section>
 
 <section>
-  <div class="wrap section-pad">
+  <div class="wrap section-pad section-center">
     <h2>What you can depute. What stays yours.</h2>
     <div class="depute-grid">
       <div class="depute-col">
@@ -398,7 +394,7 @@ home_body = f"""
 </section>
 
 <section class="border-t">
-  <div class="wrap section-pad">
+  <div class="wrap section-pad section-center">
     <h2 class="mb-lg">How It Works</h2>
     <div class="steps-grid">
       {"".join(f'<div class="step-item"><div class="meta">{n} &middot; {w}</div><h3>{t}</h3><p>{b}</p></div>' for n, w, t, b in home_steps)}
@@ -456,7 +452,7 @@ services_body = f"""
 </section>
 
 <section id="smart-call-handling" class="bg-white border-b">
-  <div class="wrap section-pad">
+  <div class="wrap section-pad section-center">
     <div class="eyebrow">Flagship</div>
     <h2>Smart Call Handling</h2>
     <p class="prose section-sub">Your phone is where jobs are won and lost, and most small businesses lose them silently — after hours, on busy lines, in voicemail nobody checks. Smart Call Handling covers all three, without pretending to be a person and without taking anyone's place.</p>
@@ -591,7 +587,7 @@ about_body = f"""
 </section>
 
 <section>
-  <div class="wrap section-pad">
+  <div class="wrap section-pad section-center">
     <h2>Some work is deputable. Some never will be.</h2>
     <p class="prose section-sub">A good deputy takes the routine off your desk and brings you the decisions. That's the standard we hold our AI to. It answers the phone at seven in the evening, takes the details down properly, checks the diary, chases the paperwork &mdash; and then it stops, because the next step belongs to a person.</p>
     <div class="depute-grid">
@@ -623,7 +619,7 @@ about_body = f"""
 </section>
 
 <section>
-  <div class="wrap section-pad-sm">
+  <div class="wrap section-pad-sm section-center">
     <h2 class="h2-md mb-lg">Founders</h2>
     <div class="grid-2 founder-grid">
       {"".join(f'''<div class="founder">
