@@ -57,6 +57,14 @@ img{ max-width:100%; }
 section[id]{ scroll-margin-top:90px; }
 
 /* ===================== Utilities ===================== */
+/* Centred section intros: headings/subs centre, components re-left */
+.section-center{ text-align:center; }
+.section-center .section-sub{ margin-left:auto; margin-right:auto; }
+.section-center :is(.card, .mode-card, .panel, .depute-col, .check-list,
+  .numbered-list, .results-panel, .step-item, .split, .founder){ text-align:left; }
+.section-center .flow-tabs{ justify-content:center; }
+.section-center .assure-strip{ justify-content:center; }
+
 .prose{ font-size:17px; line-height:1.65; color:var(--muted-2); max-width:46em; margin:0 0 16px; }
 .prose:last-child{ margin-bottom:0; }
 .prose.small{ font-size:15px; color:var(--muted); }
@@ -212,9 +220,9 @@ p{ margin:0; }
 .cta-band p{ font-size:17px; color:#C3D0DC; }
 
 /* ===================== Page hero (inner pages) ===================== */
-.page-hero{ padding:76px 32px 64px; }
-.page-hero h1{ max-width:24em; }
-.page-hero .lede{ font-size:18px; line-height:1.6; color:var(--muted-2); max-width:40em; }
+.page-hero{ padding:76px 32px 64px; text-align:center; }
+.page-hero h1{ max-width:24em; margin-left:auto; margin-right:auto; }
+.page-hero .lede{ font-size:18px; line-height:1.6; color:var(--muted-2); max-width:40em; margin-left:auto; margin-right:auto; }
 
 /* ===================== Dictionary entry (About hero) ===================== */
 .dict-entry{ margin-bottom:22px; }
@@ -278,8 +286,9 @@ p{ margin:0; }
 
 /* ===================== Contact / booking ===================== */
 .contact-min{ min-height:70vh; }
-.contact-head{ padding:64px 32px 8px; }
+.contact-head{ padding:64px 32px 8px; text-align:center; }
 .contact-head h1{ font-size:46px; }
+.contact-head .prose{ margin-left:auto; margin-right:auto; }
 .booking-wrap{ padding:16px 32px 88px; }
 .booking-embed{
   width:100%; height:680px; display:block;
@@ -360,8 +369,8 @@ p{ margin:0; }
   text-transform:uppercase; color:var(--muted-3);
 }
 .flow-key .key-dot{ width:10px; height:10px; border-radius:3px; background:var(--hitl); flex:none; }
-.flow-note{ margin-top:22px; padding-top:22px; border-top:1px solid var(--border); font-size:15px; line-height:1.6; color:var(--muted); max-width:62em; }
-.flow-after{ margin-top:24px; }
+.flow-note{ margin-top:22px; padding-top:22px; border-top:1px solid var(--border); font-size:15px; line-height:1.6; color:var(--muted); text-align:center; }
+.flow-after{ margin:24px auto 0; text-align:center; }
 
 /* ===================== Consent bar ===================== */
 .consent-bar{
