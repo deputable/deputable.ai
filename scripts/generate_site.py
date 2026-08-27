@@ -76,6 +76,7 @@ def head(title, desc, active_id, filename, relpath_prefix="", extra_head=""):
 <meta property="og:image" content="{BASE_URL}assets/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Deputable AI — Depute the busywork. Keep the judgment.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{title}">
 <meta name="twitter:description" content="{desc}">
