@@ -138,8 +138,8 @@ p{ margin:0; }
 .hero-center{ padding:104px 32px 96px; text-align:center; }
 /* Exactly two lines on every device: each sentence is a non-wrapping
    block, and the type size tracks the viewport so the longer line
-   ("Depute the busywork.", ~11em) always fits inside the padding. */
-.hero-title{ margin-bottom:24px; font-size:clamp(20px, calc((100vw - 64px) / 11), 64px); }
+   ("Delegate the busywork.", ~12.2em) always fits inside the padding. */
+.hero-title{ margin-bottom:24px; font-size:clamp(20px, calc((100vw - 64px) / 12.4), 62px); }
 .hero-title span{ display:block; white-space:nowrap; }
 .hero-sub{ font-size:20px; line-height:1.55; color:var(--muted-2); margin:0 auto 36px; max-width:36em; }
 .hero-ctas{ display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap; }

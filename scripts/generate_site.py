@@ -89,7 +89,7 @@ def head(title, desc, active_id, filename, relpath_prefix="", extra_head=""):
 <meta property="og:image" content="{BASE_URL}assets/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Deputable AI — Depute the busywork. Keep the judgment.">
+<meta property="og:image:alt" content="Deputable AI — Delegate the busywork. Own the decisions.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{title}">
 <meta name="twitter:description" content="{desc}">
@@ -316,7 +316,7 @@ home_body = f"""
 <section class="hero">
   <div class="wrap hero-center">
     <div class="eyebrow">Simplify work &middot; Amplify people</div>
-    <h1 class="hero-title"><span>Depute the busywork.</span> <span>Keep the judgment.</span></h1>
+    <h1 class="hero-title"><span>Delegate the busywork.</span> <span>Own the decisions.</span></h1>
     <p class="hero-sub">We build AI that takes on the work you'd hand to a trusted deputy — answering the phone after hours, picking up overflow calls while your team is busy, running the routine steps of scheduling, stock and paperwork. Turn-key, fitted to the systems you already run, with a person in charge of everything that matters.</p>
     <div class="hero-ctas">
       <a class="btn btn-primary" href="contact.html">Book a Demo Call</a>
