@@ -47,6 +47,16 @@ post-submission rule is set to redirect to
 works even before that rule is configured. Anyone who submits without
 booking should be called back — the lead is already in Zoho.
 
+## The shareable booking link: deputable.ai/book
+
+`book/index.html` (generated) redirects to the Zoho Bookings Demo Call page.
+Use `deputable.ai/book` on ANYTHING printed, spoken, or signed — cards, flyers,
+email signatures, QR codes — never the raw Zoho URL or a third-party shortener:
+this repo controls where /book points, so printed material survives a change of
+booking provider. `assets/book-qr.svg` (vector master) and `assets/book-qr.png`
+(2048px, branded) encode it — regenerate with `scripts/make_qr.py` and re-run
+its scan check if the artwork ever changes.
+
 ## Assets
 
 `scripts/make_assets.py` (needs Pillow, dev-only) rebuilds the favicon set,

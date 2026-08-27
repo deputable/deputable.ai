@@ -15,9 +15,12 @@ To change anything:
 3. Preview: `python3 -m http.server 8080` from the repo root.
 
 Generated: `index.html`, `services.html`, `how-it-works.html`, `about.html`, `trust.html`,
-`contact.html`, `privacy.html`, `zoho-thanks.html`, `sitemap.xml`, `llms.txt`.
+`contact.html`, `privacy.html`, `zoho-thanks.html`, `book/index.html` (the permanent
+`deputable.ai/book` redirect to the booking calendar — print/QR/spoken links all point here),
+`sitemap.xml`, `llms.txt`.
 Hand-maintained: `css/style.css`, `js/main.js`, `assets/`, `robots.txt`, `CNAME`, `.nojekyll`,
-`README.md`, `scripts/make_assets.py` (Pillow, dev-only), `scripts/og-template.html`.
+`README.md`, `scripts/make_assets.py` + `scripts/make_qr.py` (dev-only; the QR encodes
+`deputable.ai/book`, never the Zoho URL), `scripts/og-template.html`.
 
 Placeholder constants at the top of the generator (`GA_MEASUREMENT_ID`,
 `ZOHO_BOOKINGS_URL`, `ASSET_VER`) degrade gracefully while unset — see README.

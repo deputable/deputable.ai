@@ -858,3 +858,30 @@ with open(os.path.join(OUT, "llms.txt"), "w") as f:
 {llms_pages}
 """)
 print("Generated: llms.txt")
+
+# ==================================================================
+# /book — the permanent shareable booking link (deputable.ai/book).
+# Everything printed or spoken points here (QR codes, cards, email
+# signatures), so the target can change without breaking any of it.
+# Not in the sitemap; noindex. Falls back to the contact page while
+# no booking URL is configured.
+# ==================================================================
+book_target = ZOHO_BOOKINGS_URL or (BASE_URL + "contact.html")
+os.makedirs(os.path.join(OUT, "book"), exist_ok=True)
+with open(os.path.join(OUT, "book", "index.html"), "w") as f:
+    f.write(f"""<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta http-equiv="refresh" content="0; url={book_target}">
+<title>Book a demo call — Deputable AI</title>
+<script>location.replace("{book_target}");</script>
+</head>
+<body>
+<p>Taking you to the booking calendar&hellip;
+<a href="{book_target}">Click here if nothing happens.</a></p>
+</body>
+</html>
+""")
+print("Generated: book/index.html")
