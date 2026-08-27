@@ -15,8 +15,8 @@ To change anything:
 3. Preview: `python3 -m http.server 8080` from the repo root.
 
 Generated: `index.html`, `services.html`, `how-it-works.html`, `about.html`, `trust.html`,
-`contact.html`, `privacy.html`, `zoho-thanks.html`, `book/index.html` (the permanent
-`deputable.ai/book` redirect to the booking calendar — print/QR/spoken links all point here),
+`contact.html`, `privacy.html`, `book/index.html` (the permanent `deputable.ai/book`
+redirect to the booking calendar — print/QR/spoken links all point here),
 `sitemap.xml`, `llms.txt`.
 Hand-maintained: `css/style.css`, `js/main.js`, `assets/`, `robots.txt`, `CNAME`, `.nojekyll`,
 `README.md`, `scripts/make_assets.py` + `scripts/make_qr.py` (dev-only; the QR encodes
@@ -42,10 +42,11 @@ Placeholder constants at the top of the generator (`GA_MEASUREMENT_ID`,
 
 ## Behaviour notes
 
-- Contact form is a Zoho Forms iframe with a two-step flow (form → book/skip) in
-  `js/main.js` (`initDemoFlow`). Submission signal: `zoho-thanks.html` postMessage
-  (once the Zoho redirect is configured) with a load-count fallback. Edit form fields
-  at forms.zoho.eu, not here.
+- The contact page embeds the Zoho Bookings calendar directly (one form — its booking
+  form carries Company + "The process you'd like to discuss"; edit fields at
+  bookings.zoho.eu, not here). No enquiry form, no JS state machine. Don't add
+  "email us instead" prompts to the booking flow (Prashant 2026-08-27) — the footer
+  contact line and the privacy notice keep the email.
 - The animated workflow diagram lives on the **homepage** (`FLOW_MODES` in `js/main.js`);
   human-approval steps are `{t, human:true}` objects and render amber. Autoplay pauses
   off-viewport and under `prefers-reduced-motion`; services links to `index.html#flow`.

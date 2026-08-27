@@ -16,5 +16,5 @@
 - [How It Works — Eight Weeks to Production | Deputable AI](https://deputable.ai/how-it-works.html): Five steps: demo call, assessment, build and pilot, handover, optional ongoing support. A decision point at every stage — and you keep everything we deliver.
 - [About — Why We're Called Deputable | Deputable AI](https://deputable.ai/about.html): Deputable: what you can safely hand to an AI, and what should stay with people. The thinking behind the name, and the founders behind the company.
 - [Trust & Security — Your Data Is Your Own | Deputable AI](https://deputable.ai/trust.html): Where your data is processed, who can act on it, and what happens when the model gets it wrong — the questions IT and procurement ask first, answered plainly.
-- [Book a Demo Call | Deputable AI](https://deputable.ai/contact.html): Tell us the process that wastes the most time. Forty-five minutes, no deck — pick a time, or skip it and we'll call you back.
+- [Book a Demo Call | Deputable AI](https://deputable.ai/contact.html): Pick a 45-minute slot and tell us the process that wastes the most time. No deck, no pitch — we arrive having read what you wrote.
 - [Privacy Notice | Deputable AI](https://deputable.ai/privacy.html): What the deputable.ai website collects, why, and your rights under UK GDPR — in plain English.

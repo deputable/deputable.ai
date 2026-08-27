@@ -8,10 +8,10 @@ Plain HTML/CSS/JS site, no build step. All pages are **generated** by
 - `how-it-works.html` — five-step process/timeline
 - `about.html` — the "deputable" narrative + founders
 - `trust.html` — trust & security Q&A (FAQPage JSON-LD)
-- `contact.html` — two-step demo flow (Zoho form → book a call / skip)
+- `contact.html` — the booking page: Zoho Bookings calendar embedded directly
+  (its booking form collects name, email, phone, company and the process to
+  discuss — one form, no separate enquiry step)
 - `privacy.html` — privacy notice (linked from the footer)
-- `zoho-thanks.html` — hidden helper page: the Zoho form's post-submission
-  redirect target; signals "submitted" to the contact page (not in sitemap)
 - `sitemap.xml`, `llms.txt` — regenerated on every run; `robots.txt` is static
 
 ## Run locally
@@ -31,21 +31,21 @@ then open `http://localhost:8080`.
   Until then **no analytics or consent banner is emitted at all**. When set,
   GA4 loads with Consent Mode v2 default-denied and a lightweight
   accept/decline banner (PECR-compliant).
-- `ZOHO_BOOKINGS_URL` — paste the Zoho Bookings booking-page URL. Until then
-  the contact flow skips the "book a call" step and shows a plain
-  confirmation (no dead button ships).
+- `ZOHO_BOOKINGS_URL` / `ZOHO_BOOKINGS_EMBED_URL` — the live Demo Call
+  booking page (public link and Zoho's frameable portal-embed variant).
+  If ever unset, the contact page degrades to an email fallback panel.
 - `ASSET_VER` — bump to cache-bust the favicon/logo after changing artwork.
+  (css/js bust automatically via content-hash query strings.)
 
-## Contact form (Zoho)
+## Booking (Zoho Bookings)
 
-The demo-request form is a Zoho Forms iframe (`DemoRequest`, EU-hosted) —
-edit its fields at forms.zoho.eu, not here. Two-step flow: after submit the
-page offers "Book a Call" (Zoho Bookings) or "Skip — we'll call you back".
-Submission is detected two ways: deterministically, once the form's
-post-submission rule is set to redirect to
-`https://deputable.ai/zoho-thanks.html`; and by a load-count fallback that
-works even before that rule is configured. Anyone who submits without
-booking should be called back — the lead is already in Zoho.
+The contact page embeds the Zoho Bookings "Demo Call" calendar directly —
+one form, managed at bookings.zoho.eu (workspace "Deputable.ai"): 45-minute
+one-on-one, 15-min post-buffer, 4-hour minimum notice, booking form fields
+Name / Email / Contact Number / Company / "The process you'd like to
+discuss". Slots follow the staff member's working hours; bookings sync with
+their Zoho Calendar. The old Zoho Forms enquiry form is retired (the
+DemoRequest form still exists at forms.zoho.eu but nothing links to it).
 
 ## The shareable booking link: deputable.ai/book
 
