@@ -1,60 +1,94 @@
+import datetime
+import json
 import os
 
 # Output to the repo root (this script lives in scripts/)
 OUT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-PAGES = [
-    ("index.html", "home", "Home"),
-    ("services.html", "services", "What We Do"),
-    ("how-it-works.html", "process", "How It Works"),
-    ("about.html", "about", "About"),
-    ("trust.html", "trust", "Trust & Security"),
-    ("contact.html", "contact", "Contact"),
-]
+# ------------------------------------------------------------------
+# Site-wide constants. The placeholder values below degrade
+# gracefully: an unset GA id emits no analytics at all, and an unset
+# bookings URL makes the contact flow skip straight to confirmation.
+# ------------------------------------------------------------------
+BASE_URL = "https://deputable.ai/"
+ASSET_VER = "2"                     # bump to cache-bust icons/logo
+GA_MEASUREMENT_ID = "G-XXXXXXXXXX"  # FOUNDER TO-DO: create GA4 property, paste id
+ZOHO_BOOKINGS_URL = ""              # FOUNDER TO-DO: Zoho Bookings booking-page URL
+ZOHO_FORM_URL = "https://forms.zohopublic.eu/prashantdepu1/form/DemoRequest/formperma/NZOvPlQ0DNGZdgDLAsVXU9CWqtnsvX2yJ9xcpn_Qs24?zf_rszfm=1"
+TAGLINE = "Simplify Work. Amplify People."
+
+GA_IS_SET = not GA_MEASUREMENT_ID.endswith("XXXXXXXXXX")
 
 NAV_ITEMS = [
-    ("services.html", "services", "What We Do"),
+    ("services.html", "services", "Services"),
     ("how-it-works.html", "process", "How It Works"),
     ("about.html", "about", "About"),
     ("trust.html", "trust", "Trust & Security"),
     ("contact.html", "contact", "Contact"),
 ]
 
-SITE_URL = "https://deputable.ai/"
-SITE_TITLE = "Deputable AI — Human Centric AI Solutions for UK SMEs"
-SITE_DESC = "Deputable AI builds practical AI automation for small and medium businesses across the UK — telephone agents, workflow automation, internal knowledge assistants and governance built in from day one."
+SITE_TITLE = "Deputable AI — Smart Call Handling & AI Operations for UK Businesses"
+SITE_DESC = "AI that answers your phone out of hours, catches overflow calls, and runs routine workflows — with a person in charge of every decision that matters. Built in London."
+
+ORG_JSONLD = json.dumps({
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Deputable AI",
+    "url": BASE_URL,
+    "logo": BASE_URL + "assets/deputable-logo.png",
+    "email": "hello@deputable.ai",
+    "slogan": TAGLINE,
+    "address": {"@type": "PostalAddress", "addressLocality": "London", "addressCountry": "GB"},
+    "founder": [
+        {"@type": "Person", "name": "Rohit Sinha", "sameAs": "https://www.linkedin.com/in/rohit-sinha-b6792715/"},
+        {"@type": "Person", "name": "Prashant Tiwari", "sameAs": "https://www.linkedin.com/in/prashanttiwari247/"},
+    ],
+})
+
+# Consent Mode v2, default-denied: no analytics cookie is set until the
+# visitor accepts the banner (PECR/ICO-compliant path for GA4).
+GA_SNIPPET = """<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('consent', 'default', {'analytics_storage':'denied','ad_storage':'denied','ad_user_data':'denied','ad_personalization':'denied'});
+gtag('js', new Date());
+gtag('config', '__GA_ID__');
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=__GA_ID__"></script>"""
 
 
-def head(title, desc, active_id, relpath_prefix="", filename="index.html"):
-    page_url = SITE_URL + ("" if filename == "index.html" else filename)
+def head(title, desc, active_id, filename, relpath_prefix="", extra_head=""):
+    canonical = BASE_URL if filename == "index.html" else BASE_URL + filename
+    ga = GA_SNIPPET.replace("__GA_ID__", GA_MEASUREMENT_ID) if GA_IS_SET else ""
     return f"""<!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title}</title>
 <meta name="description" content="{desc}">
-<link rel="icon" href="{relpath_prefix}assets/favicon.ico" sizes="any">
-<link rel="icon" type="image/png" sizes="32x32" href="{relpath_prefix}assets/favicon-32.png">
-<link rel="apple-touch-icon" href="{relpath_prefix}assets/apple-touch-icon.png">
-<link rel="canonical" href="{page_url}">
+<link rel="canonical" href="{canonical}">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Deputable AI">
-<meta property="og:url" content="{page_url}">
 <meta property="og:title" content="{title}">
 <meta property="og:description" content="{desc}">
-<meta property="og:image" content="{SITE_URL}assets/og-image.png">
+<meta property="og:url" content="{canonical}">
+<meta property="og:image" content="{BASE_URL}assets/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Deputable AI — Simplify Work. Amplify People.">
+<meta property="og:image:alt" content="Deputable AI — Depute the busywork. Keep the judgment.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{title}">
 <meta name="twitter:description" content="{desc}">
-<meta name="twitter:image" content="{SITE_URL}assets/og-image.png">
+<meta name="twitter:image" content="{BASE_URL}assets/og-image.png">
+<link rel="icon" href="{relpath_prefix}assets/favicon.ico?v={ASSET_VER}" sizes="32x32">
+<link rel="icon" type="image/png" href="{relpath_prefix}assets/icon-192.png?v={ASSET_VER}" sizes="192x192">
+<link rel="apple-touch-icon" href="{relpath_prefix}assets/apple-touch-icon.png?v={ASSET_VER}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{relpath_prefix}css/style.css">
+<script type="application/ld+json">{ORG_JSONLD}</script>{extra_head}{ga}
 </head>
 <body>
 <div class="page-shell">
@@ -73,12 +107,12 @@ def header(active_id, relpath_prefix=""):
     return f"""  <header class="site-header">
     <div class="wrap header-inner">
       <a class="logo-link" href="{home_href}">
-        <img src="{relpath_prefix}assets/deputable-logo.png" alt="Deputable AI">
+        <img src="{relpath_prefix}assets/deputable-logo.png?v={ASSET_VER}" alt="Deputable AI — {TAGLINE}">
       </a>
       <button class="mobile-toggle" aria-label="Toggle menu">Menu</button>
       <nav class="main-nav">
         {nav_links}
-        <a class="btn-nav" href="{relpath_prefix}contact.html">Request a Demo</a>
+        <a class="btn-nav" href="{relpath_prefix}contact.html">Book a Demo</a>
       </nav>
     </div>
   </header>"""
@@ -91,256 +125,88 @@ def footer(relpath_prefix=""):
     return f"""  <footer class="site-footer">
     <div class="wrap footer-top">
       <div class="footer-brand">
-        <img src="{relpath_prefix}assets/deputable-logo.png" alt="Deputable AI">
-        <p>Human centric AI solutions for small and medium businesses in the United Kingdom.</p>
+        <img src="{relpath_prefix}assets/deputable-logo.png?v={ASSET_VER}" alt="Deputable AI">
+        <p class="footer-tagline">{TAGLINE}</p>
+        <p>Human-centric AI for small and mid-sized businesses, from our London HQ.</p>
       </div>
-      <div class="footer-cols">
+      <div class="footer-col">
+        <div class="footer-col-title">Explore</div>
         <div class="footer-nav">
           {links}
         </div>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Contact</div>
         <div class="footer-contact">
-          <div>hello@deputable.ai</div>
+          <a href="mailto:hello@deputable.ai">hello@deputable.ai</a>
           <div>London, UK</div>
         </div>
       </div>
     </div>
     <div class="footer-bottom">
       <div class="wrap footer-bottom-inner">
-        <span>&copy; 2026 Deputable AI Ltd</span>
-        <span>Registered in England &amp; Wales</span>
+        <span>&copy; 2026 Deputable AI &middot; London</span>
+        <a href="{relpath_prefix}privacy.html">Privacy</a>
       </div>
     </div>
   </footer>"""
 
 
+def consent_banner():
+    if not GA_IS_SET:
+        return ""
+    return """
+<div class="consent-bar hidden" data-consent-bar>
+  <p>We use one optional analytics cookie to understand how the site is used. Nothing is set unless you accept.</p>
+  <div class="consent-actions">
+    <button type="button" class="btn btn-primary" data-consent-accept>Accept</button>
+    <button type="button" class="btn btn-secondary" data-consent-decline>Decline</button>
+  </div>
+</div>"""
+
+
 def tail(relpath_prefix=""):
     return f"""</main>
 {footer(relpath_prefix)}
-</div>
+</div>{consent_banner()}
 <script src="{relpath_prefix}js/main.js"></script>
 </body>
 </html>
 """
 
 
-def write_page(filename, title, desc, active_id, body):
-    html = head(title, desc, active_id, filename=filename) + body + tail()
+WRITTEN = []  # (filename, title, desc) for sitemap.xml + llms.txt
+
+
+def write_page(filename, title, desc, active_id, body, extra_head="", in_sitemap=True):
+    html = head(title, desc, active_id, filename, extra_head=extra_head) + body + tail()
     with open(os.path.join(OUT, filename), "w") as f:
         f.write(html)
+    if in_sitemap:
+        WRITTEN.append((filename, title, desc))
+    print(f"Generated: {filename}")
 
 
-# ==================================================================
-# HOME
-# ==================================================================
-start_points = [
-    ("01", "Quotes, invoices and order paperwork that someone retypes by hand"),
-    ("02", "Inbox and enquiry triage that delays a first response by days"),
-    ("03", "Reporting assembled from spreadsheets every Monday morning"),
-    ("04", "Knowledge locked in the head of one long-serving colleague"),
-]
-
-principles = [
-    ("A Person Stays Accountable", "Anything that touches a customer, a payment or a record is reviewed or approved by a named person. The system proposes; your team decides."),
-    ("Your Data Is Not Our Training Set", "Client data is used to serve that client only. It is never used to train models, and we tell you exactly which third-party services process it."),
-    ("Built to Be Handed Over", "We document what we build and train your staff to run it. If you end the relationship, the workflow keeps working."),
-]
-
-services_home = [
-    ("#00B4FF", "AI Readiness Assessment", "Two weeks mapping where AI would genuinely save time, and where it would not. You get a costed shortlist, not a strategy document."),
-    ("#16BFA0", "Workflow Automation", "Document handling, triage, data entry and reporting, connected to the systems you already run."),
-    ("#0E2A4A", "Assistants on Your Own Knowledge", "Internal and customer-facing assistants grounded in your documents, with citations and clear limits on what they answer."),
-]
-
-home_steps = [
-    ("01", "Week 0", "Demo Call", "You bring a process. We walk through how it would run and whether it is worth doing."),
-    ("02", "Weeks 1–2", "Assessment", "We map the work as it happens today and cost the options."),
-    ("03", "Weeks 3–6", "Build", "One workflow, deployed to a small group first, with approval steps in place."),
-    ("04", "Weeks 7–8", "Handover", "Documentation, training, and a review of what it saved."),
-]
-
-home_body = f"""
-<section class="hero">
-  <div class="wrap hero-grid">
-    <div>
-      <div class="eyebrow">Human Centric AI &middot; United Kingdom</div>
-      <h1>AI Solutions for Small and Medium Businesses Across the UK.</h1>
-      <p class="hero-sub">We build AI that works alongside your team rather than around it. Practical automation, deployed carefully, with a person accountable at every step.</p>
-      <div class="hero-ctas">
-        <a class="btn btn-primary" href="contact.html">Request a Demo</a>
-        <a class="btn btn-secondary" href="services.html">See What We Do</a>
-      </div>
-    </div>
-    <div class="hero-panel">
-      <div class="hero-panel-title">Where We Start</div>
-      <div>
-        {"".join(f'<div class="start-point"><span class="n">{n}</span><span class="t">{t}</span></div>' for n, t in start_points)}
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="bg-navy">
-  <div class="wrap principles-grid">
-    <h2>What &ldquo;Human Centric&rdquo; Means Here</h2>
-    <div>
-      {"".join(f'<div class="principle-item"><div class="principle-title">{t}</div><div class="principle-body">{b}</div></div>' for t, b in principles)}
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="wrap section-pad">
-    <div class="section-head-row">
-      <h2>What We Do</h2>
-      <a href="services.html" style="font-size:15px;font-weight:600;color:#0090D6">All Services &rarr;</a>
-    </div>
-    <div class="grid-3">
-      {"".join(f'<div class="card"><div class="accent" style="background:{a}"></div><h3>{t}</h3><p>{b}</p></div>' for a, t, b in services_home)}
-    </div>
-  </div>
-</section>
-
-<section class="border-t bg-white">
-  <div class="wrap section-pad">
-    <h2 style="margin-bottom:44px">How It Works</h2>
-    <div class="steps-grid">
-      {"".join(f'<div class="step-item"><div class="meta">{n} &middot; {w}</div><h3>{t}</h3><p>{b}</p></div>' for n, w, t, b in home_steps)}
-    </div>
-  </div>
-</section>
-
-<section class="border-t">
-  <div class="wrap" style="padding:84px 32px">
-    <h2 style="font-size:34px;margin-bottom:18px">Built for the Way UK SMEs Actually Operate</h2>
-    <p style="font-size:17px;line-height:1.65;color:#43535F;margin-bottom:16px;max-width:46em">Small teams, mixed systems, no spare capacity for a year-long programme. We scope work in weeks, integrate with the tools you already pay for, and hand over documentation your team can maintain.</p>
-    <p style="font-size:17px;line-height:1.65;color:#43535F;max-width:46em">Data stays in the UK or EU. We are equally comfortable working with enterprise IT functions and public sector procurement.</p>
-  </div>
-</section>
-
+def cta_band(title, sub, label="Book a Demo Call"):
+    return f"""
 <section class="bg-navy">
   <div class="wrap cta-band">
     <div>
-      <h2>See It Against Your Own Process</h2>
-      <p>A 30-minute demo using a workflow you choose.</p>
+      <h2>{title}</h2>
+      <p>{sub}</p>
     </div>
-    <a class="btn btn-teal" href="contact.html">Request a Demo</a>
+    <a class="btn btn-teal" href="contact.html">{label}</a>
   </div>
 </section>
 """
 
-write_page("index.html", SITE_TITLE, SITE_DESC, "home", home_body)
 
-print("Generated: index.html")
-
-# ==================================================================
-# SERVICES
-# ==================================================================
-voice_caps = [
-    "Answer frequently asked questions",
-    "Identify the caller and reason for calling",
-    "Book, change, or cancel appointments",
-    "Check availability, order status, or delivery information",
-    "Qualify sales enquiries and capture lead details",
-    "Take messages and create follow-up tasks",
-    "Route urgent or complex calls to the correct employee",
-    "Send confirmations by SMS or email",
-    "Update the CRM automatically",
-    "Produce call transcripts, summaries, and sentiment indicators",
-    "Support several languages",
-    "Handle calls outside normal business hours",
-]
-
-channels = [
-    "Website chat and lead capture", "WhatsApp customer service", "SMS enquiries and reminders",
-    "Email classification and response drafting", "Facebook or Instagram enquiries", "Customer self-service portals",
-]
-
-knowledge_qs = [
-    "What is our refund process?",
-    "Which products meet this customer’s requirements?",
-    "Summarise this contract.",
-    "How do I complete this compliance procedure?",
-    "Show me the latest pricing and approved proposal wording.",
-]
-
-departments = [
-    ("Sales", "Lead qualification, proposal drafting, CRM updates and follow-ups"),
-    ("Customer Service", "Voice agents, chat, ticket summaries and suggested responses"),
-    ("Finance", "Invoice extraction, reconciliation support and payment reminders"),
-    ("Operations", "Scheduling, job allocation, stock alerts and report generation"),
-    ("HR", "Onboarding, policy assistants, training and routine employee enquiries"),
-    ("Marketing", "Content drafts, campaign personalisation and enquiry attribution"),
-    ("Management", "Automated reports, business dashboards and forecasting support"),
-    ("Compliance", "Document checks, audit trails, retention controls and policy monitoring"),
-]
-
-bespoke = [
-    "Staff operations portals", "Customer booking systems", "Quote and proposal generators",
-    "Field-service applications", "Document-processing platforms", "Management dashboards",
-    "Secure approval workflows", "Industry-specific case-management systems",
-]
-
-discovery = [
-    ("01", "Interview employees and map repetitive workflows."),
-    ("02", "Measure volumes, labour time, delays and error rates."),
-    ("03", "Assess data quality and existing systems."),
-    ("04", "Rank opportunities by benefit, complexity and risk."),
-    ("05", "Recommend a 60–90 day roadmap."),
-    ("06", "Build one small, measurable pilot."),
-]
-
-support = [
-    "Process and requirements discovery", "Solution design and integration", "Knowledge-base preparation",
-    "Testing with real business scenarios", "Employee training and adoption", "Performance monitoring",
-    "Conversation and workflow improvement", "Security updates and incident response",
-    "Monthly business-impact reporting", "Human support and service-level agreements",
-    "Backup procedures when the AI or another system is unavailable",
-]
-
-measures = [
-    "Calls resolved", "Appointments booked", "Response time", "Employee hours saved",
-    "Conversion rate", "Transfer rate", "Error rate", "Customer satisfaction",
-]
-
-governance = [
-    "A documented lawful basis for processing personal information",
-    "Data minimisation and defined retention periods",
-    "A data-protection impact assessment where appropriate",
-    "Supplier and data-location review",
-    "Role-based access and audit logs",
-    "Testing for inaccurate or harmful responses",
-    "Clear AI disclosure",
-    "Human escalation and override",
-    "A process for challenging significant automated decisions",
-    "Written incident and complaint procedures",
-    "An employee AI-use policy",
-    "Controls preventing client data from being used for model training without authority",
-]
-
-packages = [
-    ("#00B4FF", "AI Receptionist", "Telephone answering, appointment booking, FAQ support and call summaries."),
-    ("#16BFA0", "Customer Service Automation", "Voice, website chat, email and ticketing integration."),
-    ("#0E2A4A", "AI Workflow Pilot", "One end-to-end internal process automated within a fixed scope."),
-    ("#00B4FF", "Internal Knowledge Assistant", "Secure search and answers across approved company information."),
-    ("#16BFA0", "AI Operations Suite", "Several connected agents and workflows across departments."),
-    ("#0E2A4A", "Managed AI Service", "Monitoring, improvements, support, reporting and governance for a monthly fee."),
-]
-
-services_body = f"""
-<section class="border-b bg-white">
-  <div class="wrap page-hero">
-    <div class="eyebrow">What We Do</div>
-    <h1 style="max-width:24em">We identify repetitive work, automate it safely, connect existing business systems, and provide ongoing human support.</h1>
-    <p class="lede">An AI operations partner for UK small and mid-sized businesses &mdash; not merely a chatbot developer.</p>
-  </div>
-</section>
-
-<section class="bg-white border-b">
-  <div class="wrap section-pad">
-    <h2>Business-Process Automation</h2>
-    <p style="font-size:17.5px;line-height:1.6;color:#43535F;margin:16px 0 32px;max-width:46em">Three things agents do from day one: bring in leads, answer the phone, and run the internal applications your team already depends on &mdash; stock, fleet, inventory, scheduling and job paperwork. Pick one to watch it run.</p>
-
-    <div data-flow-demo>
+def flow_demo_html():
+    """The animated workflow diagram. Tab/lane/step labels live in
+    js/main.js (FLOW_MODES); human-approval steps are objects with
+    human:true and render amber."""
+    return """
+    <div data-flow-demo id="flow">
       <div class="flow-tabs" data-flow-tabs></div>
       <div class="flow-panel">
         <div class="flow-row">
@@ -358,159 +224,342 @@ services_body = f"""
           <div class="flow-lanes" data-flow-lanes></div>
         </div>
         <div class="flow-legend" data-flow-legend></div>
-        <div class="flow-note">Employees remain responsible for financial commitments, recruitment decisions, contract approval, complaints with serious consequences, and other high-impact decisions.</div>
+        <div class="flow-key"><span class="key-dot"></span>Amber steps wait for a person — nothing passes them on its own.</div>
+        <div class="flow-note">Some things are not deputable: pricing, hiring, contractual commitments, and any complaint with real consequences. Those stay with your people, always.</div>
       </div>
-    </div>
-  </div>
-</section>
+    </div>"""
 
-<section>
-  <div class="wrap split start">
-    <div>
-      <h2 style="font-size:30px">AI Telephone and Customer-Service Agents</h2>
-      <p style="margin-bottom:26px">An AI receptionist can answer calls 24/7 using a natural voice and the client&rsquo;s business information.</p>
-      <div class="check-list">
-        {"".join(f'<div class="check-item"><span class="tick">&#10003;</span><span>{c}</span></div>' for c in voice_caps)}
+
+def demo_flow_html():
+    """Two-step demo flow: Zoho form (step 1) -> book a call / skip
+    (step 2). Submission is detected by a postMessage from
+    zoho-thanks.html (set as the form's post-submission redirect at
+    forms.zoho.eu); the old load-count heuristic remains as fallback."""
+    booking_href = ZOHO_BOOKINGS_URL or "#"
+    return f"""
+    <div class="demo-flow" data-demo-flow>
+      <div class="demo-steps">
+        <span class="demo-step-dot active" data-step-dot="1">1 &middot; Your details</span>
+        <span class="demo-step-dot" data-step-dot="2">2 &middot; Book a call</span>
       </div>
-    </div>
-    <div class="panel-stack">
-      <div class="panel">
-        <h3>Safeguards, Not Optional Extras</h3>
-        <p>Clear disclosure that the customer is speaking with an AI, an easy route to a person, recording and privacy notices, confidence thresholds, and emergency escalation.</p>
-      </div>
-      <div class="panel">
-        <h3>We Start With Inbound Calls</h3>
-        <p>Outbound sales calling brings additional consent, privacy and telecommunication considerations. Ofcom specifically requires organisations to prevent automated systems from producing silent or abandoned calls, and can take enforcement action for persistent misuse. <a href="https://www.ofcom.org.uk/phones-and-broadband/unwanted-calls-and-messages/refresher-messaging-on-silent-and-abandoned-calls" target="_blank" rel="noopener" style="color:#0090D6;font-weight:500">Ofcom Guidance &rarr;</a></p>
-      </div>
-      <div class="panel">
-        <h3 style="margin-bottom:8px">Website, WhatsApp and Messaging Agents</h3>
-        <p style="margin-bottom:16px">A conversation can begin on the website, continue by telephone, and finish with an appointment confirmation without the customer repeating their information.</p>
-        <div class="pill-row">
-          {"".join(f'<span class="pill">{c}</span>' for c in channels)}
+      <div data-df-form>
+        <div data-zoho-clip class="contact-form-clip">
+          <iframe data-zoho-form class="contact-form-embed" aria-label="Demo Request" frameborder="0" scrolling="no"
+            src="{ZOHO_FORM_URL}"></iframe>
         </div>
       </div>
-    </div>
-  </div>
-</section>
-
-<section class="bg-white border-t border-b">
-  <div class="wrap" style="padding:84px 32px;display:grid;grid-template-columns:0.9fr 1.1fr;gap:60px;align-items:start">
-    <div>
-      <h2 style="font-size:30px">Internal Knowledge Assistants</h2>
-      <p style="margin:14px 0 18px">Many SMEs have information scattered across documents, emails, shared drives and employee knowledge. We provide a secure internal assistant that answers questions about it.</p>
-      <p style="font-size:15.5px;color:#52626D">The assistant quotes or links to its source, respects employee permissions, and says when it cannot find a reliable answer.</p>
-    </div>
-    <div style="display:grid;gap:12px">
-      {"".join(f'<div class="quote-box">&ldquo;{q}&rdquo;</div>' for q in knowledge_qs)}
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="wrap section-pad">
-    <h2 style="font-size:34px;margin-bottom:14px">Department-Specific Solutions</h2>
-    <p style="font-size:17px;line-height:1.6;color:#43535F;margin-bottom:36px;max-width:44em">Focused packages rather than vague &ldquo;AI transformation&rdquo;.</p>
-    <div class="dept-table">
-      {"".join(f'<div class="dept-row"><div class="dept-area">{a}</div><div class="dept-solutions">{s}</div></div>' for a, s in departments)}
-    </div>
-  </div>
-</section>
-
-<section class="bg-white border-t">
-  <div class="wrap" style="padding:84px 32px;display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start">
-    <div>
-      <h2 style="font-size:30px">Bespoke Applications</h2>
-      <p style="margin:14px 0 24px">Some clients need a small application instead of another disconnected AI tool. The best approach is usually to extend or connect existing software before replacing it.</p>
-      <div class="pill-row">
-        {"".join(f'<span class="pill pill-lg">{b}</span>' for b in bespoke)}
-      </div>
-    </div>
-    <div>
-      <h2 style="font-size:30px">AI Readiness and Consulting</h2>
-      <p style="margin:14px 0 24px">Many SMEs will not know where to begin, so discovery is structured.</p>
-      <div class="numbered-list">
-        {"".join(f'<div class="numbered-item"><span class="n">{n}</span><span class="t">{t}</span></div>' for n, t in discovery)}
-      </div>
-      <p style="font-size:15px;line-height:1.6;color:#52626D;margin-top:20px">A good first project is high-volume, rules-based, easy to review and capable of showing results within several weeks.</p>
-    </div>
-  </div>
-</section>
-
-<section class="bg-navy">
-  <div class="wrap" style="padding:84px 32px;display:grid;grid-template-columns:0.9fr 1.1fr;gap:60px;align-items:start">
-    <div>
-      <h2 style="font-size:30px;color:#fff">Implementation and Ongoing Support</h2>
-      <p style="margin:14px 0 24px;color:#C3D0DC">Our service covers more than initial development.</p>
-      <div style="border-top:1px solid #24456B;padding-top:20px">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#7FDBC8;margin-bottom:14px">What We Measure</div>
-        <div class="pill-row">
-          {"".join(f'<span class="pill pill-dark">{m}</span>' for m in measures)}
+      <div data-df-book class="confirm-box hidden">
+        <div class="title">Thanks &mdash; one more step.</div>
+        <div class="sub">Pick a slot that suits you, or skip and we&rsquo;ll ring you.</div>
+        <div class="confirm-actions">
+          <a class="btn btn-primary" data-df-book-link target="_blank" rel="noopener" href="{booking_href}">Book a Call</a>
+          <button type="button" class="btn btn-secondary" data-df-skip>Skip this &mdash; we&rsquo;ll call you back instead</button>
         </div>
       </div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 28px">
-      <div class="check-list check-list-tight" style="grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:0 28px">
-        {"".join(f'<div class="check-item" style="color:#E4EBF1"><span class="tick">&#10003;</span><span>{s}</span></div>' for s in support)}
+      <div data-df-done class="confirm-box hidden">
+        <div class="title" data-df-done-title>Thanks &mdash; we&rsquo;ll ring you.</div>
+        <div class="sub" data-df-done-sub>Usually within one working day.</div>
       </div>
+    </div>"""
+
+
+# ==================================================================
+# HOME
+# ==================================================================
+live_rows = [
+    ("5–9", "Evenings, weekends and bank holidays — every call answered, every callback booked."),
+    ("9–5", "Busy lines covered — the AI picks up when your whole team is already on calls."),
+    ("LIVE", "In-call assist — your operator briefed with the caller's details as the conversation happens."),
+]
+
+modes_home = [
+    ("Out of hours", "Every call answered.",
+     "When the office closes, the AI picks up — evenings, weekends and bank holidays. It answers the routine questions, takes proper details, and books callbacks so the morning starts with a list, not a voicemail backlog."),
+    ("Office hours · overflow", "No caller lost to a busy line.",
+     "When everyone is already on a call, the AI takes the next one. It captures who's calling and why, answers what it safely can, and queues the rest for the right person — so a busy hour doesn't cost you a customer."),
+    ("Live, during the call", "Your team, two steps ahead.",
+     "While one of your people takes the call, the AI works alongside them — surfacing the caller's history, the job details and the next free slot as the conversation happens. The customer just notices they're talking to someone who already knows."),
+]
+
+services_home = [
+    ("#00B4FF", "website-chat", "Website Chat", "The same engine that answers your phone, on your website. Enquiries answered, details captured, callbacks arranged — one system, one conversation history."),
+    ("#16BFA0", "workflow-automation", "Workflow Automation", "Built bespoke around one process of yours — route planning, stock reordering, job paperwork — connected to the systems you already run, with an approval step wherever a mistake would reach a customer."),
+    ("#0E2A4A", "readiness", "AI Readiness Assessment", "Two weeks mapping where AI would genuinely save time, and where it would not. You get a costed shortlist, not a strategy document."),
+]
+
+# Shared by the homepage and About page — keep the two in step.
+depute_items = [
+    "Out-of-hours and overflow call answering",
+    "Appointment booking and diary management",
+    "Customer detail capture and callbacks",
+    "Data entry across your systems",
+    "Follow-up drafts and routine reports",
+    "Routine paperwork and reminders",
+]
+
+keep_items = [
+    "Pricing and quote negotiations",
+    "Managing human resources",
+    "Escalated complaints and disputes",
+    "Contractual commitments",
+    "Decisions that carry your reputation",
+]
+
+assure_items = [
+    "A named person stays accountable",
+    "Your data is never our training set",
+    "Built to be handed over, not held hostage",
+]
+
+result_metrics = ["Calls answered", "Response time", "Hours saved", "Error rate"]
+
+home_steps = [
+    ("01", "Week 0", "Demo Call", "You bring a process. We walk through how it would run and whether it is worth doing."),
+    ("02", "Weeks 1–2", "Assessment", "We map the work as it happens today and cost the options."),
+    ("03", "Weeks 3–6", "Build", "One workflow, deployed to a small group first, with approval steps in place."),
+    ("04", "Weeks 7–8", "Handover", "Documentation, training, and a review of what it saved."),
+    ("05", "Ongoing", "Support (optional)", "Monitoring, tuning and a monthly report, priced separately. Or run it yourself — it's yours either way."),
+]
+
+home_body = f"""
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">Simplify work &middot; Amplify people</div>
+      <h1>Depute the busywork. Keep the judgment.</h1>
+      <p class="hero-sub">We build AI that takes on the work you'd hand to a trusted deputy — answering the phone after hours, picking up overflow calls while your team is busy, running the routine steps of scheduling, stock and paperwork. Turn-key, fitted to the systems you already run, with a person in charge of everything that matters.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="contact.html">Book a Demo Call</a>
+        <a class="btn btn-secondary" href="how-it-works.html">See How It Works</a>
+      </div>
+    </div>
+    <div class="hero-panel">
+      <div class="hero-panel-title">Live today</div>
+      <div>
+        {"".join(f'<div class="start-point"><span class="n">{n}</span><span class="t">{t}</span></div>' for n, t in live_rows)}
+      </div>
+      <p class="hero-panel-foot">A working prototype answers a live UK number today. Ask to hear it on your demo call — we'd rather you hear it than read about it.</p>
     </div>
   </div>
 </section>
 
 <section class="bg-white border-b">
   <div class="wrap section-pad">
-    <h2 style="font-size:34px;margin-bottom:14px">Governance and UK Compliance</h2>
-    <p style="font-size:17px;line-height:1.6;color:#43535F;margin-bottom:40px;max-width:46em">Responsible AI is part of the product rather than an optional consultancy extra. Every deployment includes the following.</p>
-    <div class="gov-grid">
-      {"".join(f'<div class="check-item"><span class="tick">&#10003;</span><span>{g}</span></div>' for g in governance)}
+    <div class="eyebrow">Smart Call Handling</div>
+    <h2>The phone, handled. Three ways.</h2>
+    <p class="prose section-sub">One system, fitted to how your day actually runs — not a machine that takes your team's place, but one that covers for it and backs it up.</p>
+    <div class="grid-3">
+      {"".join(f'<div class="mode-card"><div class="mode-kicker">{k}</div><h3>{t}</h3><p>{b}</p></div>' for k, t, b in modes_home)}
     </div>
-    <div class="gov-panels">
-      <div class="gov-note">
-        <p>The ICO provides an AI risk toolkit and guidance on applying UK GDPR principles to AI systems. UK rules also require safeguards around significant solely automated decisions, including information, the ability to challenge a decision and access to human intervention.</p>
-        <div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:16px">
-          <a href="https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/artificial-intelligence/" target="_blank" rel="noopener" style="font-size:14.5px;font-weight:500;color:#0090D6">ICO AI and Data-Protection Guidance &rarr;</a>
-          <a href="https://www.gov.uk/guidance/data-use-and-access-act-2025-data-protection-and-privacy-changes?hl=en-GB" target="_blank" rel="noopener" style="font-size:14.5px;font-weight:500;color:#0090D6">UK Government Guidance &rarr;</a>
-        </div>
-      </div>
-      <div class="gov-stat">
-        <div class="num">17%</div>
-        <p>of AI-using businesses had any AI policy or guidance, and just 5% had a formal written policy. <a href="https://www.gov.uk/government/statistics/uk-business-data-survey-2026/uk-business-data-survey-2026" target="_blank" rel="noopener" style="color:#0090D6;font-weight:500">UK Business Data Survey 2026 &rarr;</a></p>
-      </div>
-    </div>
+    <div class="section-foot"><a class="link-arrow" href="services.html#smart-call-handling">Smart Call Handling in full &rarr;</a></div>
   </div>
 </section>
 
 <section>
-  <div class="wrap" style="padding:84px 32px 96px">
-    <h2 style="font-size:34px;margin-bottom:14px">Commercial Packages</h2>
-    <p style="font-size:17px;line-height:1.6;color:#43535F;margin-bottom:36px;max-width:46em">A one-off discovery and implementation charge, combined with monthly platform, usage, monitoring and support fees.</p>
-    <div class="grid-3">
-      {"".join(f'<div class="card"><div class="accent" style="background:{a}"></div><h3>{n}</h3><p>{b}</p></div>' for a, n, b in packages)}
+  <div class="wrap section-pad">
+    <div class="section-head-row">
+      <div>
+        <h2>More than the phone.</h2>
+        <p class="prose section-sub">An AI operations partner for UK small and mid-sized businesses — three more ways we take on the busywork.</p>
+      </div>
+      <a class="link-arrow" href="services.html">All services &rarr;</a>
     </div>
-    <div class="pkg-actions">
-      <a class="btn btn-primary" href="contact.html">Request a Demo</a>
+    <div class="grid-3">
+      {"".join(f'<div class="card"><div class="accent" style="background:{a}"></div><h3>{t}</h3><p>{b}</p><a class="link-arrow card-link" href="services.html#{anchor}">Learn more &rarr;</a></div>' for a, anchor, t, b in services_home)}
     </div>
   </div>
 </section>
-"""
 
-write_page("services.html", "What We Do — Deputable AI", "Business-process automation, AI telephone agents, internal knowledge assistants, bespoke applications and UK AI governance for SMEs.", "services", services_body)
-print("Generated: services.html")
+<section class="bg-white border-t border-b">
+  <div class="wrap section-pad">
+    <h2>Watch a job run end to end.</h2>
+    <p class="prose section-sub">Every flow below has a step only a person can pass — it's marked. That's not a limitation we apologise for; it's the design.</p>
+    {flow_demo_html()}
+    <p class="prose flow-after">Follow-ups go only to customers you already serve, by email or a callback they asked for. We don't do cold outbound calling — and nothing here sends without a person's say-so.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap section-pad">
+    <h2>What you can depute. What stays yours.</h2>
+    <div class="depute-grid">
+      <div class="depute-col">
+        <div class="depute-col-title">Depute it</div>
+        {"".join(f'<div class="depute-item"><span class="tick">&#10003;</span><span>{d}</span></div>' for d in depute_items)}
+      </div>
+      <div class="depute-col keep">
+        <div class="depute-col-title">Keep it</div>
+        {"".join(f'<div class="depute-item"><span class="dot">&#9679;</span><span>{k}</span></div>' for k in keep_items)}
+      </div>
+    </div>
+    <p class="prose depute-close">That line — what's deputable and what isn't — is the whole company. It's why we're called what we're called. <a class="link-arrow" href="about.html">Why &ldquo;Deputable&rdquo; &rarr;</a></p>
+    <div class="assure-strip">
+      {"".join(f'<a class="assure-item" href="trust.html">{a}</a>' for a in assure_items)}
+    </div>
+  </div>
+</section>
+
+<section class="bg-white border-t">
+  <div class="wrap split start">
+    <div>
+      <h2>No logo wall. Not yet.</h2>
+      <p>We're a new company, and we won't decorate this page with invented numbers or testimonials we don't have. What we do have: a working product answering a live UK number, a build process you can audit at every stage, and a rule that you keep everything we make — the workflow, the documentation, the accounts it runs on.</p>
+    </div>
+    <div class="results-panel">
+      <div class="mono-label">Pilot results — published as they complete</div>
+      <p>This space is reserved for real measurements. When our first pilots finish, the before-and-after numbers go here — with the client's sign-off, and whether or not they flatter us.</p>
+      <div class="pill-row">
+        {"".join(f'<span class="pill">{m}</span>' for m in result_metrics)}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="border-t">
+  <div class="wrap section-pad">
+    <h2 class="mb-lg">How It Works</h2>
+    <div class="steps-grid">
+      {"".join(f'<div class="step-item"><div class="meta">{n} &middot; {w}</div><h3>{t}</h3><p>{b}</p></div>' for n, w, t, b in home_steps)}
+    </div>
+  </div>
+</section>
+""" + cta_band("See it against your own process.", "Forty-five minutes, one workflow of your choosing, no deck.")
+
+write_page("index.html", SITE_TITLE, SITE_DESC, "home", home_body)
+
+# ==================================================================
+# SERVICES
+# ==================================================================
+modes_full = [
+    ("Out of hours", "Every call answered.",
+     "When the office closes, the AI picks up — evenings, weekends and bank holidays. It answers the routine questions from your own business information, takes proper details with the caller's number confirmed digit by digit, and books callbacks so the morning starts with a list, not a voicemail backlog."),
+    ("Office hours · overflow", "No caller lost to a busy line.",
+     "When everyone is already on a call, the AI takes the next one instead of letting it ring out. It captures who's calling and why, answers what it safely can, and queues the rest for the right person — a busy hour stops costing you customers."),
+    ("Live, during the call", "Your team, two steps ahead.",
+     "While one of your people takes the call, the AI works for them, not instead of them — surfacing the caller's history, the job details and the next free slot as the conversation happens, so your operator can focus on the customer rather than the lookup."),
+]
+
+voice_caps = [
+    "Answer frequently asked questions from your own business information",
+    "Identify the caller and the reason for calling",
+    "Book, change or cancel appointments",
+    "Take messages and organise callbacks",
+    "Qualify enquiries and capture lead details",
+    "Route urgent or complex calls to the right person",
+    "Send confirmations by email",
+    "Log transcripts and summaries in your CRM",
+]
+
+workflow_pills = [
+    "Route planning", "Inventory & stock reordering", "Job scheduling & dispatch",
+    "Quotes & job paperwork", "Reporting",
+]
+
+discovery = [
+    ("01", "Interview employees and map repetitive workflows."),
+    ("02", "Measure volumes, labour time, delays and error rates."),
+    ("03", "Assess data quality and existing systems."),
+    ("04", "Rank opportunities by benefit, complexity and risk."),
+    ("05", "Recommend a 60–90 day roadmap."),
+    ("06", "Build one small, measurable pilot."),
+]
+
+services_body = f"""
+<section class="border-b bg-white">
+  <div class="wrap page-hero">
+    <div class="eyebrow">Services</div>
+    <h1 class="hw-narrow">An AI operations partner for UK small and mid-sized businesses.</h1>
+    <p class="lede">Four services. Each one is on this page because we can deliver it today — nothing here is a roadmap.</p>
+  </div>
+</section>
+
+<section id="smart-call-handling" class="bg-white border-b">
+  <div class="wrap section-pad">
+    <div class="eyebrow">Flagship</div>
+    <h2>Smart Call Handling</h2>
+    <p class="prose section-sub">Your phone is where jobs are won and lost, and most small businesses lose them silently — after hours, on busy lines, in voicemail nobody checks. Smart Call Handling covers all three, without pretending to be a person and without taking anyone's place.</p>
+    <div class="grid-3 mb-lg">
+      {"".join(f'<div class="mode-card"><div class="mode-kicker">{k}</div><h3>{t}</h3><p>{b}</p></div>' for k, t, b in modes_full)}
+    </div>
+    <div class="split start no-pad">
+      <div>
+        <h3 class="list-title">What it handles on your line</h3>
+        <div class="check-list">
+          {"".join(f'<div class="check-item"><span class="tick">&#10003;</span><span>{c}</span></div>' for c in voice_caps)}
+        </div>
+      </div>
+      <div class="panel-stack">
+        <div class="panel">
+          <h3>Safeguards, not optional extras</h3>
+          <p>Callers are told they're speaking with an AI. There is always an easy route to a person. Recording and privacy notices are in place, and anything the system isn't confident about gets escalated, not improvised.</p>
+        </div>
+        <div class="panel">
+          <h3>Inbound-first, by design</h3>
+          <p>We answer the calls your customers make to you, and make only the follow-ups they've asked for &mdash; never cold outbound. It keeps us square with Ofcom's rules on automated calling, and keeps your number's reputation clean. <a href="https://www.ofcom.org.uk/phones-and-broadband/unwanted-calls-and-messages/refresher-messaging-on-silent-and-abandoned-calls" target="_blank" rel="noopener" class="link-arrow">Ofcom guidance &rarr;</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="website-chat">
+  <div class="wrap section-pad-sm">
+    <h2 class="h2-md">Website Chat &mdash; the same engine, on your site.</h2>
+    <p class="prose">The enquiry that starts in a chat box is the same enquiry that would have been a phone call, so we treat it the same way: answered from your business information, details captured, a callback arranged where it matters. One engine, one conversation history, no customer repeating themselves.</p>
+  </div>
+</section>
+
+<section id="workflow-automation" class="bg-white border-t border-b">
+  <div class="wrap section-pad-sm">
+    <h2 class="h2-md">Workflow Automation &mdash; built around one process of yours.</h2>
+    <p class="prose">No off-the-shelf packages, because your route planning, stock control and job paperwork don't run off the shelf either. We solve one core problem at a time, build the solution into the systems you already run — no new process for your team to adopt — and put an approval step wherever a mistake would reach a customer or a payment. When it's done, it's yours: keep us on a support contract if you want to, or take the handover and run it yourself.</p>
+    <p class="prose">Where a workflow needs it, that includes an assistant grounded in your own documents — one that cites its source and says when it doesn't know.</p>
+    <div class="pill-row">
+      {"".join(f'<span class="pill pill-lg">{p}</span>' for p in workflow_pills)}
+    </div>
+    <div class="section-foot"><a class="link-arrow" href="index.html#flow">Watch a job run end to end &rarr;</a></div>
+  </div>
+</section>
+
+<section id="readiness">
+  <div class="wrap section-pad-sm">
+    <div class="split start no-pad">
+      <div>
+        <h2 class="h2-md">AI Readiness Assessment &mdash; two weeks to a costed shortlist.</h2>
+        <p class="prose">Most businesses don't need convincing that AI could help somewhere; they need to know where, what it would cost, and what it would save. Discovery is structured so the answer is specific.</p>
+        <p class="prose small">A good first project is high-volume, rules-based, easy to review and capable of showing results within several weeks.</p>
+      </div>
+      <div class="numbered-list">
+        {"".join(f'<div class="numbered-item"><span class="n">{n}</span><span class="t">{t}</span></div>' for n, t in discovery)}
+      </div>
+    </div>
+  </div>
+</section>
+
+""" + cta_band("See it against your own process.", "Forty-five minutes, one workflow of your choosing, no deck.")
+
+write_page(
+    "services.html",
+    "Services — Smart Call Handling, Website Chat & Workflow Automation | Deputable AI",
+    "Three modes of Smart Call Handling, website chat on the same engine, bespoke workflow automation and a two-week AI readiness assessment. Nothing on this page is a roadmap.",
+    "services", services_body)
 
 # ==================================================================
 # HOW IT WORKS
 # ==================================================================
 process_full = [
-    ("01", "Week 0", "Demo Call", "A 30-minute conversation about one process you would like handled. We are direct about what AI does poorly, and will tell you if the answer is a spreadsheet fix rather than a model.", "A written view on whether to proceed, at no cost."),
+    ("01", "Week 0", "Demo Call", "A 45-minute conversation about one process you would like handled. We are direct about what AI does poorly, and will tell you if the answer is a spreadsheet fix rather than a model.", "A written view on whether to proceed, at no cost."),
     ("02", "Weeks 1–2", "Assessment", "We observe the work as it is actually done, not as the process document describes it. Volumes, exceptions, handoffs and the cost of each error are recorded.", "Costed shortlist of workflows ranked by payback, plus a risk note."),
     ("03", "Weeks 3–6", "Build and Pilot", "One workflow at a time. It runs alongside the existing process first, so you can compare outputs before anyone relies on it. Approval steps sit wherever a mistake would reach a customer.", "A working workflow in your environment, plus pilot results."),
     ("04", "Weeks 7–8", "Handover and Review", "Your team is trained to operate and adjust what we built. We measure time saved against the assessment estimate and share the numbers whether or not they flatter us.", "Documentation, trained staff, and a measured before-and-after."),
+    ("05", "After week 8", "Ongoing Support (optional)", "If you want us to stay, we monitor the workflow, tune it as your business changes, and send a monthly report of what it handled and what it escalated. Priced separately, cancelled whenever you like — because the handover in week 8 was real, not a hostage arrangement.", "A support agreement with response times, monthly reporting, and the freedom to leave."),
 ]
 
 process_body = f"""
 <section class="border-b bg-white">
   <div class="wrap page-hero">
     <div class="eyebrow">How It Works</div>
-    <h1 style="max-width:22em">Eight Weeks From First Call to Something Running in Production.</h1>
+    <h1 class="hw-narrow">Eight Weeks From First Call to Something Running in Production.</h1>
     <p class="lede">Every stage ends with a decision point. You can stop after any of them and keep what has been delivered.</p>
   </div>
 </section>
@@ -524,179 +573,277 @@ process_body = f"""
       <div class="process-body">
         <h2>{t}</h2>
         <p>{b}</p>
-        <div class="process-output"><strong style="font-weight:600">You get:</strong> {o}</div>
+        <div class="process-output"><strong>You get:</strong> {o}</div>
       </div>
     </div>''' for n, w, t, b, o in process_full)}
   </div>
 </section>
-"""
+""" + cta_band("Week 0 starts with a call.", "Bring one process. We'll tell you straight whether it's worth automating.")
 
-write_page("how-it-works.html", "How It Works — Deputable AI", "An eight-week path from a demo call to a working AI workflow in production, with a decision point at every stage.", "process", process_body)
-print("Generated: how-it-works.html")
+write_page(
+    "how-it-works.html",
+    "How It Works — Eight Weeks to Production | Deputable AI",
+    "Five steps: demo call, assessment, build and pilot, handover, optional ongoing support. A decision point at every stage — and you keep everything we deliver.",
+    "process", process_body)
 
 # ==================================================================
 # ABOUT
 # ==================================================================
-capabilities = [
-    "Generating, qualifying and following up with sales leads",
-    "Answering business calls and handling customer enquiries",
-    "Booking appointments and routing requests to the right team",
-    "Supporting stock, inventory and fleet-management processes",
-    "Connecting AI agents with existing CRM and internal applications",
-    "Automating routine administrative and operational workflows",
-    "Providing employees with fast access to relevant business information",
-]
-
-sector_groups = [
-    ("Trades & Installation", ["Construction", "Electricians", "Plumbing & Heating", "Roofing & Glazing", "HVAC & Refrigeration", "Lift Installation & Maintenance", "Water Treatment & Softeners", "Security & Fire Systems"]),
-    ("Property & Facilities", ["Estate Agents", "Lettings & Property Management", "Facilities & Maintenance", "Cleaning Services", "Landscaping & Grounds", "Pest Control", "Surveying & Inspection", "Waste & Recycling"]),
-    ("Product & Logistics", ["Manufacturing & Fabrication", "Wholesale & Distribution", "Trade Suppliers & Merchants", "Equipment Hire", "Removals & Logistics", "Vehicle Repair & MOT"]),
-    ("Clinics & Professional Services", ["Dental Practices", "Chiropractic Clinics", "Physiotherapy", "Health & Fitness", "Healthcare Practices", "Veterinary Practices", "Accountancy & Bookkeeping", "Legal Services", "Recruitment Agencies", "Insurance Brokers", "Training Providers", "Hospitality & Events"]),
-]
-
 team = [
-    ("Rohit Sinha", "Founder", "https://www.linkedin.com/in/rohit-sinha-b6792715/", "Rohit has spent his career getting change into production safely at large organisations — release and change management, cutover and deployment, service transition and major incident response across enterprise infrastructure and cloud programmes. That work is the reason Deputable pilots every workflow alongside the existing process and puts a named approver on anything that reaches a customer."),
-    ("Prashant Tiwari", "Founder", "https://www.linkedin.com/in/prashanttiwari247/", "Prashant leads how the work is scoped and built, from the first process-mapping session through to handover. He focuses on keeping engagements small enough to finish: one workflow at a time, integrated with the systems a client already runs, documented so their own team can maintain it afterwards."),
+    ("Rohit Sinha", "Founder", "https://www.linkedin.com/in/rohit-sinha-b6792715/", "Rohit has spent two decades getting change safely into production at Britain's biggest banks — cloud platform delivery, release management and observability at institutions where a bad deployment makes the news — most recently leading AI and Copilot adoption inside a major UK building society. Regulated environments taught him the rules Deputable now runs on: pilots that run alongside the existing process, evidence before reliance, and a named approver on anything that reaches a customer. Deputable exists because he'd watched too many automation programmes fail the same way — by removing people from processes that still needed them."),
+    ("Prashant Tiwari", "Founder", "https://www.linkedin.com/in/prashanttiwari247/", "Prashant has spent his career building systems that aren't allowed to fail quietly — low-latency trading engines in an investment bank's front office, IoT fleets, a data platform parsing millions of records a day — and, most recently, AI systems that answer to evaluation gates rather than demos. At Deputable he leads how the work is scoped and built: one workflow at a time, integrated with the systems a client already runs, tested against real calls before it ships, and documented so the client's own team can maintain it afterwards. A co-organiser of PyData London for the last ten years, he started Deputable because the businesses that most need this help are the ones least able to gamble a year and a six-figure budget finding out whether it works."),
 ]
 
 about_body = f"""
 <section class="border-b bg-white">
   <div class="wrap page-hero">
-    <div class="eyebrow">About Us</div>
-    <h1 style="max-width:24em">We Help UK Businesses Work Smarter With Practical, Intelligent AI Solutions.</h1>
-    <p class="lede" style="font-size:18.5px;max-width:46em">Our company was founded with a clear purpose: to make advanced AI accessible and valuable to small and medium-sized businesses. We create tailored AI agents that support everyday operations, reduce repetitive work and give business owners and their teams more time to focus on customers, growth and important decisions.</p>
+    <div class="eyebrow">About</div>
+    <div class="dict-entry">
+      <span class="dict-word">deputable</span>
+      <span class="dict-ipa">/d&#603;p&#712;ju&#720;t&#601;bl/</span>
+      <span class="dict-pos">adjective</span>
+      <span class="dict-def">able to be safely deputed; fit to be delegated.</span>
+    </div>
+    <p class="lede">We started with one question: which parts of a working day can you honestly hand to an AI &mdash; and which parts should never leave a person's hands? The company is named after the answer.</p>
   </div>
 </section>
 
 <section>
-  <div class="wrap" style="padding:80px 32px;display:grid;grid-template-columns:0.85fr 1.15fr;gap:60px;align-items:start">
-    <div>
-      <h2 style="font-size:32px;margin-bottom:16px">What We Do</h2>
-      <p style="font-size:17px;line-height:1.65;color:#43535F">Every business operates differently, so we do not offer a one-size-fits-all product. We take the time to understand each organisation&rsquo;s processes, challenges and existing systems before designing a solution around its needs.</p>
-    </div>
-    <div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#8A968F;margin-bottom:6px">Our Capabilities Include</div>
-      <div class="check-list check-list-lined">
-        {"".join(f'<div class="check-item"><span class="tick" style="font-size:14px">&#10003;</span><span style="font-size:16.5px">{c}</span></div>' for c in capabilities)}
+  <div class="wrap section-pad">
+    <h2>Some work is deputable. Some never will be.</h2>
+    <p class="prose section-sub">A good deputy takes the routine off your desk and brings you the decisions. That's the standard we hold our AI to. It answers the phone at seven in the evening, takes the details down properly, checks the diary, chases the paperwork &mdash; and then it stops, because the next step belongs to a person.</p>
+    <div class="depute-grid">
+      <div class="depute-col">
+        <div class="depute-col-title">Deputable</div>
+        {"".join(f'<div class="depute-item"><span class="tick">&#10003;</span><span>{d}</span></div>' for d in depute_items)}
+      </div>
+      <div class="depute-col keep">
+        <div class="depute-col-title">Not deputable</div>
+        {"".join(f'<div class="depute-item"><span class="dot">&#9679;</span><span>{k}</span></div>' for k in keep_items)}
       </div>
     </div>
+    <p class="prose depute-close">Our job is to empower and enable people &mdash; never to replace them. If a proposal of ours would quietly erase someone's judgment from a process, it's a bad proposal, and we'll tell you so.</p>
   </div>
 </section>
 
 <section class="bg-white border-t border-b">
-  <div class="wrap section-pad">
-    <h2 style="font-size:32px;margin-bottom:16px">Who We Support</h2>
-    <p style="font-size:17px;line-height:1.65;color:#43535F;margin-bottom:30px;max-width:50em">We work with small and medium-sized businesses across the UK, without limiting our services to a single industry. Our solutions can support construction companies, electricians, plumbers, estate agents, lift installation and maintenance providers, water-treatment businesses and many other service-led organisations.</p>
-    <div class="grid-2">
-      {"".join(f'''<div class="sector-card">
-        <div class="sector-card-head"><span class="name">{name}</span><span class="count">{len(items):02d}</span></div>
-        <div class="sector-items">
-          {"".join(f'<span class="sector-pill">{s}</span>' for s in items)}
-        </div>
-      </div>''' for name, items in sector_groups)}
+  <div class="wrap split start">
+    <div>
+      <h2 class="h2-md">How we work</h2>
+      <p class="prose">Every business operates differently, so we don't sell a one-size-fits-all product. We take the time to understand your processes, your systems and your day before building anything &mdash; then we deliver one working solution at a time, fitted to the tools you already run, documented so your own team can maintain it.</p>
+      <p class="prose">Most of our thinking is shaped by service businesses that live and die by the phone &mdash; trades, clinics, property, logistics &mdash; but nothing about the approach is locked to an industry.</p>
+    </div>
+    <div class="mission-box">
+      <div class="label">Our Mission</div>
+      <p>Remove the operational friction from growing businesses. When AI manages the repetitive calls, enquiries and system updates, your team responds faster and spends its day on the work that actually creates value.</p>
     </div>
   </div>
 </section>
 
 <section>
-  <div class="wrap" style="padding:80px 32px;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start">
-    <div>
-      <h2 style="font-size:32px;margin-bottom:16px">Our Approach</h2>
-      <p style="font-size:17px;line-height:1.65;color:#43535F;margin-bottom:16px">We combine agentic AI, workflow automation and system integration to create solutions that can understand requests, take appropriate actions and collaborate with employees. Our technology is designed to complement your team&mdash;not replace the expertise, relationships and judgement that make your business successful.</p>
-      <p style="font-size:17px;line-height:1.65;color:#43535F">From the first consultation through implementation and ongoing improvement, we focus on delivering technology that is secure, dependable and straightforward to use.</p>
-    </div>
-    <div class="mission-box">
-      <div class="label">Our Mission</div>
-      <p>Our mission is to remove operational friction from growing businesses. By allowing AI to manage repetitive calls, enquiries, administrative tasks and system updates, we help teams respond faster, operate more efficiently and concentrate on the work that creates the greatest value.</p>
-    </div>
-  </div>
-</section>
-
-<section class="bg-white border-t">
-  <div class="wrap" style="padding:72px 32px 88px">
-    <h2 style="font-size:30px;margin-bottom:32px">Founders</h2>
-    <div class="grid-2" style="gap:40px">
+  <div class="wrap section-pad-sm">
+    <h2 class="h2-md mb-lg">Founders</h2>
+    <div class="grid-2 founder-grid">
       {"".join(f'''<div class="founder">
-        <div class="founder-portrait"><span>portrait</span></div>
-        <div>
-          <div class="name">{n}</div>
-          <div class="role">{r}</div>
-          <p>{b}</p>
-          <a class="li-link" href="{li}" target="_blank" rel="noopener">LinkedIn &rarr;</a>
-        </div>
+        <div class="name">{n}</div>
+        <div class="role">{r}</div>
+        <p>{b}</p>
+        <a class="li-link" href="{li}" target="_blank" rel="noopener">LinkedIn &rarr;</a>
       </div>''' for n, r, li, b in team)}
     </div>
   </div>
 </section>
 """
 
-write_page("about.html", "About — Deputable AI", "Deputable AI is a UK-based AI operations partner for small and medium businesses, founded by Rohit Sinha and Prashant Tiwari.", "about", about_body)
-print("Generated: about.html")
+write_page(
+    "about.html",
+    "About — Why We're Called Deputable | Deputable AI",
+    "Deputable: what you can safely hand to an AI, and what should stay with people. The thinking behind the name, and the founders behind the company.",
+    "about", about_body)
 
 # ==================================================================
 # TRUST
 # ==================================================================
 trust = [
-    ("Where Is Our Data Processed?", "In the UK or EU by default. Where a workflow requires a model hosted elsewhere, we say so in writing before deployment and you decide whether to proceed."),
-    ("Do You Train Models on Our Data?", "No. Client data is used to serve that client only. We contract with providers on terms that exclude training on submitted data, and we can show you those terms."),
-    ("Who Can the System Act on Behalf Of?", "Nothing that touches a customer, a payment or a record of account is sent without a named person approving it, unless you explicitly ask for an unattended step and accept that in writing."),
-    ("What Happens if the Model Gets It Wrong?", "Every workflow logs its inputs, outputs and decisions so an error can be traced and reversed. Pilots run alongside the existing process precisely so failures surface before anyone depends on the output."),
-    ("What if We End the Engagement?", "You keep the workflow, the documentation and the accounts it runs on. We do not hold your integrations hostage, and there is no proprietary layer you have to keep paying us for."),
-    ("Subprocessors and Compliance", "We maintain a current list of subprocessors and data flows for each client, and work to UK GDPR requirements. Certifications and DPA terms are shared on request."),
+    ("Where is our data processed?", "In the UK or EU by default. Where a workflow requires a model hosted elsewhere, we say so in writing before deployment and you decide whether to proceed."),
+    ("Do you train models on our data?", "No. Client data is used to serve that client only. We contract with providers on terms that exclude training on submitted data, and we can show you those terms."),
+    ("Who can the system act on behalf of?", "Nothing that touches a customer, a payment or a record of account is sent without a named person approving it, unless you explicitly ask for an unattended step and accept that in writing."),
+    ("What happens if the model gets it wrong?", "Every workflow logs its inputs, outputs and decisions so an error can be traced and reversed. Pilots run alongside the existing process precisely so failures surface before anyone depends on the output."),
+    ("What if we end the engagement?", "You keep the workflow, the documentation and the accounts it runs on. We do not hold your integrations hostage, and there is no proprietary layer you have to keep paying us for."),
+    ("Which other companies touch our data?", "The third-party services we use to run your workflow — for example the telephony provider and the model provider. We keep a current, named list of them for every client, with where each one processes data, and we work to UK GDPR throughout. Our data-processing terms are shared on request."),
 ]
+
+deployment_includes = [
+    "Callers and users are told when they're talking to an AI",
+    "An easy route to a human, always",
+    "A named person approves anything customer-facing",
+    "Logs of every input, output and action",
+    "A documented UK GDPR lawful basis and retention period",
+    "A contractual bar on training models with your data",
+]
+
+trust_faq_jsonld = json.dumps({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {"@type": "Question", "name": q,
+         "acceptedAnswer": {"@type": "Answer", "text": a}}
+        for q, a in trust
+    ],
+})
 
 trust_body = f"""
 <section class="border-b bg-white">
   <div class="wrap page-hero">
     <div class="eyebrow">Trust &amp; Security</div>
-    <h1 style="max-width:22em">Where Your Data Goes, and Who Can Act on It.</h1>
-    <p class="lede">The questions procurement and IT ask us first, answered plainly.</p>
+    <h1 class="hw-narrow">Your data is your own.</h1>
+    <p class="lede">Where does it go, and who can act on it? The questions IT and procurement ask us first &mdash; answered plainly.</p>
   </div>
 </section>
 <section>
   <div class="trust-list">
     {"".join(f'<div class="trust-item"><h2>{q}</h2><p>{a}</p></div>' for q, a in trust)}
+    <div class="trust-includes">
+      <div class="mono-label">What every deployment includes</div>
+      <div class="check-list check-list-lined">
+        {"".join(f'<div class="check-item"><span class="tick">&#10003;</span><span>{d}</span></div>' for d in deployment_includes)}
+      </div>
+      <p class="prose small ico-note">The ICO publishes guidance on applying UK GDPR principles to AI systems; we work to it. <a class="link-arrow" href="https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/artificial-intelligence/" target="_blank" rel="noopener">ICO AI and data-protection guidance &rarr;</a></p>
+    </div>
   </div>
 </section>
-"""
+""" + cta_band("Ask us the hard questions first.", "Bring your IT lead or your DPO to the demo call — we'd rather answer this before you commit than after.")
 
-write_page("trust.html", "Trust & Security — Deputable AI", "How Deputable AI handles data location, model training, human accountability and UK GDPR compliance.", "trust", trust_body)
-print("Generated: trust.html")
+write_page(
+    "trust.html",
+    "Trust & Security — Your Data Is Your Own | Deputable AI",
+    "Where your data is processed, who can act on it, and what happens when the model gets it wrong — the questions IT and procurement ask first, answered plainly.",
+    "trust", trust_body,
+    extra_head=f'\n<script type="application/ld+json">{trust_faq_jsonld}</script>')
 
 # ==================================================================
 # CONTACT
 # ==================================================================
-contact_body = """
-<section class="bg-white" style="min-height:70vh">
+contact_body = f"""
+<section class="bg-white contact-min">
   <div class="wrap contact-grid">
     <div class="contact-info">
-      <div class="eyebrow">Request a Demo</div>
-      <h1>Bring a Workflow. We&rsquo;ll Show You What It Looks Like Handled.</h1>
-      <p>Thirty minutes, no deck. Tell us the process that wastes the most time and we will walk through how it would run.</p>
+      <div class="eyebrow">Book a Demo</div>
+      <h1>Tell us what's eating the day.</h1>
+      <p>Forty-five minutes, no deck. Tell us a little about the business, then pick a time &mdash; or skip that and we'll ring you.</p>
       <div class="contact-details">
-        <div>hello@deputable.ai</div>
+        <a href="mailto:hello@deputable.ai">hello@deputable.ai</a>
         <div>London, United Kingdom</div>
       </div>
     </div>
     <div class="contact-panel">
-      <div data-contact-confirm class="confirm-box hidden">
-        <div class="title">Thanks &mdash; We&rsquo;ll Be in Touch.</div>
-        <div class="sub">Usually within one working day.</div>
-      </div>
-      <!-- Demo-request form is a Zoho Forms embed; submissions are stored in
-           Zoho Forms and emailed to the team. Edit the form at forms.zoho.eu.
-           zf_rszfm=1 makes Zoho postMessage its content height; js/main.js
-           sizes the iframe to fit (no inner scrolling) and the clip wrapper
-           hides Zoho's footer strip. On submit the embed is swapped for the
-           confirmation above. -->
-      <div data-zoho-clip class="contact-form-clip">
-        <iframe data-zoho-form class="contact-form-embed" aria-label="Demo Request" frameborder="0" scrolling="no"
-          src="https://forms.zohopublic.eu/prashantdepu1/form/DemoRequest/formperma/NZOvPlQ0DNGZdgDLAsVXU9CWqtnsvX2yJ9xcpn_Qs24?zf_rszfm=1"></iframe>
-      </div>
+      {demo_flow_html()}
     </div>
   </div>
 </section>
 """
 
-write_page("contact.html", "Contact — Deputable AI", "Request a 30-minute demo with Deputable AI. Bring a workflow and see how it would be handled.", "contact", contact_body)
-print("Generated: contact.html")
+write_page(
+    "contact.html",
+    "Book a Demo Call | Deputable AI",
+    "Tell us the process that wastes the most time. Forty-five minutes, no deck — pick a time, or skip it and we'll call you back.",
+    "contact", contact_body)
+
+# ==================================================================
+# PRIVACY
+# ==================================================================
+privacy_sections = [
+    ("Who we are", "Deputable AI, based in London. We build AI call handling and workflow automation for businesses. For anything in this notice, write to <a href=\"mailto:hello@deputable.ai\">hello@deputable.ai</a>."),
+    ("What we collect", "If you request a demo, we collect what you type into the form — your name, company, contact details and what you hope to get out of it. The form is provided by Zoho Forms and hosted in the EU; submissions are stored there and emailed to us. If you email us directly, we keep the correspondence."),
+    ("Cookies and analytics", "This site sets no analytics cookies unless you accept them. If you accept, we use Google Analytics to understand how the site is used — page views and rough journey, not identity. Declining changes nothing about how the site works."),
+    ("How we use it", "To reply to you, to prepare for the call you asked for, and to keep a record of the conversation. We do not sell or share your details for marketing, and we do not use them to train AI models."),
+    ("Where it lives", "Form submissions are processed by Zoho (EU hosting). If analytics are accepted, usage data is processed by Google. Client project data is governed separately by each client agreement — see our <a href=\"trust.html\">Trust &amp; Security</a> page."),
+    ("Your rights", "Under UK GDPR you can ask what we hold about you, ask us to correct it, or ask us to delete it. Email <a href=\"mailto:hello@deputable.ai\">hello@deputable.ai</a> and we'll do it. If you're not satisfied, you can complain to the ICO."),
+]
+
+privacy_body = f"""
+<section class="border-b bg-white">
+  <div class="wrap page-hero">
+    <div class="eyebrow">Privacy</div>
+    <h1 class="hw-narrow">Privacy Notice.</h1>
+    <p class="lede">What this website collects, why, and what you can do about it &mdash; in plain English.</p>
+  </div>
+</section>
+<section>
+  <div class="trust-list">
+    {"".join(f'<div class="trust-item"><h2>{t}</h2><p>{b}</p></div>' for t, b in privacy_sections)}
+  </div>
+</section>
+"""
+
+write_page(
+    "privacy.html",
+    "Privacy Notice | Deputable AI",
+    "What the deputable.ai website collects, why, and your rights under UK GDPR — in plain English.",
+    "privacy", privacy_body)
+
+# ==================================================================
+# ZOHO POST-SUBMIT REDIRECT TARGET (not in sitemap, no site chrome)
+# ==================================================================
+zoho_thanks = """<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>Thanks</title>
+</head>
+<body>
+<script>
+// Set as the Zoho form's post-submission redirect (forms.zoho.eu).
+// Loaded inside the contact-page iframe it is same-origin with the
+// parent, so this message is an unambiguous submit signal.
+if (window.parent !== window) {
+  window.parent.postMessage('deputable:form-submitted', '*');
+} else {
+  location.replace('contact.html');
+}
+</script>
+</body>
+</html>
+"""
+with open(os.path.join(OUT, "zoho-thanks.html"), "w") as f:
+    f.write(zoho_thanks)
+print("Generated: zoho-thanks.html")
+
+# ==================================================================
+# SITEMAP + LLMS.TXT (regenerated every run — cannot drift from pages)
+# ==================================================================
+today = datetime.date.today().isoformat()
+urls = "\n".join(
+    f"  <url><loc>{BASE_URL if fn == 'index.html' else BASE_URL + fn}</loc><lastmod>{today}</lastmod></url>"
+    for fn, _, _ in WRITTEN
+)
+with open(os.path.join(OUT, "sitemap.xml"), "w") as f:
+    f.write(f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{urls}
+</urlset>
+""")
+print("Generated: sitemap.xml")
+
+llms_pages = "\n".join(
+    f"- [{title}]({BASE_URL if fn == 'index.html' else BASE_URL + fn}): {desc}"
+    for fn, title, desc in WRITTEN
+)
+with open(os.path.join(OUT, "llms.txt"), "w") as f:
+    f.write(f"""# Deputable AI
+
+> {TAGLINE} Deputable AI builds Smart Call Handling and workflow automation
+> for UK small and mid-sized businesses: AI that answers the phone out of
+> hours, catches overflow calls during the day, briefs operators live
+> during a call, and runs routine workflows (route planning, stock,
+> job paperwork) integrated with a client's existing systems. A person
+> stays accountable for every decision that matters. Solutions are
+> delivered turn-key and handed over — clients own what we build, with
+> ongoing support available as an optional service contract. No pricing
+> is published; engagement starts with a 45-minute demo call.
+
+## Pages
+{llms_pages}
+""")
+print("Generated: llms.txt")
