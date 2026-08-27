@@ -20,6 +20,19 @@ TAGLINE = "Simplify Work. Amplify People."
 
 GA_IS_SET = not GA_MEASUREMENT_ID.endswith("XXXXXXXXXX")
 
+
+def _content_ver(relpath):
+    """Short content hash for cache-busting css/js URLs: every deploy
+    that changes the file busts caches automatically, so GitHub Pages'
+    10-minute asset cache can never serve fresh HTML with stale JS."""
+    import hashlib
+    with open(os.path.join(OUT, relpath), "rb") as fh:
+        return hashlib.md5(fh.read()).hexdigest()[:8]
+
+
+CSS_VER = _content_ver("css/style.css")
+JS_VER = _content_ver("js/main.js")
+
 NAV_ITEMS = [
     ("services.html", "services", "Services"),
     ("how-it-works.html", "process", "How It Works"),
@@ -88,7 +101,7 @@ def head(title, desc, active_id, filename, relpath_prefix="", extra_head=""):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{relpath_prefix}css/style.css">
+<link rel="stylesheet" href="{relpath_prefix}css/style.css?v={CSS_VER}">
 <script type="application/ld+json">{ORG_JSONLD}</script>{extra_head}{ga}
 </head>
 <body>
@@ -170,7 +183,7 @@ def tail(relpath_prefix=""):
     return f"""</main>
 {footer(relpath_prefix)}
 </div>{consent_banner()}
-<script src="{relpath_prefix}js/main.js"></script>
+<script src="{relpath_prefix}js/main.js?v={JS_VER}"></script>
 </body>
 </html>
 """
