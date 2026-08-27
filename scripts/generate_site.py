@@ -263,12 +263,6 @@ def booking_html():
 # ==================================================================
 # HOME
 # ==================================================================
-live_rows = [
-    ("5–9", "Evenings, weekends and bank holidays — every call answered, every callback booked."),
-    ("9–5", "Busy lines covered — the AI picks up when your whole team is already on calls."),
-    ("LIVE", "In-call assist — your operator briefed with the caller's details as the conversation happens."),
-]
-
 modes_home = [
     ("Out of hours", "Every call answered.",
      "When the office closes, the AI picks up — evenings, weekends and bank holidays. It answers the routine questions, takes proper details, and books callbacks so the morning starts with a list, not a voicemail backlog."),
@@ -320,22 +314,13 @@ home_steps = [
 
 home_body = f"""
 <section class="hero">
-  <div class="wrap hero-grid">
-    <div>
-      <div class="eyebrow">Simplify work &middot; Amplify people</div>
-      <h1>Depute the busywork. Keep the judgment.</h1>
-      <p class="hero-sub">We build AI that takes on the work you'd hand to a trusted deputy — answering the phone after hours, picking up overflow calls while your team is busy, running the routine steps of scheduling, stock and paperwork. Turn-key, fitted to the systems you already run, with a person in charge of everything that matters.</p>
-      <div class="hero-ctas">
-        <a class="btn btn-primary" href="contact.html">Book a Demo Call</a>
-        <a class="btn btn-secondary" href="how-it-works.html">See How It Works</a>
-      </div>
-    </div>
-    <div class="hero-panel">
-      <div class="hero-panel-title">Live today</div>
-      <div>
-        {"".join(f'<div class="start-point"><span class="n">{n}</span><span class="t">{t}</span></div>' for n, t in live_rows)}
-      </div>
-      <p class="hero-panel-foot">A working prototype answers a live UK number today. Ask to hear it on your demo call — we'd rather you hear it than read about it.</p>
+  <div class="wrap hero-center">
+    <div class="eyebrow">Simplify work &middot; Amplify people</div>
+    <h1 class="hero-title"><span>Depute the busywork.</span> <span>Keep the judgment.</span></h1>
+    <p class="hero-sub">We build AI that takes on the work you'd hand to a trusted deputy — answering the phone after hours, picking up overflow calls while your team is busy, running the routine steps of scheduling, stock and paperwork. Turn-key, fitted to the systems you already run, with a person in charge of everything that matters.</p>
+    <div class="hero-ctas">
+      <a class="btn btn-primary" href="contact.html">Book a Demo Call</a>
+      <a class="btn btn-secondary" href="how-it-works.html">See How It Works</a>
     </div>
   </div>
 </section>
