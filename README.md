@@ -47,6 +47,16 @@ post-submission rule is set to redirect to
 works even before that rule is configured. Anyone who submits without
 booking should be called back — the lead is already in Zoho.
 
+## The shareable booking link: deputable.ai/book
+
+`book/index.html` (generated) redirects to the Zoho Bookings Demo Call page.
+Use `deputable.ai/book` on ANYTHING printed, spoken, or signed — cards, flyers,
+email signatures, QR codes — never the raw Zoho URL or a third-party shortener:
+this repo controls where /book points, so printed material survives a change of
+booking provider. `assets/book-qr.svg` (vector master) and `assets/book-qr.png`
+(2048px, branded) encode it — regenerate with `scripts/make_qr.py` and re-run
+its scan check if the artwork ever changes.
+
 ## Assets
 
 `scripts/make_assets.py` (needs Pillow, dev-only) rebuilds the favicon set,
@@ -66,8 +76,21 @@ apple-touch icon and the optimised logo from `assets/deputable-logo.png`.
 
 - Zoho Forms: fields → Name, Company, Email, Phone, "What do you hope to
   get out of this?"; post-submission redirect → `https://deputable.ai/zoho-thanks.html`.
-- Zoho Bookings: create a 45-minute "Demo call" booking page (Rohit's
-  calendar), paste URL into `ZOHO_BOOKINGS_URL`, regenerate.
+- **Zoho Bookings setup (Rohit, ~15 min)** — note: plain Zoho Calendar has
+  no public booking page; Zoho Bookings is the Zoho product for that and
+  syncs two-way with Zoho Calendar (its free tier covers one staff member):
+  1. Sign in at bookings.zoho.eu (same Zoho org as the forms account).
+  2. Create a workspace, add Rohit as staff, and connect his Zoho
+     Calendar under staff → calendar sync — his events then block slots,
+     and bookings land back in his calendar.
+  3. Create one service: "Demo call", **45 minutes**, one-on-one; set
+     working hours, a buffer (e.g. 15 min), and minimum notice; enable
+     email confirmations (and meeting-link generation if wanted).
+  4. Copy the service's public booking-page URL (Share → copy link) into
+     `ZOHO_BOOKINGS_URL` in `scripts/generate_site.py`, regenerate, push.
+  Once the URL is set, contact-page step 2 embeds the calendar inline
+  (with a new-tab fallback link); while unset, the flow degrades to a
+  plain "we'll be in touch" confirmation.
 - GA4: create property, paste id into `GA_MEASUREMENT_ID`, regenerate;
   then Google Search Console + submit `sitemap.xml`.
 - Founder photos for the About page (portrait placeholders were removed

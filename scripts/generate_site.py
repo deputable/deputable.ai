@@ -13,7 +13,8 @@ OUT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_URL = "https://deputable.ai/"
 ASSET_VER = "2"                     # bump to cache-bust icons/logo
 GA_MEASUREMENT_ID = "G-XXXXXXXXXX"  # FOUNDER TO-DO: create GA4 property, paste id
-ZOHO_BOOKINGS_URL = ""              # FOUNDER TO-DO: Zoho Bookings booking-page URL
+ZOHO_BOOKINGS_URL = "https://deputableai.zohobookings.eu/264805000000037050"  # Demo Call, 45 min
+ZOHO_BOOKINGS_EMBED_URL = "https://deputableai.zohobookings.eu/portal-embed#/264805000000037050"
 ZOHO_FORM_URL = "https://forms.zohopublic.eu/prashantdepu1/form/DemoRequest/formperma/NZOvPlQ0DNGZdgDLAsVXU9CWqtnsvX2yJ9xcpn_Qs24?zf_rszfm=1"
 TAGLINE = "Simplify Work. Amplify People."
 
@@ -231,11 +232,21 @@ def flow_demo_html():
 
 
 def demo_flow_html():
-    """Two-step demo flow: Zoho form (step 1) -> book a call / skip
-    (step 2). Submission is detected by a postMessage from
+    """Two-step demo flow: Zoho form (step 1) -> book a 45-minute slot /
+    skip (step 2). Submission is detected by a postMessage from
     zoho-thanks.html (set as the form's post-submission redirect at
-    forms.zoho.eu); the old load-count heuristic remains as fallback."""
+    forms.zoho.eu); the old load-count heuristic remains as fallback.
+    With ZOHO_BOOKINGS_URL set, step 2 embeds the booking calendar
+    inline (lazy-loaded on entry — see initDemoFlow); without it the
+    flow degrades to a plain confirmation."""
     booking_href = ZOHO_BOOKINGS_URL or "#"
+    embed = ""
+    if ZOHO_BOOKINGS_URL:
+        # The portal-embed variant is Zoho's frameable URL; the public
+        # page sends X-Frame-Options and is for the new-tab link only.
+        embed_src = ZOHO_BOOKINGS_EMBED_URL or ZOHO_BOOKINGS_URL
+        embed = f"""
+        <iframe data-df-embed data-embed-src="{embed_src}" class="booking-embed" title="Book a 45-minute demo call" frameborder="0"></iframe>"""
     return f"""
     <div class="demo-flow" data-demo-flow>
       <div class="demo-steps">
@@ -248,12 +259,12 @@ def demo_flow_html():
             src="{ZOHO_FORM_URL}"></iframe>
         </div>
       </div>
-      <div data-df-book class="confirm-box hidden">
+      <div data-df-book class="confirm-box book-step hidden">
         <div class="title">Thanks &mdash; one more step.</div>
-        <div class="sub">Pick a slot that suits you, or skip and we&rsquo;ll ring you.</div>
+        <div class="sub">Pick a 45-minute slot that suits you, or skip and we&rsquo;ll ring you.</div>{embed}
         <div class="confirm-actions">
-          <a class="btn btn-primary" data-df-book-link target="_blank" rel="noopener" href="{booking_href}">Book a Call</a>
-          <button type="button" class="btn btn-secondary" data-df-skip>Skip this &mdash; we&rsquo;ll call you back instead</button>
+          <a class="link-arrow" data-df-book-link target="_blank" rel="noopener" href="{booking_href}">Open the calendar in a new tab &rarr;</a>
+          <button type="button" class="btn btn-secondary" data-df-skip>Skip &mdash; we&rsquo;ll call you back</button>
         </div>
       </div>
       <div data-df-done class="confirm-box hidden">
@@ -847,3 +858,30 @@ with open(os.path.join(OUT, "llms.txt"), "w") as f:
 {llms_pages}
 """)
 print("Generated: llms.txt")
+
+# ==================================================================
+# /book — the permanent shareable booking link (deputable.ai/book).
+# Everything printed or spoken points here (QR codes, cards, email
+# signatures), so the target can change without breaking any of it.
+# Not in the sitemap; noindex. Falls back to the contact page while
+# no booking URL is configured.
+# ==================================================================
+book_target = ZOHO_BOOKINGS_URL or (BASE_URL + "contact.html")
+os.makedirs(os.path.join(OUT, "book"), exist_ok=True)
+with open(os.path.join(OUT, "book", "index.html"), "w") as f:
+    f.write(f"""<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta http-equiv="refresh" content="0; url={book_target}">
+<title>Book a demo call — Deputable AI</title>
+<script>location.replace("{book_target}");</script>
+</head>
+<body>
+<p>Taking you to the booking calendar&hellip;
+<a href="{book_target}">Click here if nothing happens.</a></p>
+</body>
+</html>
+""")
+print("Generated: book/index.html")

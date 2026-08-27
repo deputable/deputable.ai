@@ -225,6 +225,11 @@ function initDemoFlow() {
     }
     root.querySelectorAll('[data-step-dot]').forEach(d =>
       d.classList.toggle('active', (next === 'FORM') === (d.dataset.stepDot === '1')));
+    if (next === 'BOOK') {
+      // Lazy-load the booking calendar only when the visitor gets here.
+      const embed = root.querySelector('[data-df-embed]');
+      if (embed && !embed.getAttribute('src')) embed.src = embed.dataset.embedSrc;
+    }
   }
 
   function done(title, sub) {
@@ -260,10 +265,8 @@ function initDemoFlow() {
   const skip = root.querySelector('[data-df-skip]');
   if (skip) skip.addEventListener('click', () =>
     done('Thanks — we’ll ring you.', 'Usually within one working day.'));
-
-  const book = root.querySelector('[data-df-book-link]');
-  if (book) book.addEventListener('click', () =>
-    done('Booked — see you then.', 'We’ll come having read what you wrote, not with a pitch.'));
+  // The new-tab calendar link deliberately does NOT change state: the
+  // visitor may come back to the inline calendar or still choose Skip.
 }
 
 /* ---------------- Analytics consent (only rendered when GA is set) ---- */
