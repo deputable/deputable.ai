@@ -13,7 +13,8 @@ OUT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_URL = "https://deputable.ai/"
 ASSET_VER = "2"                     # bump to cache-bust icons/logo
 GA_MEASUREMENT_ID = "G-XXXXXXXXXX"  # FOUNDER TO-DO: create GA4 property, paste id
-ZOHO_BOOKINGS_URL = ""              # FOUNDER TO-DO: Zoho Bookings booking-page URL
+ZOHO_BOOKINGS_URL = "https://deputableai.zohobookings.eu/264805000000037050"  # Demo Call, 45 min
+ZOHO_BOOKINGS_EMBED_URL = "https://deputableai.zohobookings.eu/portal-embed#/264805000000037050"
 ZOHO_FORM_URL = "https://forms.zohopublic.eu/prashantdepu1/form/DemoRequest/formperma/NZOvPlQ0DNGZdgDLAsVXU9CWqtnsvX2yJ9xcpn_Qs24?zf_rszfm=1"
 TAGLINE = "Simplify Work. Amplify People."
 
@@ -241,8 +242,11 @@ def demo_flow_html():
     booking_href = ZOHO_BOOKINGS_URL or "#"
     embed = ""
     if ZOHO_BOOKINGS_URL:
+        # The portal-embed variant is Zoho's frameable URL; the public
+        # page sends X-Frame-Options and is for the new-tab link only.
+        embed_src = ZOHO_BOOKINGS_EMBED_URL or ZOHO_BOOKINGS_URL
         embed = f"""
-        <iframe data-df-embed data-embed-src="{ZOHO_BOOKINGS_URL}" class="booking-embed" title="Book a 45-minute demo call" frameborder="0"></iframe>"""
+        <iframe data-df-embed data-embed-src="{embed_src}" class="booking-embed" title="Book a 45-minute demo call" frameborder="0"></iframe>"""
     return f"""
     <div class="demo-flow" data-demo-flow>
       <div class="demo-steps">
