@@ -224,7 +224,7 @@ def flow_demo_html():
         </div>
         <div class="flow-legend" data-flow-legend></div>
         <div class="flow-key"><span class="key-dot"></span>Amber steps wait for a person — nothing passes them on its own.</div>
-        <div class="flow-note">Some things are not deputable: prices, hires, contracts, and any complaint with real consequences. Those stay with your people, always.</div>
+        <div class="flow-note">Some things are not deputable: pricing, hiring, contractual commitments, and any complaint with real consequences. Those stay with your people, always.</div>
       </div>
     </div>"""
 
@@ -286,21 +286,22 @@ services_home = [
     ("#0E2A4A", "readiness", "AI Readiness Assessment", "Two weeks mapping where AI would genuinely save time, and where it would not. You get a costed shortlist, not a strategy document."),
 ]
 
+# Shared by the homepage and About page — keep the two in step.
 depute_items = [
-    "Answering the 7pm phone call",
-    "Taking details and booking slots",
-    "Checking the diary",
-    "Retyping data between systems",
-    "Drafting the follow-up",
-    "Chasing routine paperwork",
+    "Out-of-hours and overflow call answering",
+    "Appointment booking and diary management",
+    "Customer detail capture and callbacks",
+    "Data entry across your systems",
+    "Follow-up drafts and routine reports",
+    "Routine paperwork and reminders",
 ]
 
 keep_items = [
-    "Quoting a price",
-    "Hiring a person",
-    "Handling a complaint that matters",
-    "Signing anything",
-    "Every judgment call with consequences",
+    "Pricing and quote negotiations",
+    "Managing human resources",
+    "Escalated complaints and disputes",
+    "Contractual commitments",
+    "Decisions that carry your reputation",
 ]
 
 assure_items = [
@@ -462,15 +463,6 @@ discovery = [
     ("06", "Build one small, measurable pilot."),
 ]
 
-notdo = [
-    ("No cold outbound calling.",
-     'Outbound brings consent and telecoms obligations we take seriously — Ofcom can act against automated systems that produce silent or abandoned calls. So we start with inbound, and with follow-ups your customers have asked for. <a href="https://www.ofcom.org.uk/phones-and-broadband/unwanted-calls-and-messages/refresher-messaging-on-silent-and-abandoned-calls" target="_blank" rel="noopener" class="link-arrow">Ofcom guidance &rarr;</a>'),
-    ("No WhatsApp or social-channel agents yet.",
-     "When we offer them, they'll have been tested as hard as the phone line has. Until then they stay off this page."),
-    ("No pretending.",
-     "If your problem is a spreadsheet fix rather than a model, we'll say so on the demo call and save you the money."),
-]
-
 services_body = f"""
 <section class="border-b bg-white">
   <div class="wrap page-hero">
@@ -495,9 +487,15 @@ services_body = f"""
           {"".join(f'<div class="check-item"><span class="tick">&#10003;</span><span>{c}</span></div>' for c in voice_caps)}
         </div>
       </div>
-      <div class="panel">
-        <h3>Safeguards, not optional extras</h3>
-        <p>Callers are told they're speaking with an AI. There is always an easy route to a person. Recording and privacy notices are in place, and anything the system isn't confident about gets escalated, not improvised.</p>
+      <div class="panel-stack">
+        <div class="panel">
+          <h3>Safeguards, not optional extras</h3>
+          <p>Callers are told they're speaking with an AI. There is always an easy route to a person. Recording and privacy notices are in place, and anything the system isn't confident about gets escalated, not improvised.</p>
+        </div>
+        <div class="panel">
+          <h3>Inbound-first, by design</h3>
+          <p>We answer the calls your customers make to you, and make only the follow-ups they've asked for &mdash; never cold outbound. It keeps us square with Ofcom's rules on automated calling, and keeps your number's reputation clean. <a href="https://www.ofcom.org.uk/phones-and-broadband/unwanted-calls-and-messages/refresher-messaging-on-silent-and-abandoned-calls" target="_blank" rel="noopener" class="link-arrow">Ofcom guidance &rarr;</a></p>
+        </div>
       </div>
     </div>
   </div>
@@ -518,6 +516,7 @@ services_body = f"""
     <div class="pill-row">
       {"".join(f'<span class="pill pill-lg">{p}</span>' for p in workflow_pills)}
     </div>
+    <div class="section-foot"><a class="link-arrow" href="index.html#flow">Watch a job run end to end &rarr;</a></div>
   </div>
 </section>
 
@@ -536,15 +535,6 @@ services_body = f"""
   </div>
 </section>
 
-<section class="bg-white border-t">
-  <div class="wrap section-pad">
-    <h2>What we don't do.</h2>
-    <div class="grid-3 mt-md">
-      {"".join(f'<div class="panel"><h3>{t}</h3><p>{b}</p></div>' for t, b in notdo)}
-    </div>
-    <div class="section-foot"><a class="link-arrow" href="index.html#flow">Watch a job run end to end &rarr;</a></div>
-  </div>
-</section>
 """ + cta_band("See it against your own process.", "Forty-five minutes, one workflow of your choosing, no deck.")
 
 write_page(
@@ -598,23 +588,6 @@ write_page(
 # ==================================================================
 # ABOUT
 # ==================================================================
-deputable_yes = [
-    "Answering out-of-hours calls",
-    "Taking details, booking slots",
-    "Diary checks and confirmations",
-    "Retyping data between systems",
-    "Drafting follow-ups and reports",
-    "Flagging what needs attention",
-]
-
-deputable_no = [
-    "Setting a price",
-    "Hiring or managing people",
-    "Complaints with real consequences",
-    "Signing contracts",
-    "Anything where being wrong costs trust",
-]
-
 team = [
     ("Rohit Sinha", "Founder", "https://www.linkedin.com/in/rohit-sinha-b6792715/", "Rohit has spent two decades getting change safely into production at Britain's biggest banks — cloud platform delivery, release management and observability at institutions where a bad deployment makes the news — most recently leading AI and Copilot adoption inside a major UK building society. Regulated environments taught him the rules Deputable now runs on: pilots that run alongside the existing process, evidence before reliance, and a named approver on anything that reaches a customer. Deputable exists because he'd watched too many automation programmes fail the same way — by removing people from processes that still needed them."),
     ("Prashant Tiwari", "Founder", "https://www.linkedin.com/in/prashanttiwari247/", "Prashant has spent his career building systems that aren't allowed to fail quietly — low-latency trading engines in an investment bank's front office, IoT fleets, a data platform parsing millions of records a day — and, most recently, AI systems that answer to evaluation gates rather than demos. At Deputable he leads how the work is scoped and built: one workflow at a time, integrated with the systems a client already runs, tested against real calls before it ships, and documented so the client's own team can maintain it afterwards. A co-organiser of PyData London for the last ten years, he started Deputable because the businesses that most need this help are the ones least able to gamble a year and a six-figure budget finding out whether it works."),
@@ -641,11 +614,11 @@ about_body = f"""
     <div class="depute-grid">
       <div class="depute-col">
         <div class="depute-col-title">Deputable</div>
-        {"".join(f'<div class="depute-item"><span class="tick">&#10003;</span><span>{d}</span></div>' for d in deputable_yes)}
+        {"".join(f'<div class="depute-item"><span class="tick">&#10003;</span><span>{d}</span></div>' for d in depute_items)}
       </div>
       <div class="depute-col keep">
         <div class="depute-col-title">Not deputable</div>
-        {"".join(f'<div class="depute-item"><span class="dot">&#9679;</span><span>{k}</span></div>' for k in deputable_no)}
+        {"".join(f'<div class="depute-item"><span class="dot">&#9679;</span><span>{k}</span></div>' for k in keep_items)}
       </div>
     </div>
     <p class="prose depute-close">Our job is to empower and enable people &mdash; never to replace them. If a proposal of ours would quietly erase someone's judgment from a process, it's a bad proposal, and we'll tell you so.</p>

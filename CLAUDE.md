@@ -29,7 +29,9 @@ Placeholder constants at the top of the generator (`GA_MEASUREMENT_ID`,
   never replace them".
 - **No pricing** on the site. **No invented social proof** — no testimonials, stats, client
   names or case studies until real ones exist (the homepage "Pilot results" panel is the
-  designated slot). No SMS/WhatsApp claims (listed under "What we don't do").
+  designated slot). No SMS/WhatsApp claims — unoffered channels are simply absent, never
+  disclaimed (Prashant 2026-08-27: no "what we don't do" walls, too negative; positives only,
+  e.g. the "Inbound-first, by design" panel carrying the Ofcom stance).
 - Business model on the page: turn-key solutions integrated with the client's existing
   systems; optional ongoing-support contract; clean handover — the client owns what we build.
 - Footer says "© Deputable AI · London" — no "Ltd"/"Registered in England & Wales" until
