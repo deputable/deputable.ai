@@ -1,4 +1,4 @@
-// Deputable AI — shared site behaviour (no framework, no build step)
+// Deputable AI - shared site behaviour (no framework, no build step)
 
 document.addEventListener('DOMContentLoaded', () => {
   initMobileNav();
@@ -18,7 +18,7 @@ function initMobileNav() {
 
 /* ---------------- Homepage: animated workflow diagram ----------------
    Steps are strings, or {t, human:true} for the approval steps a person
-   must pass — those render amber and the animation dwells on them. */
+   must pass - those render amber and the animation dwells on them. */
 const FLOW_MODES = [
   {
     label: 'New enquiry', entry: 'Customer calls', route: 'AI answers',
