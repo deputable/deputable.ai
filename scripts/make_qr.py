@@ -14,8 +14,8 @@ Verify it still scans after any change (logo overlay eats error budget):
     import cv2; print(cv2.QRCodeDetector().detectAndDecode(cv2.imread('assets/book-qr.png'))[0])"
 
 Outputs (committed; also served from the site so they can be linked):
-  assets/book-qr.svg  vector master, plain navy — use for print layouts
-  assets/book-qr.png  2048px with the brand mark centred — ready to drop
+  assets/book-qr.svg  vector master, plain navy - use for print layouts
+  assets/book-qr.png  2048px with the brand mark centred - ready to drop
                       into cards/flyers as-is
 """
 import io
@@ -38,7 +38,7 @@ qr.save(os.path.join(ASSETS, "book-qr.svg"), kind="svg", dark=NAVY,
 print("wrote assets/book-qr.svg")
 
 # PNG at print resolution with the brand mark on a white tile in the
-# centre (~18% of width — well inside the 30% error budget).
+# centre (~18% of width - well inside the 30% error budget).
 buf = io.BytesIO()
 qr.save(buf, kind="png", dark=NAVY, light="#FFFFFF", border=4, scale=10)
 buf.seek(0)

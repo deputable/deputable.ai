@@ -44,7 +44,7 @@ for size, name in [(512, "icon-512.png"), (192, "icon-192.png")]:
     square.resize((size, size), Image.LANCZOS).save(os.path.join(ASSETS, name))
     print(f"wrote assets/{name}")
 
-# iOS flattens transparency to black — give the touch icon a solid ground
+# iOS flattens transparency to black - give the touch icon a solid ground
 touch = Image.new("RGBA", (side, side), BG)
 touch.paste(square, (0, 0), square)
 touch.resize((180, 180), Image.LANCZOS).convert("RGB").save(
