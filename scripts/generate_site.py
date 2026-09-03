@@ -21,8 +21,8 @@ NAV_ITEMS = [
 ]
 
 SITE_URL = "https://deputable.ai/"
-SITE_TITLE = "Deputable AI — Human Centric AI Solutions for UK SMEs"
-SITE_DESC = "Deputable AI builds practical AI automation for small and medium businesses across the UK — telephone agents, workflow automation, internal knowledge assistants and governance built in from day one."
+SITE_TITLE = "Deputable AI - Human Centric AI Solutions for UK SMEs"
+SITE_DESC = "Deputable AI builds practical AI automation for small and medium businesses across the UK - telephone agents, workflow automation, internal knowledge assistants and governance built in from day one."
 
 
 def head(title, desc, active_id, relpath_prefix="", filename="index.html"):
@@ -46,7 +46,7 @@ def head(title, desc, active_id, relpath_prefix="", filename="index.html"):
 <meta property="og:image" content="{SITE_URL}assets/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Deputable AI — Simplify Work. Amplify People.">
+<meta property="og:image:alt" content="Deputable AI - Simplify Work. Amplify People.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{title}">
 <meta name="twitter:description" content="{desc}">
@@ -498,7 +498,7 @@ services_body = f"""
 </section>
 """
 
-write_page("services.html", "What We Do — Deputable AI", "Business-process automation, AI telephone agents, internal knowledge assistants, bespoke applications and UK AI governance for SMEs.", "services", services_body)
+write_page("services.html", "What We Do - Deputable AI", "Business-process automation, AI telephone agents, internal knowledge assistants, bespoke applications and UK AI governance for SMEs.", "services", services_body)
 print("Generated: services.html")
 
 # ==================================================================
@@ -536,7 +536,7 @@ process_body = f"""
 </section>
 """
 
-write_page("how-it-works.html", "How It Works — Deputable AI", "An eight-week path from a demo call to a working AI workflow in production, with a decision point at every stage.", "process", process_body)
+write_page("how-it-works.html", "How It Works - Deputable AI", "An eight-week path from a demo call to a working AI workflow in production, with a decision point at every stage.", "process", process_body)
 print("Generated: how-it-works.html")
 
 # ==================================================================
@@ -560,7 +560,7 @@ sector_groups = [
 ]
 
 team = [
-    ("Rohit Sinha", "Founder", "https://www.linkedin.com/in/rohit-sinha-b6792715/", "Rohit has spent his career getting change into production safely at large organisations — release and change management, cutover and deployment, service transition and major incident response across enterprise infrastructure and cloud programmes. That work is the reason Deputable pilots every workflow alongside the existing process and puts a named approver on anything that reaches a customer."),
+    ("Rohit Sinha", "Founder", "https://www.linkedin.com/in/rohit-sinha-b6792715/", "Rohit has spent his career getting change into production safely at large organisations - release and change management, cutover and deployment, service transition and major incident response across enterprise infrastructure and cloud programmes. That work is the reason Deputable pilots every workflow alongside the existing process and puts a named approver on anything that reaches a customer."),
     ("Prashant Tiwari", "Founder", "https://www.linkedin.com/in/prashanttiwari247/", "Prashant leads how the work is scoped and built, from the first process-mapping session through to handover. He focuses on keeping engagements small enough to finish: one workflow at a time, integrated with the systems a client already runs, documented so their own team can maintain it afterwards."),
 ]
 
@@ -635,7 +635,7 @@ about_body = f"""
 </section>
 """
 
-write_page("about.html", "About — Deputable AI", "Deputable AI is a UK-based AI operations partner for small and medium businesses, founded by Rohit Sinha and Prashant Tiwari.", "about", about_body)
+write_page("about.html", "About - Deputable AI", "Deputable AI is a UK-based AI operations partner for small and medium businesses, founded by Rohit Sinha and Prashant Tiwari.", "about", about_body)
 print("Generated: about.html")
 
 # ==================================================================
@@ -665,7 +665,7 @@ trust_body = f"""
 </section>
 """
 
-write_page("trust.html", "Trust & Security — Deputable AI", "How Deputable AI handles data location, model training, human accountability and UK GDPR compliance.", "trust", trust_body)
+write_page("trust.html", "Trust & Security - Deputable AI", "How Deputable AI handles data location, model training, human accountability and UK GDPR compliance.", "trust", trust_body)
 print("Generated: trust.html")
 
 # ==================================================================
@@ -703,5 +703,5 @@ contact_body = """
 </section>
 """
 
-write_page("contact.html", "Contact — Deputable AI", "Request a 30-minute demo with Deputable AI. Bring a workflow and see how it would be handled.", "contact", contact_body)
+write_page("contact.html", "Contact - Deputable AI", "Request a 30-minute demo with Deputable AI. Bring a workflow and see how it would be handled.", "contact", contact_body)
 print("Generated: contact.html")

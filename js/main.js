@@ -1,4 +1,4 @@
-// Deputable AI — shared site behaviour (no framework, no build step)
+// Deputable AI - shared site behaviour (no framework, no build step)
 
 document.addEventListener('DOMContentLoaded', () => {
   initMobileNav();

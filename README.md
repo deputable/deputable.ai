@@ -1,13 +1,13 @@
-# Deputable AI — website
+# Deputable AI - website
 
 Plain HTML/CSS/JS site, no build step. Six static pages sharing `css/style.css` and `js/main.js`:
 
-- `index.html` — Home
-- `services.html` — What We Do (includes the interactive workflow demo)
-- `how-it-works.html` — process/timeline
-- `about.html` — company, sectors, founders
-- `trust.html` — trust & security Q&A
-- `contact.html` — demo request form (currently front-end only, see below)
+- `index.html` - Home
+- `services.html` - What We Do (includes the interactive workflow demo)
+- `how-it-works.html` - process/timeline
+- `about.html` - company, sectors, founders
+- `trust.html` - trust & security Q&A
+- `contact.html` - demo request form (currently front-end only, see below)
 
 ## Run locally
 
@@ -35,10 +35,10 @@ then open `http://localhost:8000`.
 ## Things still marked as placeholders in the content
 
 - Home and About pages have a "drop image here" placeholder where a real team/workshop photo and founder portraits should go.
-- Founder bios on the About page are drafts — LinkedIn details need confirming.
+- Founder bios on the About page are drafts - LinkedIn details need confirming.
 - Trust & Security answers are drafted and flagged for sign-off before publishing (certifications, DPA wording).
-- The contact form (`contact.html`) currently just shows a confirmation message on submit — it isn't wired to send anywhere yet. Easiest options: point the `<form>` at a service like Formspree, or add a small serverless function / GitHub Pages-compatible form handler.
+- The contact form (`contact.html`) currently just shows a confirmation message on submit - it isn't wired to send anywhere yet. Easiest options: point the `<form>` at a service like Formspree, or add a small serverless function / GitHub Pages-compatible form handler.
 
 ## Editing content
 
-There's no CMS or templating at runtime — each page is a self-contained HTML file. If you're making the same change across all six pages (e.g. nav wording, footer), it's easiest to edit `/tmp`-style via a regenerate script rather than by hand; ask Claude to regenerate from the shared source if you have it, or just edit the repeated header/footer markup in each file.
+There's no CMS or templating at runtime - each page is a self-contained HTML file. If you're making the same change across all six pages (e.g. nav wording, footer), it's easiest to edit `/tmp`-style via a regenerate script rather than by hand; ask Claude to regenerate from the shared source if you have it, or just edit the repeated header/footer markup in each file.
