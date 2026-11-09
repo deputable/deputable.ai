@@ -818,3 +818,31 @@ with open(os.path.join(OUT, "book", "index.html"), "w") as f:
 </html>
 """)
 print("Generated: book/index.html")
+
+# ==================================================================
+# /demo — the permanent link for the demo / event / conference
+# (deputable.ai/demo). Print, slides and QR codes point here, so what
+# it shows can change without breaking any of them. Today it sends
+# people to the home page; to make it special for an event, point
+# DEMO_TARGET at the event landing page (or write a real page here).
+# Not in the sitemap; noindex.
+# ==================================================================
+DEMO_TARGET = BASE_URL
+os.makedirs(os.path.join(OUT, "demo"), exist_ok=True)
+with open(os.path.join(OUT, "demo", "index.html"), "w") as f:
+    f.write(f"""<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta http-equiv="refresh" content="0; url={DEMO_TARGET}">
+<title>Deputable AI</title>
+<script>location.replace("{DEMO_TARGET}");</script>
+</head>
+<body>
+<p>Taking you to Deputable AI&hellip;
+<a href="{DEMO_TARGET}">Click here if nothing happens.</a></p>
+</body>
+</html>
+""")
+print("Generated: demo/index.html")
