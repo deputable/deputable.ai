@@ -992,11 +992,11 @@ home_body = f"""
 
 <section class="sec band-dark">
   <div class="wrap">
-    {sec_head("Trust &amp; Security", "Isolated, auditable, and under your control.", "The controls behind every deputy, written for whoever has to sign it off, including which suppliers process your data outside the UK.")}
+    {sec_head("Trust &amp; Security", "Isolated, auditable, and under your control.", "The controls behind every deputy, written for whoever has to sign it off.")}
     <div class="facts">
       {"".join(f'<div class="fact"><div class="fact-ic">{ICONS[ic]}</div><div class="big">{t}</div><p>{b}</p></div>' for ic, t, b in facts_home)}
     </div>
-    <div class="sec-foot"><a class="link-arrow" href="trust.html">Security controls, data flows and suppliers&nbsp;&rarr;</a></div>
+    <div class="sec-foot"><a class="link-arrow" href="trust.html">The twelve security controls&nbsp;&rarr;</a></div>
   </div>
 </section>
 
@@ -1470,7 +1470,7 @@ FEATURES = [
         ("ACC-04", "Paperwork as a gate", "live", "A business can't go live without a privacy notice and a dated impact assessment. The software refuses."),
         ("OPS-02", "Signed releases", "live", "Our servers run only software one of us has signed."),
         ("OPS-14", "Every minute you pay for", "built", "A usage page for whoever pays: minutes, messages and finished jobs this month."),
-        ("RES-UKEU", "UK and EU only", "next", "Every part of a call kept inside the UK and EU. Not offered until all of it can be."),
+        ("RES-UKEU", "UK and EU processing", "next", "Suppliers and models scoped to the UK and EU, for a client that requires it."),
         ("OPS-12", "A server of your own", "next", "For a client whose data must share no machine with anyone else's."),
     ]),
 ]
@@ -1707,9 +1707,12 @@ write_page(
 #
 # Every answer here is a statement about the platform as it runs. Check
 # a change against the Deputy repo (docs/legal/README.md lists what is
-# not yet true) before publishing it. Two claims are deliberately NOT
-# made yet: a UK-and-EU-only option, and the AI suppliers' no-training
-# terms (ours is stated; theirs waits on the confirmed contracts).
+# not yet true) before publishing it. The page names no suppliers and
+# draws no data-flow map (Prashant 2026-11-13: confusing and concerning,
+# and UK or EU processing can be scoped for a client that needs it):
+# sub-processors are named per client in the agreement. Do not state
+# UK-only processing as a standing feature, and do not claim the AI
+# suppliers' no-training terms until the contracts are confirmed.
 # ==================================================================
 # The controls, as tiles. (icon, group, title, body, held by a test).
 # "Held by a test" is set only where the Deputy repo has an automated
@@ -1753,40 +1756,6 @@ def controls_html():
     return out
 
 
-# Where data is processed, by region. (mark, name, what for). The mark is
-# a plain monogram, not the supplier's logo: official logos need each
-# supplier's brand permission. The complete list for one deputy is
-# generated from its configuration (`deputy residency <deputy>
-# --markdown` in the platform) and belongs in the client's agreement;
-# keep this in step with the DPA's annex.
-regions = [
-    ("uk", "United Kingdom", "Stored here", [
-        ("Or", "Oracle Cloud, London", "Our servers, your deputy's record, its documents, recordings and backups"),
-    ]),
-    ("eu", "European Union", "Processed here", [
-        ("Zo", "Zoho", "Mail and diary for some deputies, and our own staff sign-in"),
-    ]),
-    ("us", "United States", "Processed here", [
-        ("Tw", "Twilio, with Meta for WhatsApp", "Phone calls, texts and WhatsApp"),
-        ("An", "Anthropic", "The AI models that read and write"),
-        ("Op", "OpenAI", "The voice on a call"),
-        ("El", "ElevenLabs", "Spoken set lines, and speech turned into text"),
-        ("Go", "Google", "Journey times, and your own account only if you connect it"),
-    ]),
-]
-
-
-def regions_html():
-    out = ""
-    for key, name, role, items in regions:
-        tiles = "".join(
-            f'<div class="sup"><span class="sup-mark" aria-hidden="true">{mark}</span><div><h3>{n}</h3><p>{what}</p></div></div>'
-            for mark, n, what in items)
-        out += (f'<div class="region {key}"><div class="region-head"><span class="region-code">{key.upper()}</span>'
-                f'<div><div class="region-name">{name}</div><div class="region-role">{role}</div></div></div>{tiles}</div>')
-    return out
-
-
 golive = [
     "AI disclosure in the opening sentence of every call",
     "Recording notice, or recording switched off",
@@ -1801,8 +1770,8 @@ golive = [
 trust = [
     ("Where is our data stored?",
      "In Oracle Cloud's London region, on disks encrypted at rest. Each client has a dedicated directory and a dedicated database, and backups are held in London too."),
-    ("Is any of it processed outside the UK?",
-     "Yes, and you should know exactly where. Carrying a call, producing the voice on it and running the AI models that read and write are done by suppliers who process data in the United States today. Each one is named in your agreement before you go live. A UK and EU only option is being built, and we will not offer it until every part of the work can stay inside it."),
+    ("Which suppliers process our data?",
+     "Your data is stored in the UK. Telephony, speech and the AI models are provided by specialist suppliers, and each one is named, with its processing region, in your data processing agreement before you go live. If you need processing kept within the UK or EU, tell us at the outset and we scope the suppliers and models to that requirement."),
     ("Do you train AI models on our data?",
      "No. We do not train models at all. Your data is used to provide your service and for nothing else. It is never sold and never used for advertising."),
     ("Can the AI send something to a customer on its own?",
@@ -1837,11 +1806,10 @@ trust_faq_jsonld = json.dumps({
 trust_body = page_hero(
     "Trust &amp; Security",
     "Isolated, auditable, and under your control.",
-    "How each client's data is isolated, where it is processed, who can access it, and the controls that hold an AI system to account. Written for the person who has to sign it off.",
+    "How each client's data is isolated, who can access it, and the controls that hold an AI system to account. Written for the person who has to sign it off.",
     """
     <div class="trust-nav">
       <a href="#controls">Security controls</a>
-      <a href="#data">Where data is processed</a>
       <a href="#golive">Before go-live</a>
       <a href="#questions">Procurement questions</a>
     </div>""") + f"""
@@ -1854,20 +1822,7 @@ trust_body = page_hero(
   </div>
 </section>
 
-<section class="sec sec-white rule-t rule-b" id="data">
-  <div class="wrap">
-    {sec_head("Data flows", "Where your data is stored, and where it is processed.", "Your data is stored in the United Kingdom. To carry a call and to run the AI models, some of it is processed by suppliers elsewhere. These are the main ones, by region.")}
-    <div class="regions">
-      {regions_html()}
-    </div>
-    <div class="notice">
-      <div class="notice-ic">{ICONS["file"]}</div>
-      <p><strong>Your own sub-processor list.</strong> The complete list for your deputy, including the smaller services, is generated from its configuration and given to you by name and region before you go live. A UK and EU only option is being built; we will not offer it until every part of the work can stay inside it.</p>
-    </div>
-  </div>
-</section>
-
-<section class="sec" id="golive">
+<section class="sec sec-white rule-t rule-b" id="golive">
   <div class="wrap split start">
     <div>
       {sec_head("Before go-live", "What is in place before a deputy does real work.", "Each of these is checked for every client. Two of them, the privacy notice and the impact assessment, are enforced by the platform itself.")}
@@ -1879,7 +1834,7 @@ trust_body = page_hero(
   </div>
 </section>
 
-<section class="sec sec-tint rule-t" id="questions">
+<section class="sec" id="questions">
   <div class="wrap split start">
     <div>
       {sec_head("Procurement questions", "The questions IT and procurement ask first.", "Answered plainly, including the answers that are not the ones you would hope for.")}
@@ -1894,7 +1849,7 @@ trust_body = page_hero(
 write_page(
     "trust.html",
     "Trust & Security - Tenant Isolation, UK Data Residency and AI Controls | Deputable AI",
-    "Twelve security controls built into the platform: tenant isolation, UK data residency at rest, encrypted backups, a human approval gate, prompt-injection containment and signed releases. Plus where data is processed, by supplier and region.",
+    "Twelve security controls built into the platform: tenant isolation, UK data residency at rest, encrypted backups, a human approval gate, prompt-injection containment and signed releases.",
     "trust", trust_body,
     extra_head=f'\n<script type="application/ld+json">{trust_faq_jsonld}</script>')
 
@@ -1986,8 +1941,8 @@ with open(os.path.join(OUT, "llms.txt"), "w") as f:
 > writes simple workflows itself in a sentence; anything needing a new
 > tool is built, tested and signed by Deputable. Nothing customer-facing
 > is sent without a named person's approval. A person can also have a
-> deputy of their own. Data is stored in London; some suppliers process
-> work in the US, and the Trust page says which. No pricing is published;
+> deputy of their own. Data is stored in London, and each client's
+> sub-processors are named before go-live. No pricing is published;
 > engagement starts with a 45-minute demo call.
 
 ## Pages

@@ -77,7 +77,10 @@ it is proven. **The site may claim only what that list supports.**
   Channels and features that are not built are either absent or marked **next** on the
   Features page - never described as available. No "what we don't do" walls; positives
   only.
-- **Not claimed yet**, deliberately: a UK-and-EU-only option, the AI suppliers'
+- **The Trust page names no suppliers and shows no data-flow map** (Prashant 2026-11-13:
+  confusing and concerning to a client; UK or EU processing can be scoped for a client
+  that needs it). Sub-processors are named per client in the agreement, not on the site.
+- **Not claimed yet**, deliberately: UK-only processing as a standing feature, the AI suppliers'
   no-training terms (ours is stated; theirs waits on the confirmed contracts), website
   chat, bookings, CRM logging, a student deputy.
 - Business model on the page: a deputy run as a service, set up around the client's own
