@@ -87,6 +87,17 @@ ICONS = {
     "text": _SVG + '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 8.5h8M8 12h5"/></svg>',
     "page": _SVG + '<rect x="3" y="3" width="18" height="18" rx="2.5"/><path d="M3 9h18M9 21V9"/></svg>',
     "check": _SVG + '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>',
+    "silo": _SVG + '<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.66 3.58 3 8 3s8-1.34 8-3V5"/><path d="M4 12c0 1.66 3.58 3 8 3s8-1.34 8-3"/></svg>',
+    "pin": _SVG + '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>',
+    "lock": _SVG + '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
+    "clock": _SVG + '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>',
+    "user": _SVG + '<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="m17 11 2 2 4-4"/></svg>',
+    "send": _SVG + '<path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg>',
+    "file": _SVG + '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h6"/></svg>',
+    "key": _SVG + '<circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.7 12.3 9.8-9.8M17 6l3 3M14 9l2 2"/></svg>',
+    "eye": _SVG + '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
+    "pen": _SVG + '<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>',
+    "clip": _SVG + '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 13l2 2 4-4"/></svg>',
 }
 
 
@@ -840,12 +851,12 @@ four_things = [
 ]
 
 facts_home = [
-    ("London", "Your deputy's record lives on our server in Oracle Cloud's London region, on disks encrypted at rest."),
-    ("Yours alone", "One folder and one database for each business. Nothing is shared with any other client."),
-    ("Backed up hourly", "Encrypted with a key our servers never hold. Restores are rehearsed, not assumed."),
-    ("You set what we see", "Nothing, a limited view with no call transcripts, or everything, with who, why and until when written down."),
-    ("Export or erase", "One person's data or all of it, on request. Take it with you if you leave."),
-    ("Signed releases", "Only software one of us has signed reaches the servers."),
+    ("silo", "Tenant isolation", "A dedicated data silo for every client: its own directory and its own database."),
+    ("pin", "UK data residency", "Stored in Oracle Cloud's London region, encrypted at rest. Backups stay in London."),
+    ("lock", "Encrypted backups", "Taken hourly and encrypted with a key our servers never hold. Restores are rehearsed."),
+    ("eye", "Access on your terms", "You set what Deputable staff can see: none, limited, or full with a reason and an end date."),
+    ("clock", "Export and erasure", "Your data exports in full, and one person's data is erased on request."),
+    ("pen", "Signed releases", "Production runs only software we have cryptographically signed."),
 ]
 
 home_body = f"""
@@ -981,11 +992,11 @@ home_body = f"""
 
 <section class="sec band-dark">
   <div class="wrap">
-    {sec_head("Trust &amp; Security", "Your numbers and your data stay yours.", "Plain answers for whoever has to sign this off, including which suppliers handle your work outside the UK.")}
+    {sec_head("Trust &amp; Security", "Isolated, auditable, and under your control.", "The controls behind every deputy, written for whoever has to sign it off, including which suppliers process your data outside the UK.")}
     <div class="facts">
-      {"".join(f'<div class="fact"><div class="big">{t}</div><p>{b}</p></div>' for t, b in facts_home)}
+      {"".join(f'<div class="fact"><div class="fact-ic">{ICONS[ic]}</div><div class="big">{t}</div><p>{b}</p></div>' for ic, t, b in facts_home)}
     </div>
-    <div class="sec-foot"><a class="link-arrow" href="trust.html">The questions IT and procurement ask first&nbsp;&rarr;</a></div>
+    <div class="sec-foot"><a class="link-arrow" href="trust.html">Security controls, data flows and suppliers&nbsp;&rarr;</a></div>
   </div>
 </section>
 
@@ -1451,7 +1462,7 @@ FEATURES = [
         ("MEM-08", "Checked every night", "built", "Each approved skill is replayed nightly. Two failures in a row pause it and you are told."),
     ]),
     ("Privacy, access and the record", "The parts a client never sees, and should know are there.", [
-        ("ACC-02", "A folder and a database of your own", "live", "Each business's record is kept apart from every other's, on our server in London."),
+        ("ACC-02", "Tenant isolation", "live", "Every client runs in its own data silo: a dedicated directory and a dedicated database, stored in London."),
         ("ACC-06", "Hourly encrypted backups", "live", "Encrypted with a key our servers never hold. Restores are rehearsed."),
         ("ACC-03", "You decide what we can see", "live", "Nothing, a limited view with no call transcripts, or everything, with who, why and until when written down."),
         ("ACC-01", "Roles", "live", "Owner, staff, technician and monitor. What each may ask for and approve is set per business."),
@@ -1700,48 +1711,112 @@ write_page(
 # made yet: a UK-and-EU-only option, and the AI suppliers' no-training
 # terms (ours is stated; theirs waits on the confirmed contracts).
 # ==================================================================
-trust = [
-    ("Where does our data live?",
-     "On our server in Oracle Cloud's London region, on disks encrypted at rest. Each business has its own folder and its own database, shared with no other client. The backups stay in London too."),
-    ("Does any of it leave the UK?",
-     "Yes, and you should know exactly where. A call has to be carried and heard, and a document or a message has to be read, and the suppliers who do that for us process it in the United States today: the telephone network, the voice on a call, and the AI models that read and write. Each one is named in your agreement before you go live. A UK and EU only option is being built. We won't offer it until every part of the work can stay inside it."),
-    ("Do you train AI models on our data?",
-     "No. We don't train models at all. Your data is used to serve you and nobody else. It is never sold and never used for advertising."),
-    ("Can it send something to a customer on its own?",
-     "No. Anything a customer will see waits for a named person at your business. Your approval covers the version you read, and a change comes back as a new version. Each message goes once; if we can't tell whether it was delivered, a person decides before it is tried again. These are rules in the code, each held by an automated test, not instructions we hope a model follows."),
-    ("Could a caller or an email trick it?",
-     "Words from outside, such as what a caller says, an email or a web page, are treated as untrusted. They can inform a draft for you to read. They cannot make your deputy send a message or change a record. Who a follow-up goes to is fixed in your configuration and is never chosen by a model."),
-    ("Who at Deputable can see our calls and messages?",
-     "You choose, per business. Nothing at all. A limited view, which is the default: the steps your deputy took and the written messages it exchanged with customers, but no call transcripts and nothing it read in your mail or diary. Or everything, with the person, the reason and the end date written down."),
-    ("Are calls recorded, and do callers know?",
-     "By default yes, and the greeting says so in its opening sentence, along with the fact that the caller is speaking with an AI assistant. You can turn recording off. Unless you choose otherwise, recordings are kept for 30 days and notes and transcripts for 90."),
-    ("What happens if it gets something wrong?",
-     "Every job leaves a record: what came in, which tools were used and what each returned, what was drafted, who approved it and when. An error can be traced to its step. Your record is backed up hourly, encrypted with a key our servers never hold, and we rehearse restoring from it. Recordings stay on the server and are not in the backups."),
-    ("Can we get our data out, or have it deleted?",
-     "Yes. Everything exports in full and goes with you if you leave. One person's data can be exported or erased on request: the record, the recordings and the copies our telephony supplier holds. Encrypted backups can't be edited, so they expire on their own within 90 days."),
+# The controls, as tiles. (icon, group, title, body, held by a test).
+# "Held by a test" is set only where the Deputy repo has an automated
+# test for it (its CLAUDE.md invariants; tests/test_core_api.py,
+# test_workitems.py, test_loop.py, test_dispatch.py, test_deploy.py,
+# test_backup_loop.py, test_config.py).
+controls = [
+    ("silo", "Data", "Tenant isolation",
+     "Every client runs in its own data silo: a dedicated directory and a dedicated database. The tenant is resolved at the point of entry, before any AI model runs.", True),
+    ("pin", "Data", "UK data residency at rest",
+     "Records, documents, recordings and backups are stored in Oracle Cloud's London region, on disks encrypted at rest.", False),
+    ("lock", "Data", "Encrypted, rehearsed backups",
+     "Hourly backups, encrypted with a key our servers never hold. Restores are rehearsed end to end, not assumed.", True),
+    ("clock", "Data", "Retention and erasure",
+     "Recordings are kept 30 days and transcripts 90 by default, or to your own schedule. One person's data can be exported or erased on request, including the copies our telephony supplier holds.", False),
+    ("user", "AI safety", "Human approval gate",
+     "Nothing customer-facing leaves review without a named, authorised person. Approval is bound to the exact version they read.", True),
+    ("check", "AI safety", "Prompt-injection containment",
+     "Content from outside, such as a caller's words, an email or a web page, is marked untrusted. It can inform a draft. It can never trigger a send or change a record.", True),
+    ("send", "AI safety", "A single outbound gate",
+     "AI specialists cannot send. Every message leaves through one gate, exactly once, and an unconfirmed delivery is never retried without a person.", True),
+    ("file", "AI safety", "Full audit trail",
+     "Every job records its inputs, each tool call and its result, the draft, the approver and the time. Any figure can be traced to its source.", False),
+    ("key", "Access", "Role-based access control",
+     "Owner, staff, technician and monitor roles decide who may ask for what, and who may approve. Your people sign in with a one-time code or a passkey.", False),
+    ("eye", "Access", "Supplier access on your terms",
+     "You set what Deputable staff can see, per client: none, a limited view with no call transcripts (the default), or full, with the person, reason and end date recorded.", False),
+    ("pen", "Assurance", "Signed releases",
+     "Production runs only software one of us has cryptographically signed, after it has run on a pre-production twin.", True),
+    ("clip", "Assurance", "Privacy by design",
+     "No deputy goes live without a published privacy notice and a dated data protection impact assessment. The platform refuses to start it otherwise.", True),
 ]
 
-# The main suppliers, with where each processes data. The complete list
-# for one deputy is generated from its configuration (`deputy residency
-# <deputy> --markdown` in the platform) and belongs in the client's
-# agreement; keep this table in step with the DPA's annex.
-suppliers = [
-    ("Oracle", "Our servers and backups", "UK (London)"),
-    ("Twilio, and Meta for WhatsApp", "Phone calls, texts and WhatsApp", "US"),
-    ("Anthropic", "The AI models that read and write", "US"),
-    ("OpenAI", "The voice on a call", "US"),
-    ("ElevenLabs", "Spoken set lines, and turning speech into text", "US"),
-    ("Zoho", "Mail and diary for some deputies, and our staff sign-in", "EU"),
-    ("Google", "Journey times, and your account only if you connect it", "US"),
+
+def controls_html():
+    out = ""
+    for ic, group, title, body, tested in controls:
+        badge = '<span class="ctl-test">Held by an automated test</span>' if tested else ""
+        out += (f'<div class="ctl"><div class="ctl-top"><div class="ctl-ic">{ICONS[ic]}</div>'
+                f'<span class="ctl-group">{group}</span></div><h3>{title}</h3><p>{body}</p>{badge}</div>')
+    return out
+
+
+# Where data is processed, by region. (mark, name, what for). The mark is
+# a plain monogram, not the supplier's logo: official logos need each
+# supplier's brand permission. The complete list for one deputy is
+# generated from its configuration (`deputy residency <deputy>
+# --markdown` in the platform) and belongs in the client's agreement;
+# keep this in step with the DPA's annex.
+regions = [
+    ("uk", "United Kingdom", "Stored here", [
+        ("Or", "Oracle Cloud, London", "Our servers, your deputy's record, its documents, recordings and backups"),
+    ]),
+    ("eu", "European Union", "Processed here", [
+        ("Zo", "Zoho", "Mail and diary for some deputies, and our own staff sign-in"),
+    ]),
+    ("us", "United States", "Processed here", [
+        ("Tw", "Twilio, with Meta for WhatsApp", "Phone calls, texts and WhatsApp"),
+        ("An", "Anthropic", "The AI models that read and write"),
+        ("Op", "OpenAI", "The voice on a call"),
+        ("El", "ElevenLabs", "Spoken set lines, and speech turned into text"),
+        ("Go", "Google", "Journey times, and your own account only if you connect it"),
+    ]),
 ]
 
-deployment_includes = [
-    "Callers are told when they're talking to an AI assistant",
-    "A route to a person, or a promised call back, on every call",
-    "A named person approves anything customer-facing",
-    "A record of every call, message, draft and approval",
-    "A privacy notice and a dated impact assessment before go-live",
+
+def regions_html():
+    out = ""
+    for key, name, role, items in regions:
+        tiles = "".join(
+            f'<div class="sup"><span class="sup-mark" aria-hidden="true">{mark}</span><div><h3>{n}</h3><p>{what}</p></div></div>'
+            for mark, n, what in items)
+        out += (f'<div class="region {key}"><div class="region-head"><span class="region-code">{key.upper()}</span>'
+                f'<div><div class="region-name">{name}</div><div class="region-role">{role}</div></div></div>{tiles}</div>')
+    return out
+
+
+golive = [
+    "AI disclosure in the opening sentence of every call",
+    "Recording notice, or recording switched off",
+    "A named approver for anything customer-facing",
+    "A published privacy notice",
+    "A dated data protection impact assessment",
     "Opt-outs honoured: STOP stops texts at once",
+    "A restore rehearsed from backup",
+    "Your list of sub-processors, by name and region",
+]
+
+trust = [
+    ("Where is our data stored?",
+     "In Oracle Cloud's London region, on disks encrypted at rest. Each client has a dedicated directory and a dedicated database, and backups are held in London too."),
+    ("Is any of it processed outside the UK?",
+     "Yes, and you should know exactly where. Carrying a call, producing the voice on it and running the AI models that read and write are done by suppliers who process data in the United States today. Each one is named in your agreement before you go live. A UK and EU only option is being built, and we will not offer it until every part of the work can stay inside it."),
+    ("Do you train AI models on our data?",
+     "No. We do not train models at all. Your data is used to provide your service and for nothing else. It is never sold and never used for advertising."),
+    ("Can the AI send something to a customer on its own?",
+     "No. Anything customer-facing waits for a named, authorised person at your business, and their approval is bound to the version they read. Each message is sent exactly once; if delivery cannot be confirmed, a person decides before it is tried again. These are controls in the code, each held by an automated test, not instructions we hope a model follows."),
+    ("How do you defend against prompt injection?",
+     "Content from outside, such as what a caller says, an email or a web page, is marked as untrusted the moment it arrives. It can inform a draft for a person to read. It cannot trigger a send or change a record, and who a follow-up goes to is fixed in your configuration, never chosen by a model."),
+    ("Who at Deputable can access our data?",
+     "You decide, per client. None. A limited view, which is the default: the steps your deputy took and the written messages it exchanged with customers, but no call transcripts and nothing it read in your mail or diary. Or full access, with the person, the reason and the end date recorded."),
+    ("Are calls recorded, and are callers told?",
+     "By default yes, and the greeting says so in its opening sentence, along with the fact that the caller is speaking with an AI assistant. Recording can be switched off. Unless you set your own schedule, recordings are kept for 30 days and notes and transcripts for 90."),
+    ("What is your audit trail and recovery position?",
+     "Every job records its inputs, each tool call and its result, the draft, the approver and the time, so an error can be traced to its step. Records are backed up hourly, encrypted with a key our servers never hold, and restores are rehearsed. Recordings are held on the server only and are not included in backups."),
+    ("Can we export or delete our data?",
+     "Yes. Your data exports in full and goes with you if you leave. One person's data can be exported or erased on request across the record, the recordings and the copies our telephony supplier holds. Encrypted backups cannot be edited, so they expire on their own within 90 days."),
 ]
 
 
@@ -1761,33 +1836,56 @@ trust_faq_jsonld = json.dumps({
 
 trust_body = page_hero(
     "Trust &amp; Security",
-    "Your data is your own.",
-    "Where does it go, and who can act on it? The questions IT and procurement ask us first, answered plainly, including the answers that are not the ones you'd hope for.") + f"""
-<section class="sec">
+    "Isolated, auditable, and under your control.",
+    "How each client's data is isolated, where it is processed, who can access it, and the controls that hold an AI system to account. Written for the person who has to sign it off.",
+    """
+    <div class="trust-nav">
+      <a href="#controls">Security controls</a>
+      <a href="#data">Where data is processed</a>
+      <a href="#golive">Before go-live</a>
+      <a href="#questions">Procurement questions</a>
+    </div>""") + f"""
+<section class="sec" id="controls">
   <div class="wrap">
-    <div class="qa">
-      {"".join(f'<div class="qa-item"><h2>{q}</h2><div><p>{a}</p></div></div>' for q, a in trust)}
+    {sec_head("Security controls", "Twelve controls, built into the platform.", "Seven of them are enforced in code and held by an automated test, so they cannot be switched off by a prompt, a caller or a busy afternoon.")}
+    <div class="g3 ctls">
+      {controls_html()}
     </div>
   </div>
 </section>
 
-<section class="sec sec-white rule-t rule-b" id="suppliers">
-  <div class="wrap split start wide-left">
-    <div>
-      {sec_head("Suppliers", "Which other companies touch our data?", "The main ones, and where each processes it. The complete list for your own deputy, including the smaller services, is generated from its configuration and given to you before you go live.")}
-      <div class="table-wrap">
-        <table class="plain">
-          <thead><tr><th>Supplier</th><th>For</th><th>Where</th></tr></thead>
-          <tbody>
-            {"".join(f"<tr><td>{s}</td><td>{f}</td><td>{w}</td></tr>" for s, f, w in suppliers)}
-          </tbody>
-        </table>
-      </div>
+<section class="sec sec-white rule-t rule-b" id="data">
+  <div class="wrap">
+    {sec_head("Data flows", "Where your data is stored, and where it is processed.", "Your data is stored in the United Kingdom. To carry a call and to run the AI models, some of it is processed by suppliers elsewhere. These are the main ones, by region.")}
+    <div class="regions">
+      {regions_html()}
     </div>
+    <div class="notice">
+      <div class="notice-ic">{ICONS["file"]}</div>
+      <p><strong>Your own sub-processor list.</strong> The complete list for your deputy, including the smaller services, is generated from its configuration and given to you by name and region before you go live. A UK and EU only option is being built; we will not offer it until every part of the work can stay inside it.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="golive">
+  <div class="wrap split start">
     <div>
-      <div class="mono-label" style="display:block;margin-bottom:16px">What every deployment includes</div>
-      {ticks(deployment_includes)}
-      <p class="prose small" style="margin-top:24px">The ICO publishes guidance on applying UK GDPR principles to AI systems; we work to it. <a class="link-arrow" href="https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/artificial-intelligence/" target="_blank" rel="noopener">ICO guidance&nbsp;&rarr;</a></p>
+      {sec_head("Before go-live", "What is in place before a deputy does real work.", "Each of these is checked for every client. Two of them, the privacy notice and the impact assessment, are enforced by the platform itself.")}
+      <p class="prose small">The ICO publishes guidance on applying UK GDPR principles to AI systems; we work to it. <a class="link-arrow" href="https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/artificial-intelligence/" target="_blank" rel="noopener">ICO guidance&nbsp;&rarr;</a></p>
+    </div>
+    <div class="golive">
+      {"".join(f'<div class="golive-item"><span class="golive-tick" aria-hidden="true"></span>{g}</div>' for g in golive)}
+    </div>
+  </div>
+</section>
+
+<section class="sec sec-tint rule-t" id="questions">
+  <div class="wrap split start">
+    <div>
+      {sec_head("Procurement questions", "The questions IT and procurement ask first.", "Answered plainly, including the answers that are not the ones you would hope for.")}
+    </div>
+    <div class="faq">
+      {"".join(f'<details{" open" if i == 0 else ""}><summary>{q}</summary><p>{a}</p></details>' for i, (q, a) in enumerate(trust))}
     </div>
   </div>
 </section>
@@ -1795,8 +1893,8 @@ trust_body = page_hero(
 
 write_page(
     "trust.html",
-    "Trust & Security - Your Data Is Your Own | Deputable AI",
-    "Where your data lives, what leaves the UK and why, who can see it, and what your deputy can never do on its own. The questions IT and procurement ask first, answered plainly.",
+    "Trust & Security - Tenant Isolation, UK Data Residency and AI Controls | Deputable AI",
+    "Twelve security controls built into the platform: tenant isolation, UK data residency at rest, encrypted backups, a human approval gate, prompt-injection containment and signed releases. Plus where data is processed, by supplier and region.",
     "trust", trust_body,
     extra_head=f'\n<script type="application/ld+json">{trust_faq_jsonld}</script>')
 
