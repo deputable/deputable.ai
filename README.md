@@ -3,15 +3,21 @@
 Plain HTML/CSS/JS site, no build step. All pages are **generated** by
 `scripts/generate_site.py` (see CLAUDE.md - never hand-edit the HTML):
 
-- `index.html` - Home (hero, Smart Call Handling, animated workflow diagram, honesty section)
-- `services.html` - Services (Smart Call Handling flagship, website chat, workflow automation, readiness)
-- `how-it-works.html` - five-step process/timeline
+- `index.html` - Home (hero with the thread demo, the doors, what happens on a call,
+  approvals, workflows, a deputy of your own, learning, trust, honesty section)
+- `business.html` - A deputy for your business (Smart Call Handling, WhatsApp and text,
+  the note after a call, approvals and commands, workflows, your team)
+- `personal.html` - A deputy of your own (mail, diary, reminders, lists, errands)
+- `features.html` - everything it does, each row marked live, built or next and tied
+  to an id in the Deputy platform's `docs/features.md`
+- `how-it-works.html` - six steps from a first call to go-live, plus the assessment
 - `about.html` - the "deputable" narrative + founders
-- `trust.html` - trust & security Q&A (FAQPage JSON-LD)
+- `trust.html` - trust & security Q&A (FAQPage JSON-LD) and the supplier table
 - `contact.html` - the booking page: Zoho Bookings calendar embedded directly
   (its booking form collects name, email, phone, company and the process to
   discuss - one form, no separate enquiry step)
 - `privacy.html` - privacy notice (linked from the footer)
+- `services.html` - a redirect to `business.html`, kept so old links work
 - `sitemap.xml`, `llms.txt` - regenerated on every run; `robots.txt` is static
 
 ## Run locally
@@ -63,6 +69,9 @@ its scan check if the artwork ever changes.
 apple-touch icon and the optimised logo from `assets/deputable-logo.png`.
 `scripts/og-template.html` is the source for `assets/og-image.png`
 (1200×630 social-share image) - the capture command is in its header comment.
+
+Colours and fonts are in `CLAUDE.md` (brand quick reference) and as tokens at the
+top of `css/style.css`; the palette is the logo's.
 
 ## Deploy to GitHub Pages with the deputable.ai domain
 

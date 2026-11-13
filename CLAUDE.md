@@ -14,10 +14,12 @@ To change anything:
 2. Regenerate: `python3 scripts/generate_site.py` (writes to the repo root).
 3. Preview: `python3 -m http.server 8080` from the repo root.
 
-Generated: `index.html`, `services.html`, `how-it-works.html`, `about.html`, `trust.html`,
-`contact.html`, `privacy.html`, `book/index.html` (the permanent `deputable.ai/book`
-redirect to the booking calendar - print/QR/spoken links all point here),
-`sitemap.xml`, `llms.txt`.
+Generated: `index.html`, `business.html`, `personal.html`, `features.html`,
+`how-it-works.html`, `about.html`, `trust.html`, `contact.html`, `privacy.html`,
+`services.html` (a redirect to `business.html`, so old links keep working),
+`book/index.html` (the permanent `deputable.ai/book` redirect to the booking calendar -
+print/QR/spoken links all point here), `demo/index.html` (the permanent `deputable.ai/demo`
+link), `sitemap.xml`, `llms.txt`.
 Hand-maintained: `css/style.css`, `js/main.js`, `assets/`, `robots.txt`, `CNAME`, `.nojekyll`,
 `README.md`, `scripts/make_assets.py` + `scripts/make_qr.py` (dev-only; the QR encodes
 `deputable.ai/book`, never the Zoho URL), `scripts/og-template.html`.
@@ -25,18 +27,40 @@ Hand-maintained: `css/style.css`, `js/main.js`, `assets/`, `robots.txt`, `CNAME`
 Placeholder constants at the top of the generator (`GA_MEASUREMENT_ID`,
 `ZOHO_BOOKINGS_URL`, `ASSET_VER`) degrade gracefully while unset - see README.
 
-## Positioning rules (adopted 2026-08-27 - do not drift)
+## The source of truth is the platform
 
-- The phone product is **"Smart Call Handling"** - never "AI receptionist" (job-threatening
-  framing). Features are outcome-named; the stance line is "empower and enable people,
-  never replace them".
+The product is the Deputy platform (`~/code/deputy`). Its master feature list,
+`docs/features.md`, gives every feature a stable id and says where it runs and whether
+it is proven. **The site may claim only what that list supports.**
+
+- `FEATURES` in the generator (the Features page) carries each row's id (written into
+  the HTML as `data-id`) and one of three statuses, which must match the list:
+  **live** (in production, used on real calls or messages), **built** (built and tested,
+  switched on with the first clients), **next** (agreed and drawn, not built).
+- When a feature ships or changes in the platform, change its row here in step.
+- The Trust page states how the platform runs today. Before changing it, read the
+  platform's `docs/legal/README.md`, which lists what is not yet true.
+
+## Positioning rules (2026-08-27; revised 2026-11-13 for the Deputy platform)
+
+- The product is **a deputy**: "a deputy for your business" and "a deputy of your own".
+  The phone part keeps its name, **"Smart Call Handling"** - never "AI receptionist"
+  (job-threatening framing). The stance line is "empower and enable people, never
+  replace them".
 - **No pricing** on the site. **No invented social proof** - no testimonials, stats, client
   names or case studies until real ones exist (the homepage "Pilot results" panel is the
-  designated slot). No SMS/WhatsApp claims - unoffered channels are simply absent, never
-  disclaimed (Prashant 2026-08-27: no "what we don't do" walls, too negative; positives only,
-  e.g. the "Inbound-first, by design" panel carrying the Ofcom stance).
-- Business model on the page: turn-key solutions integrated with the client's existing
-  systems; optional ongoing-support contract; clean handover - the client owns what we build.
+  designated slot). Example threads are illustrations and say so; they use made-up
+  people and the 07700 900xxx drama range.
+- **WhatsApp and text are claimed** (revised 2026-11-13: both are live in the platform).
+  Channels and features that are not built are either absent or marked **next** on the
+  Features page - never described as available. No "what we don't do" walls; positives
+  only.
+- **Not claimed yet**, deliberately: a UK-and-EU-only option, the AI suppliers'
+  no-training terms (ours is stated; theirs waits on the confirmed contracts), website
+  chat, bookings, CRM logging, a student deputy.
+- Business model on the page: a deputy run as a service, set up around the client's own
+  hours, people and rules; workflows drawn with the client before they are built; data
+  that leaves with the client.
 - Footer says "© Deputable AI · London" - no "Ltd"/"Registered in England & Wales" until
   the company is actually incorporated at Companies House.
 
@@ -47,16 +71,26 @@ Placeholder constants at the top of the generator (`GA_MEASUREMENT_ID`,
   bookings.zoho.eu, not here). No enquiry form, no JS state machine. Don't add
   "email us instead" prompts to the booking flow (Prashant 2026-08-27) - the footer
   contact line and the privacy notice keep the email.
-- The animated workflow diagram lives on the **homepage** (`FLOW_MODES` in `js/main.js`);
-  human-approval steps are `{t, human:true}` objects and render amber. Autoplay pauses
-  off-viewport and under `prefers-reduced-motion`; services links to `index.html#flow`.
+- The homepage hero carries **the thread demo**: three real flows shown as the messages
+  a person gets on their phone (`DEMO_SCENARIOS` in the generator). The messages are in
+  the HTML, so the page reads without JavaScript; `js/main.js` only reveals them in turn
+  and switches the tabs. Autoplay pauses off-viewport and never runs under
+  `prefers-reduced-motion`.
+- The hero headline is locked to two lines on every device (each sentence is a
+  non-wrapping block sized to its column; see the comment in `css/style.css`).
 - Repo is public (GitHub Pages): never commit secrets or `.idea/` (gitignored).
 
 ## Brand/style quick reference
 
-Fonts: Schibsted Grotesk (body/headings), IBM Plex Mono (eyebrows/labels).
-Core colours: navy `#0E2A4A`, ink `#0B1A2B`, teal `#16BFA0`, blue `#00B4FF`,
-background `#FBFBF9`, human-in-the-loop amber `#E8A13D`.
+The palette is the logo's. Two accents, one meaning each, everywhere:
+**blue = the deputy did it**, **coral = a person decides** (approvals, the person's own
+messages, the step that is theirs, the call to action on dark).
+
+Fonts: Bricolage Grotesque (headings), IBM Plex Sans (body, as the platform's own pages),
+IBM Plex Mono (labels, commands such as `ok P14`).
+Core colours: navy `#04285E`, ink `#0A1F44`, blue `#1C62F8`, coral `#F96A4B`,
+paper `#FAF8F3`, night `#06183C` (the dark band).
+Body text is left-aligned and ragged; headings are left-aligned.
 Tone: plain-spoken, UK English, human-centric - AI assists and a person stays accountable;
-avoid hype language that would put off AI-averse SME owners. Honesty is the brand: never
-add a claim the company cannot demonstrate today.
+avoid hype language that would put off AI-averse SME owners. No em dashes. Honesty is the
+brand: never add a claim the company cannot demonstrate today.

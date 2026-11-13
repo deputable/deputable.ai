@@ -1,20 +1,24 @@
 # Deputable AI
 
-> Simplify Work. Amplify People. Deputable AI builds Smart Call Handling and workflow automation
-> for UK small and mid-sized businesses: AI that answers the phone out of
-> hours, catches overflow calls during the day, briefs operators live
-> during a call, and runs routine workflows (route planning, stock,
-> job paperwork) integrated with a client's existing systems. A person
-> stays accountable for every decision that matters. Solutions are
-> delivered turn-key and handed over - clients own what we build, with
-> ongoing support available as an optional service contract. No pricing
-> is published; engagement starts with a 45-minute demo call.
+> Simplify Work. Amplify People. Deputable AI builds and runs deputies for UK small and
+> mid-sized businesses. A deputy answers a business's phone and WhatsApp
+> in its name (Smart Call Handling: out of hours, on a busy line, and
+> put through to a person), writes a note after every contact, texts the
+> customer what was agreed with their consent, and drafts work such as a
+> garage estimate or a monthly invoice for a person to approve with one
+> word. Nothing customer-facing is sent without a named person's
+> approval. A person can also have a deputy of their own for mail, diary,
+> reminders and lists. Data is stored in London; some suppliers process
+> calls in the US, and the Trust page says which. No pricing is
+> published; engagement starts with a 45-minute demo call.
 
 ## Pages
-- [Deputable AI - Smart Call Handling & AI Operations for UK Businesses](https://deputable.ai/): AI that answers your phone out of hours, catches overflow calls, and runs routine workflows - with a person in charge of every decision that matters. Built in London.
-- [Services - Smart Call Handling, Website Chat & Workflow Automation | Deputable AI](https://deputable.ai/services.html): Three modes of Smart Call Handling, website chat on the same engine, bespoke workflow automation and a two-week AI readiness assessment. Nothing on this page is a roadmap.
-- [How It Works - Eight Weeks to Production | Deputable AI](https://deputable.ai/how-it-works.html): Five steps: demo call, assessment, build and pilot, handover, optional ongoing support. A decision point at every stage - and you keep everything we deliver.
+- [Deputable AI - A deputy for your business: Smart Call Handling, WhatsApp and the paperwork](https://deputable.ai/): A deputy answers your business's calls and WhatsApp in your name, writes up every one and drafts the quote or the reply. Nothing reaches a customer until a person says ok. Built and run in London.
+- [A Deputy for Your Business - Smart Call Handling, WhatsApp & Workflows | Deputable AI](https://deputable.ai/business.html): Calls answered in your business's name out of hours and on a busy line, a note after every one, drafts that wait for your ok, and workflows such as estimates and property search.
+- [A Deputy of Your Own - Mail, Diary and Reminders by Voice | Deputable AI](https://deputable.ai/personal.html): Ring it or message it. Your mail read aloud and replied to on your yes, every diary in one answer, reminders by text or call, lists, journeys and calls made for you.
+- [Features - Everything a Deputy Does, and Where Each Thing Stands | Deputable AI](https://deputable.ai/features.html): The whole list, honestly marked: 43 capabilities live in production, 17 built and in testing, 8 agreed and next.
+- [How It Works - From a First Call to Your Deputy Answering | Deputable AI](https://deputable.ai/how-it-works.html): Six steps: a demo call, intake, your workflows drawn, set up and privacy paperwork, test calls, and your go-ahead. Nothing takes a real call until you have confirmed it.
 - [About - Why We're Called Deputable | Deputable AI](https://deputable.ai/about.html): Deputable: what you can safely hand to an AI, and what should stay with people. The thinking behind the name, and the founders behind the company.
-- [Trust & Security - Your Data Is Your Own | Deputable AI](https://deputable.ai/trust.html): Where your data is processed, who can act on it, and what happens when the model gets it wrong - the questions IT and procurement ask first, answered plainly.
+- [Trust & Security - Your Data Is Your Own | Deputable AI](https://deputable.ai/trust.html): Where your data lives, what leaves the UK and why, who can see it, and what your deputy can never do on its own. The questions IT and procurement ask first, answered plainly.
 - [Book a Demo Call | Deputable AI](https://deputable.ai/contact.html): Pick a 45-minute slot and tell us the process that wastes the most time. No deck, no pitch - we arrive having read what you wrote.
 - [Privacy Notice | Deputable AI](https://deputable.ai/privacy.html): What the deputable.ai website collects, why, and your rights under UK GDPR - in plain English.

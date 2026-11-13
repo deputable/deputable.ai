@@ -2,7 +2,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   initMobileNav();
-  initFlowDemo();
+  initThreadDemo();
   initConsent();
 });
 
@@ -12,191 +12,122 @@ function initMobileNav() {
   const nav = document.querySelector('nav.main-nav');
   if (!toggle || !nav) return;
   toggle.addEventListener('click', () => {
-    nav.classList.toggle('open');
+    const open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    toggle.textContent = open ? 'Close' : 'Menu';
   });
 }
 
-/* ---------------- Homepage: animated workflow diagram ----------------
-   Steps are strings, or {t, human:true} for the approval steps a person
-   must pass - those render amber and the animation dwells on them. */
-const FLOW_MODES = [
-  {
-    label: 'New enquiry', entry: 'Customer calls', route: 'AI answers',
-    lanes: [
-      { name: 'Known caller · fast path', steps: ['Match record', 'Give update', 'Log note'] },
-      { name: 'New enquiry', steps: ['Qualify enquiry', 'Capture details', 'Check diary', 'Propose slot', { t: 'Approve & price', human: true }, 'Confirm by email', 'CRM updated'] },
-      { name: 'Callback requested', steps: ['Take number', 'Note the reason', 'Suggest times', { t: 'Person calls back', human: true }, 'Log outcome'] }
-    ]
-  },
-  {
-    label: 'Job booked to done', entry: 'New job', route: 'Agent organises',
-    lanes: [
-      { name: 'Routine job · fast path', steps: ['Take details', 'Check diary', 'Book slot'] },
-      { name: 'New booking', steps: ['Take details', 'Check diary', 'Book slot', { t: 'Approve dispatch', human: true }, 'Notify engineer', 'Records updated'] },
-      { name: 'Urgent call-out', steps: ['Triage urgency', 'Safety checks', 'Find engineer', { t: 'Human decision', human: true }, 'Dispatch', 'Records updated'] }
-    ]
-  },
-  {
-    label: 'After the job', entry: 'Job complete', route: 'Agent drafts',
-    lanes: [
-      { name: 'Paperwork · fast path', steps: ['Transcribe notes', 'Draft report', 'File'] },
-      { name: 'Follow-up', steps: ['Draft follow-up email', 'Prepare survey', { t: 'Approve & send', human: true }, 'Send & log replies'] },
-      { name: 'Invoice', steps: ['Cost parts & hours', 'Draft invoice', { t: 'Approve', human: true }, 'Raise invoice', 'Records updated'] }
-    ]
-  }
-];
+/* ---------------- Homepage: the thread demo ----------------
+   The scenarios and their messages are written into the page by
+   scripts/generate_site.py (DEMO_SCENARIOS), so the page reads in full
+   without this script. Here we only reveal a scenario's messages one
+   after another, the way they would arrive on a phone, and switch
+   scenarios from the tabs.
 
-function initFlowDemo() {
-  const root = document.querySelector('[data-flow-demo]');
+   Autoplay runs only while the demo is on screen, moves on to the next
+   scenario by itself until the visitor picks a tab, and never runs
+   under prefers-reduced-motion (the messages are simply all there). */
+function initThreadDemo() {
+  const root = document.querySelector('[data-demo]');
   if (!root) return;
 
-  const norm = (s) => (typeof s === 'string' ? { t: s, human: false } : s);
+  const tabs = Array.from(root.querySelectorAll('[data-demo-tab]'));
+  const panels = Array.from(root.querySelectorAll('[data-demo-panel]'));
+  const nameEl = root.querySelector('[data-demo-name]');
+  const viaEl = root.querySelector('[data-demo-via]');
+  if (!tabs.length || !panels.length) return;
+
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const STEP_MS = 900;
-  const HUMAN_MS = 1800;
-  const LANE_HOLD_MS = 1500;
-  const RESUME_MS = 12000;
+  const FIRST_MS = 400;       // before the first message
+  const DEPUTY_MS = 1600;     // dwell after one of the deputy's messages
+  const YOU_MS = 1100;        // dwell after one of the person's
+  const HOLD_MS = 5200;       // the finished thread, before moving on
 
-  const tabsEl = root.querySelector('[data-flow-tabs]');
-  const entryEl = root.querySelector('[data-flow-entry]');
-  const routeEl = root.querySelector('[data-flow-route]');
-  const lanesEl = root.querySelector('[data-flow-lanes]');
-  const legendEl = root.querySelector('[data-flow-legend]');
-
-  let modeIdx = 0;
-  let laneEls = [];
-  let stepEls = [];        // stepEls[lane][step]
-  let timer = null;
-  let cursor = { lane: 0, step: -1 };
+  let current = 0;
+  let timers = [];
   let inView = false;
-  let userPaused = false;
-  let resumeTimer = null;
+  let auto = true;            // false once the visitor picks a tab
+  let playing = false;
 
-  tabsEl.innerHTML = FLOW_MODES.map((m, i) =>
-    `<button type="button" class="flow-tab${i === 0 ? ' active' : ''}" data-mode="${i}">${m.label}</button>`
-  ).join('');
-
-  function buildMode(i) {
-    modeIdx = i;
-    const mode = FLOW_MODES[i];
-    entryEl.textContent = mode.entry;
-    routeEl.textContent = mode.route;
-
-    lanesEl.innerHTML = mode.lanes.map((lane, li) => {
-      const steps = lane.steps.map(norm).map(s =>
-        `<div class="flow-step${s.human ? ' human' : ''}"><div class="t">${s.t}</div></div>`
-      ).join('');
-      return `<div class="flow-lane" data-lane="${li}">
-        <div class="flow-lane-name">${lane.name}</div>
-        ${steps}
-      </div>`;
-    }).join('');
-
-    legendEl.innerHTML = mode.lanes.map((lane, li) =>
-      `<button type="button" data-lane="${li}"><span class="dot"></span>${lane.name}</button>`
-    ).join('');
-
-    tabsEl.querySelectorAll('[data-mode]').forEach(btn =>
-      btn.classList.toggle('active', Number(btn.dataset.mode) === i));
-
-    laneEls = Array.from(lanesEl.querySelectorAll('.flow-lane'));
-    stepEls = laneEls.map(l => Array.from(l.querySelectorAll('.flow-step')));
-    cursor = { lane: 0, step: -1 };
+  function clearTimers() {
+    timers.forEach(clearTimeout);
+    timers = [];
+    playing = false;
   }
 
-  function clearLit() {
-    laneEls.forEach(l => l.classList.remove('playing', 'active'));
-    stepEls.flat().forEach(s => s.classList.remove('lit'));
-    legendEl.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+  function settle(panel) {
+    // show everything, with no animation pending
+    panel.classList.remove('is-armed');
+    Array.from(panel.children).forEach(c => c.classList.remove('is-in'));
   }
 
-  function stop() {
-    if (timer) { clearTimeout(timer); timer = null; }
+  function select(i) {
+    current = i;
+    tabs.forEach((t, j) => {
+      t.setAttribute('aria-selected', j === i ? 'true' : 'false');
+      t.tabIndex = j === i ? 0 : -1;
+    });
+    panels.forEach((p, j) => {
+      p.classList.toggle('is-active', j === i);
+      settle(p);
+    });
+    nameEl.textContent = panels[i].dataset.name;
+    viaEl.textContent = panels[i].dataset.via;
   }
 
-  function shouldPlay() {
-    return inView && !userPaused && !reduceMotion.matches;
+  function play(i) {
+    clearTimers();
+    select(i);
+    if (reduceMotion.matches || !inView) return;
+
+    const panel = panels[i];
+    const msgs = Array.from(panel.children);
+    panel.classList.add('is-armed');
+    playing = true;
+
+    let at = FIRST_MS;
+    msgs.forEach((m) => {
+      timers.push(setTimeout(() => m.classList.add('is-in'), at));
+      at += m.classList.contains('you') ? YOU_MS : DEPUTY_MS;
+    });
+    timers.push(setTimeout(() => {
+      playing = false;
+      if (auto && inView) play((i + 1) % panels.length);
+    }, at + HOLD_MS));
   }
 
-  function play() {
-    stop();
-    if (!shouldPlay()) return;
-    tick();
-  }
-
-  function tick() {
-    if (!shouldPlay()) { stop(); return; }
-    const lane = laneEls[cursor.lane];
-    const steps = stepEls[cursor.lane];
-
-    cursor.step += 1;
-    if (cursor.step >= steps.length) {
-      // lane complete: hold, then clear and move on
-      timer = setTimeout(() => {
-        lane.classList.remove('playing');
-        steps.forEach(s => s.classList.remove('lit'));
-        cursor = { lane: (cursor.lane + 1) % laneEls.length, step: -1 };
-        tick();
-      }, LANE_HOLD_MS);
-      return;
-    }
-
-    lane.classList.add('playing');
-    const el = steps[cursor.step];
-    el.classList.add('lit');
-    timer = setTimeout(tick, el.classList.contains('human') ? HUMAN_MS : STEP_MS);
-  }
-
-  function selectLane(li) {
-    stop();
-    clearLit();
-    laneEls[li].classList.add('active');
-    legendEl.querySelectorAll('button').forEach(b =>
-      b.classList.toggle('active', Number(b.dataset.lane) === li));
-  }
-
-  function pauseForUser() {
-    userPaused = true;
-    if (resumeTimer) clearTimeout(resumeTimer);
-    resumeTimer = setTimeout(() => {
-      userPaused = false;
-      if (reduceMotion.matches) return;   // stay on the manual view
-      clearLit();
-      cursor = { lane: 0, step: -1 };
-      play();
-    }, RESUME_MS);
-  }
-
-  root.addEventListener('click', (evt) => {
-    const modeBtn = evt.target.closest('[data-mode]');
-    if (modeBtn) {
-      buildMode(Number(modeBtn.dataset.mode));
-      if (reduceMotion.matches || userPaused) selectLane(Math.min(1, laneEls.length - 1));
-      else { clearLit(); play(); }
-      if (!reduceMotion.matches) pauseForUser();
-      return;
-    }
-    const laneBtn = evt.target.closest('[data-lane]');
-    if (laneBtn) {
-      selectLane(Number(laneBtn.dataset.lane));
-      pauseForUser();
-    }
+  tabs.forEach((tab, i) => {
+    tab.addEventListener('click', () => { auto = false; play(i); });
+    tab.addEventListener('keydown', (evt) => {
+      if (evt.key !== 'ArrowRight' && evt.key !== 'ArrowLeft') return;
+      evt.preventDefault();
+      const next = (i + (evt.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length;
+      auto = false;
+      play(next);
+      tabs[next].focus();
+    });
   });
 
   const observer = new IntersectionObserver((entries) => {
     inView = entries[0].isIntersecting;
-    if (inView) play(); else stop();
-  }, { threshold: 0.3 });
+    if (inView) {
+      if (!playing) play(current);
+    } else {
+      // off screen: stop the clock and leave the whole thread readable
+      clearTimers();
+      settle(panels[current]);
+    }
+  }, { threshold: 0.25 });
   observer.observe(root);
 
   reduceMotion.addEventListener('change', () => {
-    if (reduceMotion.matches) { stop(); clearLit(); selectLane(Math.min(1, laneEls.length - 1)); }
-    else { clearLit(); cursor = { lane: 0, step: -1 }; play(); }
+    clearTimers();
+    settle(panels[current]);
+    if (!reduceMotion.matches && inView) play(current);
   });
 
-  buildMode(0);
-  if (reduceMotion.matches) selectLane(Math.min(1, laneEls.length - 1));
-  // autoplay starts when the observer reports the diagram in view
+  select(0);
 }
 
 /* ---------------- Analytics consent (only rendered when GA is set) ---- */
