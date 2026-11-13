@@ -3,21 +3,24 @@
 Plain HTML/CSS/JS site, no build step. All pages are **generated** by
 `scripts/generate_site.py` (see CLAUDE.md - never hand-edit the HTML):
 
-- `index.html` - Home (hero with the thread demo, the doors, what happens on a call,
-  approvals, workflows, a deputy of your own, learning, trust, honesty section)
-- `business.html` - A deputy for your business (Smart Call Handling, WhatsApp and text,
-  the note after a call, approvals and commands, workflows, your team)
+- `index.html` - Home (hero with the run demo, what it is, six kinds of work, tailored,
+  write your own, approvals, learning, trust, honesty section)
+- `platform.html` - The platform (the four layers, the specialists on the shelf, three
+  kinds of automation, how one job runs, the doors, Smart Call Handling, approvals)
+- `workflows.html` - the catalogue of workflows that exist, writing your own in a
+  sentence, what Deputable builds, why the line is drawn there, the ladder
 - `personal.html` - A deputy of your own (mail, diary, reminders, lists, errands)
 - `features.html` - everything it does, each row marked live, built or next and tied
   to an id in the Deputy platform's `docs/features.md`
-- `how-it-works.html` - six steps from a first call to go-live, plus the assessment
+- `how-it-works.html` - Getting started: six steps from a first call to go-live, plus
+  the assessment
 - `about.html` - the "deputable" narrative + founders
 - `trust.html` - trust & security Q&A (FAQPage JSON-LD) and the supplier table
 - `contact.html` - the booking page: Zoho Bookings calendar embedded directly
   (its booking form collects name, email, phone, company and the process to
   discuss - one form, no separate enquiry step)
 - `privacy.html` - privacy notice (linked from the footer)
-- `services.html` - a redirect to `business.html`, kept so old links work
+- `services.html` - a redirect to `platform.html`, kept so old links work
 - `sitemap.xml`, `llms.txt` - regenerated on every run; `robots.txt` is static
 
 ## Run locally

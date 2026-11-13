@@ -34,18 +34,19 @@ CSS_VER = _content_ver("css/style.css")
 JS_VER = _content_ver("js/main.js")
 
 NAV_ITEMS = [
-    ("business.html", "business", "Business"),
+    ("platform.html", "platform", "Platform"),
+    ("workflows.html", "workflows", "Workflows"),
     ("personal.html", "personal", "Personal"),
     ("features.html", "features", "Features"),
-    ("how-it-works.html", "process", "How it works"),
+    ("how-it-works.html", "process", "Getting started"),
     ("trust.html", "trust", "Trust"),
     ("about.html", "about", "About"),
 ]
 
-SITE_TITLE = "Deputable AI - A deputy for your business: Smart Call Handling, WhatsApp and the paperwork"
-SITE_DESC = ("A deputy answers your business's calls and WhatsApp in your name, writes up every one "
-             "and drafts the quote or the reply. Nothing reaches a customer until a person says ok. "
-             "Built and run in London.")
+SITE_TITLE = "Deputable AI - Agentic workflows for small and mid-sized businesses"
+SITE_DESC = ("Deputable runs your routine work as agentic workflows: a deputy and its squad of AI "
+             "specialists answer, read, look things up, draft and follow up, fitted to how your business "
+             "works. Nothing reaches a customer until a person says ok. Built and run in London.")
 
 ORG_JSONLD = json.dumps({
     "@context": "https://schema.org",
@@ -155,10 +156,12 @@ def header(active_id, relpath_prefix=""):
 
 
 FOOTER_PRODUCT = [
-    ("business.html", "A deputy for your business"),
+    ("platform.html", "The platform"),
+    ("workflows.html", "Workflows"),
+    ("platform.html#smart-call-handling", "Smart Call Handling"),
     ("personal.html", "A deputy of your own"),
     ("features.html", "Everything it does"),
-    ("how-it-works.html", "How it works"),
+    ("how-it-works.html", "Getting started"),
 ]
 FOOTER_COMPANY = [
     ("about.html", "About"),
@@ -174,7 +177,7 @@ def footer(relpath_prefix=""):
     <div class="wrap footer-top">
       <div class="footer-brand">
         <img src="{relpath_prefix}assets/deputable-logo.png?v={ASSET_VER}" alt="Deputable AI - {TAGLINE}" width="200" height="52">
-        <p>A deputy for your business, and one of your own. Built and run from London, with a person in charge of every decision that matters.</p>
+        <p>Agentic workflows for small and mid-sized businesses, fitted to how each one works. Built and run from London, with a person in charge of every decision that matters.</p>
       </div>
       <div class="footer-col">
         <div class="footer-col-title">Product</div>
@@ -339,137 +342,402 @@ def booking_html():
 
 
 # ------------------------------------------------------------------
-# The thread demo (homepage hero). Each scenario is a real, built flow
-# shown as the messages a person sees on their phone. Messages are in
-# the HTML from the start, so the page reads without JavaScript;
-# js/main.js only reveals them in turn and switches the tabs.
-# Blue = the deputy. Coral = the person's own words and decisions.
+# Who does a step. The platform draws every workflow as a chart whose
+# steps are coloured by who does each one (its Workflows pages), and the
+# site draws them the same way, so a visitor sees the product's own
+# picture of the work:
+#   trigger = what starts it       code   = plain code, no AI
+#   model   = an AI model reads or drafts
+#   person  = one of the client's people decides
+#   missing = a part the deputy does not have yet ("Not yet")
+# The words under each step are the platform's own wherever it has them
+# (the `Flow` declarations and `of_mail_rule` in service/workflows.py).
 # ------------------------------------------------------------------
+WHO = {"trigger": "Starts it", "code": "Code", "model": "Model", "person": "You", "missing": "Not yet"}
+
+
+def who_key(kinds=("trigger", "code", "model", "person")):
+    words = {"trigger": "Starts it", "code": "Plain code", "model": "An AI model", "person": "A person",
+             "missing": "A part it lacks"}
+    return '<div class="whokey">' + "".join(
+        f'<span><i class="{k}"></i>{words[k]}</span>' for k in kinds) + "</div>"
+
+
+def chart(steps):
+    """A workflow drawn left to right. `steps`: (who, what) or
+    (who, what, label) where label replaces the who word."""
+    out = []
+    for i, step in enumerate(steps):
+        who, what = step[0], step[1]
+        label = step[2] if len(step) > 2 else WHO[who]
+        if i:
+            out.append('<span class="arr" aria-hidden="true">&rarr;</span>')
+        out.append(f'<div class="node {who}"><span class="who">{label}</span><span class="what">{what}</span></div>')
+    return '<div class="chart">' + "".join(out) + "</div>"
+
+
+def strip(steps):
+    """The same steps as a compact strip, for a list of workflows."""
+    return '<ol class="strip">' + "".join(
+        f'<li class="{who}"><span class="who">{WHO[who]}</span>{what}</li>' for who, what in steps) + "</ol>"
+
+
 def _msg(kind, body, at="", who="", plain=False):
     cls = f"msg {kind}" + (" plain" if plain else "")
     at_html = f'<span class="at">{at}</span>' if at else ""
     who_html = f'<span class="who"><span>{who}</span>{at_html}</span>' if (who or at) else ""
-    return f'<div class="{cls}">{who_html}{body}</div>'
+    return f'<div class="{cls}" data-rv>{who_html}{body}</div>'
 
 
-def _sys(text, you=False):
-    return f'<div class="sys{" you" if you else ""}">{text}</div>'
-
-
-_EST = """<div class="est">
-  <div class="est-title">BMW 320d, 2019: front brakes</div>
-  <div class="est-row"><span>Discs, pads and wear sensor</span><span class="p">&pound;150.40</span></div>
-  <div class="est-row"><span>Labour, 1.6 h</span><span class="p">&pound;136.00</span></div>
-  <div class="est-row"><span>VAT</span><span class="p">&pound;57.28</span></div>
-  <div class="est-total"><span>Total</span><span class="p">&pound;343.68</span></div>
-  <div class="est-note">Parts: eBay, 10:46 today. Labour: starter times.</div>
-</div>"""
-
-DEMO_SCENARIOS = [
+# ------------------------------------------------------------------
+# The run demo (homepage hero): four workflows, each started a
+# different way, shown as the steps the platform runs and then what the
+# person sees on their phone. Everything is in the HTML from the start,
+# so the page reads without JavaScript; js/main.js only lights the
+# steps in turn and switches the tabs.
+# ------------------------------------------------------------------
+RUNS = [
     {
-        "tab": "After a call",
-        "name": "Your garage's deputy",
-        "via": "On your WhatsApp",
-        "msgs": [
-            _msg("deputy", "Sam Taylor (07700 900461). BMW 320d, AB12 CDE. Grinding from the front brakes. Wants a price and a slot this week, after 4pm. <b>Call back owed.</b>", "10:47", "Message taken"),
-            _msg("deputy", "Draft estimate <b>P14 v1</b> from that call. Reply <code>ok P14</code> to accept it, <code>drop P14</code> to bin it, or tell me what to change." + _EST, "10:48", "Waiting for you"),
+        "tab": "A call", "name": "Estimate from a call", "via": "A garage",
+        "steps": [
+            ("trigger", "A registration and a fault arrive, by call or WhatsApp"),
+            ("model", "The vehicle identified and the repair named"),
+            ("model", "The parts it needs, with live offers"),
+            ("code", "Labour, parts and VAT added up and checked against the records"),
+            ("person", "Staff approve it before the customer hears a figure"),
+        ],
+        "phone": [
+            _msg("deputy", "Draft estimate <b>P14 v1</b>: BMW 320d, front brakes, <b>&pound;343.68</b>. Reply <code>ok P14</code>, <code>drop P14</code>, or say what to change.", "10:48", "Waiting for you"),
             _msg("you", "ok P14", "10:52", "You"),
-            _sys("Approved by you &middot; version 1 &middot; 10:52", you=True),
         ],
     },
     {
-        "tab": "A photo of a bill",
-        "name": "Your deputy",
-        "via": "On your WhatsApp",
-        "msgs": [
-            _msg("you", "Photo &middot; IMG_2041.jpg", "09:12", "You sent"),
-            _msg("deputy", "That looks like a <b>supplier invoice</b>: Brightwell Plumbing, INV-2041, <b>&pound;153.00</b>. I was unsure of the due date and read it as 15 October. Kept as <b>S1</b> for your ok.", "09:13", "Read and sorted"),
-            _msg("you", "S1 due 22 October", "09:14", "You"),
-            _msg("deputy", "<b>S1 v2</b>: due 22 October. Reply <code>ok S1</code> to keep it as a bill.", "09:14", "New version"),
+        "tab": "A photo", "name": "A document is read and kept", "via": "Any business",
+        "steps": [
+            ("trigger", "A photo, PDF or file arrives on WhatsApp"),
+            ("model", "Read, and its kind named: an invoice, a receipt, a letter"),
+            ("code", "Kept in the record. An invoice waits for your ok, never paid"),
+            ("person", "You correct what it was unsure of, then ok it"),
+            ("code", "One row in the ledger"),
+        ],
+        "phone": [
+            _msg("deputy", "Supplier invoice: Brightwell Plumbing, <b>&pound;153.00</b>, due 22 October. Kept as <b>S1</b>. Reply <code>ok S1</code> to keep it as a bill.", "09:14", "Waiting for you"),
             _msg("you", "ok S1", "09:15", "You"),
-            _msg("deputy", "Kept as a bill: Brightwell Plumbing, &pound;153.00, due 22 October. One row in your ledger.", "09:15", "Done"),
         ],
     },
     {
-        "tab": "Your own inbox",
-        "name": "Your deputy",
-        "via": "On your WhatsApp",
-        "msgs": [
-            _msg("deputy", "From the venue, 14:02: they need final numbers for Thursday by 5pm today.", "14:05", "Mail that can't wait"),
-            _msg("you", "Draft a reply: 120 of us, and ask if the car park opens at 8", "14:07", "You", plain=True),
-            _msg("deputy", "Draft kept on the thread, everyone in copy:<br><i>&ldquo;Hi Dana, we will be 120 on Thursday. Is the car park open from 8am?&rdquo;</i><br>Say <code>send</code> to send it as it stands.", "14:08", "Draft, not sent"),
-            _msg("you", "send", "14:09", "You"),
-            _sys("Sent from your own address &middot; once &middot; 14:09", you=True),
+        "tab": "An email", "name": "Timesheets by email: the month's invoice", "via": "A contractor",
+        "steps": [
+            ("trigger", "An email from your client arrives, and the sender is confirmed"),
+            ("code", "Its screenshots, each read as a timesheet"),
+            ("model", "The month's invoice drafted on last month's"),
+            ("code", "Days and totals added up. Word file and PDF saved to your Drive"),
+            ("person", "You check the figures and send it"),
+        ],
+        "phone": [
+            _msg("deputy", "October's invoice is drafted: 21 days. The PDF is in your Drive and the email is in your drafts, <b>not sent</b>.", "17:31", "Waiting for you"),
+            _msg("you", "send", "17:40", "You"),
+        ],
+    },
+    {
+        "tab": "A schedule", "name": "Mail that can't wait", "via": "One person",
+        "steps": [
+            ("trigger", "Every 30 minutes"),
+            ("code", "New mail is checked for. Nothing new, nothing runs"),
+            ("model", "Only when something changed: can it wait?"),
+            ("person", "Told on your phone when there is something to say"),
+        ],
+        "phone": [
+            _msg("deputy", "From the venue, 14:02: they need final numbers for Thursday by 5pm today.", "14:05", "Can't wait"),
+            _msg("you", "Draft a reply: 120 of us", "14:07", "You", plain=True),
         ],
     },
 ]
 
 
-def thread_demo():
+def run_demo():
     tabs = "".join(
-        f'<button type="button" class="demo-tab" role="tab" id="demo-tab-{i}" aria-controls="demo-panel-{i}" '
-        f'aria-selected="{"true" if i == 0 else "false"}" data-demo-tab="{i}">{s["tab"]}</button>'
-        for i, s in enumerate(DEMO_SCENARIOS)
+        f'<button type="button" class="demo-tab" role="tab" id="run-tab-{i}" aria-controls="run-panel-{i}" '
+        f'aria-selected="{"true" if i == 0 else "false"}" data-demo-tab="{i}">{r["tab"]}</button>'
+        for i, r in enumerate(RUNS)
     )
-    panels = "".join(
-        f'<div class="thread-panel{" is-active" if i == 0 else ""}" role="tabpanel" id="demo-panel-{i}" '
-        f'aria-labelledby="demo-tab-{i}" data-demo-panel data-name="{s["name"]}" data-via="{s["via"]}">'
-        + "".join(s["msgs"]) + "</div>"
-        for i, s in enumerate(DEMO_SCENARIOS)
-    )
-    first = DEMO_SCENARIOS[0]
-    return f"""<div class="demo" data-demo>
-      <div class="demo-tabs" role="tablist" aria-label="Three things a deputy does">{tabs}</div>
-      <div class="thread">
-        <div class="thread-head">
-          <div class="thread-avatar"><img src="assets/icon-192.png?v={ASSET_VER}" alt="" width="26" height="26"></div>
+    panels = ""
+    for i, r in enumerate(RUNS):
+        steps = "".join(
+            f'<li class="rstep {who}" data-rv><span class="who">{WHO[who]}</span><span class="what">{what}</span></li>'
+            for who, what in r["steps"])
+        panels += (
+            f'<div class="run-panel{" is-active" if i == 0 else ""}" role="tabpanel" id="run-panel-{i}" '
+            f'aria-labelledby="run-tab-{i}" data-demo-panel data-name="{r["name"]}" data-via="{r["via"]}">'
+            f'<ol class="run-steps">{steps}</ol>'
+            f'<div class="run-phone"><div class="run-phone-label">On your phone</div>{"".join(r["phone"])}</div>'
+            "</div>")
+    first = RUNS[0]
+    return f"""<div class="demo" data-demo="auto">
+      <div class="demo-label">It starts with</div>
+      <div class="demo-tabs" role="tablist" aria-label="Four workflows, each started a different way">{tabs}</div>
+      <div class="runcard">
+        <div class="run-head">
           <div>
-            <div class="thread-name" data-demo-name>{first["name"]}</div>
-            <div class="thread-via" data-demo-via>{first["via"]}</div>
+            <div class="run-kicker">Workflow</div>
+            <div class="run-name" data-demo-name>{first["name"]}</div>
           </div>
+          <div class="run-via" data-demo-via>{first["via"]}</div>
         </div>
-        <div class="thread-panels">{panels}</div>
+        <div class="run-panels">{panels}</div>
       </div>
-      <p class="demo-caption">An illustration. The people, the car and the prices are made up.</p>
+      <p class="demo-caption">Real workflows, drawn as the platform draws them. The people and figures are made up.</p>
     </div>"""
 
 
 # ------------------------------------------------------------------
-# What a deputy does, said once and used on several pages.
+# The catalogue: workflows that exist today, as the platform lists them
+# (one row each: what starts it, the steps, who does each). The id is
+# the feature's in the Deputy repo's docs/features.md; the status must
+# match that list (see FEATURES below).
 # ------------------------------------------------------------------
-# (for whom, title, status, body)
-WORKFLOWS = [
-    ("Garages", "Estimates for a garage", "live",
-     "The vehicle, the repair, the labour and the parts, totalled with VAT in code and drafted a minute or two after the call for you to check. Parts are priced live from eBay today, with starter labour times; licensed data is next."),
-    ("Estate agents", "Property search", "live",
-     "A caller asks for a two-bed to rent near the station. Your deputy searches your own live listings, reads the matches back, and takes the lead. If there is nothing in that town it says so and offers the ones nearby."),
-    ("Any business", "A photo becomes a bill", "built",
-     "Send a supplier invoice or a letter as a photo. It is read, sorted, its figures pulled out and put to you, with what it was unsure of. Your ok writes one row in the ledger."),
-    ("Contractors", "The monthly invoice", "live",
-     "Timesheet screenshots in, last month's invoice as the template. The Word file, the PDF and the covering email are drafted for you to check. Nothing is sent."),
-    ("Any business", "Meeting follow-ups", "built",
-     "Send a recording. Back come a summary, the decisions, and who owes what by when. Each follow-up waits for your ok before anyone outside hears from it."),
-    ("Any business", "Yours, in your words", "built",
-     "&ldquo;When a message is taken, text me and raise a call back.&rdquo; Describe a workflow, your deputy draws it, and you turn it on."),
+STARTS = ["A call", "A document", "An email", "A time", "Something happens", "You ask"]
+
+CATALOGUE = [
+    ("REC-14", "Estimate from a call or a message", "A call", "live", "Garages", [
+        ("trigger", "A registration and a fault arrive"),
+        ("model", "The vehicle identified and the repair named"),
+        ("model", "The parts it needs, with live offers"),
+        ("code", "Totals and VAT added up and checked"),
+        ("person", "Staff approve it before the customer hears a figure")]),
+    ("REC-15", "Property search on the call", "A call", "live", "Estate agents", [
+        ("trigger", "A caller asks what is for sale or to rent"),
+        ("code", "The agency's own live listings searched"),
+        ("model", "The matches read back, the lead taken"),
+        ("person", "Staff ring back")]),
+    ("REC-02", "The note after every contact", "A call", "live", "Any business", [
+        ("trigger", "A call ends, or a message thread goes quiet"),
+        ("code", "Every action taken is listed from the record"),
+        ("model", "Summary, open items, promises, the lead"),
+        ("code", "Checked complete, then sent to the owner's phone")]),
+    ("REC-04", "Call backs owed", "Something happens", "live", "Any business", [
+        ("trigger", "A call back is promised"),
+        ("code", "Raised as an item due at your next opening"),
+        ("person", "Someone makes the call and closes it")]),
+    ("REC-03", "The text to your customer", "Something happens", "live", "Any business", [
+        ("trigger", "A message is taken"),
+        ("code", "Only if the caller said yes to a text"),
+        ("code", "One text with what was agreed, never twice")]),
+    ("DOC-01", "A document sent in is read and kept", "A document", "built", "Any business", [
+        ("trigger", "A photo, PDF or file arrives"),
+        ("model", "Read, and its kind named"),
+        ("code", "Kept in the record"),
+        ("person", "An invoice waits for your ok, never paid")]),
+    ("COMP-26", "Meeting follow-ups", "A document", "built", "Any business", [
+        ("trigger", "A recording arrives"),
+        ("code", "Transcribed, each speaker named"),
+        ("model", "Summary, decisions, who owes what by when"),
+        ("person", "You approve each follow-up before anyone hears of it")]),
+    ("DOC-01b", "Timesheets by email: the month's invoice", "An email", "live", "Contractors", [
+        ("trigger", "An email from your client, sender confirmed"),
+        ("code", "Its screenshots, each read as a timesheet"),
+        ("model", "The month's invoice drafted on last month's"),
+        ("person", "You check the figures and send it")]),
+    ("COMP-04", "Mail that can't wait", "A time", "live", "One person", [
+        ("trigger", "Every 30 minutes"),
+        ("code", "New mail checked for. Nothing new, nothing runs"),
+        ("model", "Only when something changed: can it wait?"),
+        ("person", "Told on your phone when there is something to say")]),
+    ("COMP-05", "Diary clashes", "A time", "built", "One person", [
+        ("trigger", "Every hour"),
+        ("code", "Every calendar read and compared"),
+        ("person", "Each new overlap said once, on your phone")]),
+    ("COMP-18", "The morning summary", "A time", "built", "One person", [
+        ("trigger", "07:30 every day"),
+        ("model", "Diaries, mail that needs you, reminders, what waits"),
+        ("code", "Emailed once, from your deputy's mailbox")]),
+    ("COMP-08", "Reminders", "A time", "live", "One person", [
+        ("trigger", "The time you set"),
+        ("code", "A text, or a call. No AI model involved")]),
+    ("COMP-13", "A call made from a brief", "You ask", "built", "One person", [
+        ("trigger", "You ask it to ring someone"),
+        ("model", "A brief drafted: who, what to say, what it may agree"),
+        ("person", "You approve the brief"),
+        ("code", "It rings inside calling hours, with one retry"),
+        ("model", "The outcome read against the brief and told to you")]),
+    ("COMP-24", "A voice note, heard and answered", "You ask", "built", "Any business", [
+        ("trigger", "A voice note arrives on WhatsApp"),
+        ("code", "Transcribed"),
+        ("model", "Answered as a text would be")]),
+    ("COMP-14", "What a call owed, settled", "A call", "built", "One person", [
+        ("trigger", "A call ends"),
+        ("code", "What was promised is compared with what was done"),
+        ("model", "What it can do itself, it does"),
+        ("person", "The rest waits on your word")]),
 ]
 
 
-def workflow_cards():
-    return "".join(
-        f'<div class="card"><div class="top"><span class="for">{who}</span>{status(st)}</div>'
-        f'<h3>{title}</h3><p>{body}</p></div>'
-        for who, title, st, body in WORKFLOWS
-    )
+def catalogue_html():
+    rows = "".join(
+        f'<div class="wfrow" data-id="{fid}"><div class="wf-main"><h3>{name}</h3>'
+        f'<div class="wf-meta"><span class="starts">{starts}</span><span class="for">{who}</span></div></div>'
+        f'{strip(steps)}<div class="wf-status">{status(st)}</div></div>'
+        for fid, name, starts, st, who, steps in CATALOGUE)
+    return f'<div class="wflist">{rows}</div>'
+
+
+# ------------------------------------------------------------------
+# A workflow from a description: the platform's own Add page, with its
+# own wording ("We'd call it", "In your words", "What it lacks", the
+# buttons) and its own two test cases (tests/test_workflows.py in the
+# Deputy repo). The first is built at once from parts the deputy has;
+# the second needs two parts it lacks, which become one request to us.
+# ------------------------------------------------------------------
+DRAFTS = [
+    {
+        "tab": "Simple: built at once",
+        "words": "When a message is taken, tell Sam and raise a call back for his ok.",
+        "name": "Messages to Sam, with a call back",
+        "tag": ("ok", "Built from parts it has"),
+        "steps": [
+            ("trigger", "A message is taken"),
+            ("code", "Tells Sam: who rang and what they wanted"),
+            ("person", "Raises a call back for someone's ok"),
+        ],
+        "lacks": [],
+        "acts": [("go", "Turn it on")],
+        "foot": "Texts to customers go only in the words written here. The model reads and never picks who is told or what is sent.",
+    },
+    {
+        "tab": "Bigger: needs a part it lacks",
+        "words": "Every weekday at nine, look up MOT dates at the DVLA, text me, and ring anyone who does not reply.",
+        "name": "MOT reminders with the DVLA",
+        "tag": ("warn", "Needs Deputable"),
+        "steps": [
+            ("trigger", "09:00 on weekdays"),
+            ("missing", "Look up the MOT date at the DVLA", "Not yet &middot; a tool"),
+            ("code", "Tells you: MOT reminders went out"),
+            ("missing", "Ring anyone who does not reply", "Not yet &middot; a specialist"),
+        ],
+        "lacks": ["A tool: look up the MOT date at the DVLA", "A specialist: ring anyone who does not reply"],
+        "acts": [("go", "Turn on what it has"), ("warn", "Send the request")],
+        "foot": "The parts it has can go on today. The rest becomes one request to Deputable, with your words and the drawing attached.",
+    },
+]
+
+
+def draft_demo():
+    tabs = "".join(
+        f'<button type="button" class="demo-tab" role="tab" id="draft-tab-{i}" aria-controls="draft-panel-{i}" '
+        f'aria-selected="{"true" if i == 0 else "false"}" data-demo-tab="{i}">{d["tab"]}</button>'
+        for i, d in enumerate(DRAFTS))
+    panels = ""
+    for i, d in enumerate(DRAFTS):
+        tone, tag = d["tag"]
+        lacks = ""
+        if d["lacks"]:
+            lacks = ('<div class="draft-lacks"><div class="draft-k">What it lacks</div><ul>'
+                     + "".join(f"<li>{x}</li>" for x in d["lacks"]) + "</ul></div>")
+        acts = "".join(f'<span class="draft-btn {t}">{label}</span>' for t, label in d["acts"])
+        panels += f"""<div class="draft-panel{" is-active" if i == 0 else ""}" role="tabpanel" id="draft-panel-{i}" aria-labelledby="draft-tab-{i}" data-demo-panel>
+          <div class="draft-k">In your words</div>
+          <p class="draft-words">{d["words"]}</p>
+          <div class="draft-named"><span class="draft-k">We'd call it</span><span class="draft-name">{d["name"]}</span><span class="draft-tag {tone}">{tag}</span></div>
+          {chart(d["steps"])}
+          {lacks}
+          <div class="draft-acts">{acts}</div>
+          <p class="draft-foot">{d["foot"]}</p>
+        </div>"""
+    return f"""<div class="demo draft" data-demo>
+      <div class="demo-tabs" role="tablist" aria-label="Two workflows written in words">{tabs}</div>
+      <div class="draftcard">
+        <div class="draft-bar"><span>Workflows</span><span aria-hidden="true">&middot;</span><span>Add</span><span aria-hidden="true">&middot;</span><span>drawn from your words</span></div>
+        <div class="draft-panels">{panels}</div>
+      </div>
+    </div>"""
+
+
+# What a business can build for itself today: the platform's closed
+# parts catalogue (config/workflow_parts.yaml in the Deputy repo).
+PARTS_STARTS = [
+    ("At a time", "Every day, on weekdays, or every hour."),
+    ("When something happens", "A message is taken, a call ends, a voicemail is left, a document is read, a draft is approved, two diary entries overlap, a send fails."),
+    ("When an email arrives", "From a sender you name, with timesheets attached."),
+]
+PARTS_STEPS = [
+    ("code", "Tell one of your people", "In the words you wrote, with the details filled in."),
+    ("person", "Raise work for someone's ok", "A call back, a promise, a draft: it waits for a person."),
+    ("code", "Text the customer", "Only in the words you wrote, only about the customer it concerns."),
+]
+# The four kinds of part it will not build from words (`missing:` in the
+# same file), and the path a request takes (requisitions.STEPS).
+PARTS_MISSING = [
+    ("A new tool", "A site, an API or a lookup your deputy has no way into yet."),
+    ("A new specialist", "A member of the squad with its own access to one of your systems."),
+    ("A new kind of document", "Paperwork it cannot read yet."),
+    ("Anything that pays or signs", "Never built from words. Built with you, with a person approving each one."),
+]
+REQUEST_STEPS = ["You asked", "Deputable is reviewing", "A decision and a price, if any", "Built and tested", "On your deputy"]
+
+# Why the line is drawn there. Each of these is how the platform is
+# built, not a promise: see docs/workflows.md ("Invariants held") and
+# docs/learning.md ("Invariants this keeps") in the Deputy repo.
+PRINCIPLES = [
+    ("Your deputy never writes its own code.",
+     "A workflow you describe is assembled only from parts that already exist and have been tested. It cannot do something nobody has checked."),
+    ("The drawing is the agreement.",
+     "It draws exactly what it will do and who does each step. You change the words and it redraws. Turning it on builds what the drawing shows and nothing else."),
+    ("A model may read. It may not send.",
+     "Every message, and every change to a record, is plain code or a person. A text to a customer goes in the exact words you wrote; the model never picks who is told or what is said."),
+    ("Money is never built from words.",
+     "Anything that pays, signs or moves money is built with you by people, with an approval on every one."),
+    ("New parts are built once, by people.",
+     "A tool your deputy lacks is reviewed, built with its tests and signed by one of us before it runs. The next business that needs it gets it from the shelf."),
+    ("Every version is kept.",
+     "Pause a workflow, remove it, restore it. What it was on any day is in your record."),
+]
+
+# The ladder (docs/learning.md, "Five kinds of proposal, on one ladder"):
+# the deputy always proposes the lowest rung that does the job.
+LADDER = [
+    ("you", "A lesson", "A habit in how something is written or done.", "The person it came from"),
+    ("you", "A rule", "A line your whole deputy holds, on every call and every job.", "The business owner"),
+    ("you", "A skill", "A known sequence of steps over tools it already has, dry-run in front of you first.", "You"),
+    ("us", "A new tool", "A way into a system it cannot reach yet.", "Deputable builds and signs"),
+    ("us", "A new specialist", "A new member of the squad with its own access.", "Deputable builds and signs"),
+]
+
+
+def ladder_html():
+    rungs = "".join(
+        f'<li class="rung {side}"><span class="rung-n">0{i}</span><div><h3>{name}</h3><p>{what}</p>'
+        f'<span class="rung-by">{by}</span></div></li>'
+        for i, (side, name, what, by) in enumerate(LADDER, 1))
+    return f"""<ol class="ladder">{rungs}</ol>
+    <div class="ladder-key"><span class="you">Rungs 1 to 3: you approve, and it takes effect on the next job</span><span class="us">Rungs 4 and 5: we build, test and sign</span></div>"""
+
+
+# The shelf: the specialists a squad is assembled from, with what each
+# can do and what it works with (src/deputy/members/ in the Deputy
+# repo). Plain names here; the platform's own role names stay internal.
+SHELF = [
+    ("Mail and diary", "Finds and reads mail, drafts replies, sends on a yes. Reads every calendar, blocks time, sends invitations.", "Gmail, Google Calendar, Zoho, calendar feeds"),
+    ("Parts and pricing", "Identifies the vehicle, names the repair, finds the parts and live offers, totals it with VAT.", "eBay, your own records"),
+    ("Property", "Searches an agency's own live listings and reads the matches back.", "The agency's website"),
+    ("Invoicing", "Drafts the month's invoice from timesheets, on last month's as the template.", "Gmail, Google Drive"),
+    ("Research", "Searches the web and reads a page in parts.", "Brave Search"),
+    ("Journeys", "Public transport in London with real times. Drives in traffic, and when to leave.", "TfL, Google Routes"),
+    ("Documents", "Reads photos, PDFs and letters, names what each is, finds them again by name.", "Your deputy's own record"),
+    ("Reminders", "A text, or a call, at the time you set.", "Text and phone"),
+    ("Lists and facts", "Lists, &ldquo;remember that&rdquo;, and what it is told to forget.", "Your deputy's own record"),
+    ("Calls out", "Puts you through to someone, or drafts a brief for a call it makes itself.", "Phone"),
+    ("Decks", "Builds slides from an outline you agree, and emails them to you.", "Email"),
+]
 
 
 # Shared by the homepage and About page - keep the two in step.
 depute_items = [
-    "Answering calls out of hours and on a busy line",
-    "Taking messages and writing up every call",
-    "Keeping track of every call back you owe",
     "Drafting estimates, replies and invoices",
     "Reading and sorting the photos and PDFs you send",
-    "Reminders, diaries and the mail that can't wait",
+    "Writing up every call and every message",
+    "Keeping track of every call back you owe",
+    "Watching the mail and the diary for what can't wait",
+    "Answering the phone out of hours and on a busy line",
 ]
 
 keep_items = [
@@ -511,52 +779,64 @@ def guarantees_html():
 # ==================================================================
 # HOME
 # ==================================================================
-doors_home = [
-    ("phone", "Phone", "live", "A UK number answered in your business's name. Or keep the number your customers know and forward it when you're busy or closed.", ""),
-    ("chat", "WhatsApp", "live", "Customers message the business and get an answer. Your notes, drafts and approvals arrive on your own WhatsApp.", "Meta checks each business before its number goes on WhatsApp. It takes a few days and we handle it."),
-    ("text", "Text", "live", "What was agreed on the call, sent to your customer in writing, only if they said yes. STOP is honoured at once.", ""),
-    ("page", "Your pages", "built", "Sign in with a code sent to your phone. What waits for you, recent conversations, your workflows and your usage.", ""),
+# The six ways a workflow starts, in the platform's own words (STARTS in
+# service/workflows.py).
+anatomy_starts = [
+    ("A call", "A customer rings your business"),
+    ("A document", "A photo, a PDF, a recording"),
+    ("An email", "From a sender you name"),
+    ("A time", "Every morning, every half hour"),
+    ("Something happens", "A message is taken, a draft approved"),
+    ("You ask", "By voice, WhatsApp or text"),
+]
+anatomy_ends = [
+    ("person", "A draft, waiting for your ok"),
+    ("code", "A message, sent once"),
+    ("code", "A record, kept"),
+    ("code", "One of your people, told"),
 ]
 
-callmap = [
-    ("Before the first word", "It reads up.", [
-        (False, "<b>Who is calling.</b> Your staff are greeted by name. A customer is answered as the business."),
-        (False, "<b>What happened last time.</b> The last call, the notes, what was promised."),
-        (False, "<b>Your rules.</b> Hours, services and standing rules in your own words: &ldquo;never give a price&rdquo;."),
-    ]),
-    ("On the call", "It answers as you.", [
-        (False, "<b>Says what it is.</b> The greeting names your business, says it is an AI assistant and that the call is recorded."),
-        (False, "<b>Answers what it safely can</b> from your own facts, and says so when it can't."),
-        (False, "<b>Takes it down properly.</b> Who, the number, what is wrong, what they want."),
-        (True, "<b>They ask for a person.</b> It holds the caller and rings your mobile. If you can't take it, a call back is promised."),
-    ]),
-    ("After the call", "It writes it up.", [
-        (False, "<b>A note on your WhatsApp</b> as the call ends: who rang, why, what was promised."),
-        (False, "<b>Your customer gets it in writing</b>, by text, only if they said yes."),
-        (False, "<b>A promised call back</b> becomes an item that waits until it is done."),
-        (True, "<b>Any draft waits for your ok.</b> An estimate, a reply, an invoice. Nothing goes on its own."),
-    ]),
+kinds = [
+    ("Answer", "The phone out of hours and on a busy line, WhatsApp messages, voice notes. In your business's name, from your own facts and rules."),
+    ("Write up", "A note after every contact: who it was, what they wanted, what was promised. The text to your customer. The call back you now owe."),
+    ("Read", "Photos, PDFs, letters, timesheets, recordings and your inbox. Sorted, the figures pulled out, and what it was unsure of said plainly."),
+    ("Look up", "Your own listings and records, parts and live prices, every diary you keep, journeys, the web."),
+    ("Draft", "Estimates, invoices, replies and decks, with the arithmetic done in code. Yours to check, change and send."),
+    ("Chase and watch", "Reminders, mail that can't wait, diary clashes, meeting follow-ups, a call made for you from a brief you approved."),
+]
+
+# Three deputies as they are assembled today: the squad, the workflows
+# switched on, and the decision that stays with a person.
+fits = [
+    ("A garage", ["Parts and pricing"],
+     ["The note after every call", "Call backs owed", "An estimate from a call"],
+     "The owner approves every estimate. Nobody is quoted on the phone."),
+    ("An estate agency", ["Property"],
+     ["Listings searched on the call", "A card to staff for every message", "A text listing the properties read out"],
+     "Staff ring back every lead."),
+    ("A contractor", ["Mail and diary", "Invoicing", "Reminders", "Research"],
+     ["The month's invoice from timesheets", "Mail that can't wait", "Diary clashes", "The morning summary"],
+     "You check the figures and send it."),
 ]
 
 
-def callmap_html():
-    cols = ""
-    for when, title, steps in callmap:
-        items = "".join(
-            f'<div class="callstep{" you" if you else ""}">{text}</div>' for you, text in steps
-        )
-        cols += f'<div class="callcol"><div class="when">{when}</div><h3>{title}</h3><div class="callsteps">{items}</div></div>'
-    return f"""<div class="callmap">{cols}</div>
-    <div class="legend"><span><i></i>Your deputy does it</span><span><i class="you"></i>A person decides</span></div>"""
+def fits_html():
+    out = ""
+    for name, squad, flows, decides in fits:
+        out += (
+            f'<div class="fit"><h3>{name}</h3>'
+            '<div class="fit-k">Its squad</div><div class="pill-row">'
+            + "".join(f'<span class="pill">{s}</span>' for s in squad) + "</div>"
+            '<div class="fit-k">Its workflows</div>' + ticks(flows)
+            + f'<div class="fit-decides"><span class="fit-k">Stays with a person</span>{decides}</div></div>')
+    return out
 
 
-personal_teaser = [
-    "<b>Your inbox, by voice.</b> Found, read aloud, replied to on your yes.",
-    "<b>Every diary in one answer</b>, with clashes flagged.",
-    "<b>Reminders</b> by text, or a call, at the time you set.",
-    "<b>&ldquo;Remember that.&rdquo;</b> Lists and facts, kept and recalled.",
-    "<b>Journeys</b> with real times, and when to leave.",
-    "<b>&ldquo;Call my brother.&rdquo;</b> It rings you back and puts you through.",
+four_things = [
+    ("Its facts", "Your hours, services, people and who may approve what."),
+    ("Its rules", "Plain sentences in your own words: &ldquo;never give a price on the phone&rdquo;."),
+    ("Its squad", "The specialists your work needs, picked from the shelf or built for you."),
+    ("Its workflows", "The pieces of routine work it runs, each one drawn before it is built."),
 ]
 
 facts_home = [
@@ -568,48 +848,91 @@ facts_home = [
     ("Signed releases", "Only software one of us has signed reaches the servers."),
 ]
 
-home_steps = [
-    (False, "01", "A 45-minute call", "Bring one process. We'll tell you straight whether a deputy is the answer."),
-    (False, "02", "We draw it", "Your hours, people, rules and workflows, drawn and reviewed with you before anything is built."),
-    (False, "03", "Test calls", "We ring it as a stranger and as you, until it answers the way you would."),
-    (True, "04", "You say go", "No real caller reaches your deputy until you have read it all and confirmed."),
-]
-
 home_body = f"""
 <section class="hero">
   <div class="wrap hero-grid">
     <div>
-      <div class="eyebrow">Simplify work &middot; Amplify people</div>
+      <div class="eyebrow">Agentic workflows for small and mid-sized businesses</div>
       <h1 class="hero-title"><span>Delegate the busywork.</span> <span>Own the <span class="yours">decisions.</span></span></h1>
-      <p class="hero-sub">A deputy answers your business's calls and messages in your name, writes up every one, and drafts the quote or the reply. Nothing reaches a customer until you say ok.</p>
+      <p class="hero-sub">Deputable runs your routine work as workflows: a deputy and its squad of AI specialists that answer, read, look things up, draft and follow up. Fitted to how your business works. Nothing reaches a customer until you say ok.</p>
       <div class="hero-ctas">
         <a class="btn btn-primary" href="contact.html">Book a demo call <span class="arr" aria-hidden="true">&rarr;</span></a>
-        <a class="btn btn-secondary" href="business.html">See what it does</a>
+        <a class="btn btn-secondary" href="workflows.html">See the workflows</a>
       </div>
       <div class="hero-foot">
-        <span>Phone, WhatsApp and text</span>
+        <span>Phone, WhatsApp, email and paperwork</span>
         <span class="you">A person approves what customers see</span>
         <span>Built and run in London</span>
       </div>
     </div>
-    {thread_demo()}
+    {run_demo()}
   </div>
 </section>
 
-<section class="sec">
+<section class="sec" id="what">
   <div class="wrap">
-    {sec_head("One deputy", "Every way your customers reach you.", "The same deputy on every line, working from one record. A customer who rang on Monday and messages on Thursday never has to start again.")}
-    <div class="doors">
-      {"".join(f'<div class="door"><div class="door-top"><div class="ic">{ICONS[ic]}</div>{status(st)}</div><h3>{t}</h3><p>{b}</p>' + (f'<p class="fine">{fine}</p>' if fine else "") + '</div>' for ic, t, st, b, fine in doors_home)}
+    {sec_head("What it is", "A deputy, a squad, and the workflows that put them to work.", "One deputy speaks for your business. Behind it sits a squad of specialists, each with its own tools. A piece of routine work is a workflow: something starts it, the squad does the steps, and it stops where a person should decide.")}
+    <div class="anatomy">
+      <div class="an-col">
+        <div class="an-title">It starts with</div>
+        {"".join(f'<div class="an-item"><b>{t}</b><span>{b}</span></div>' for t, b in anatomy_starts)}
+      </div>
+      <div class="an-mid">
+        <div class="an-title">The squad does the work</div>
+        <div class="an-deputy"><span class="who">Your deputy</span>The only one that talks to people. Answers what is simple, hands on the rest.</div>
+        <div class="an-squad">
+          {"".join(f'<span class="pill">{name}</span>' for name, _w, _s in SHELF)}
+        </div>
+        <p class="an-note">Specialists look things up, keep records and draft. None of them can send: every message leaves through one gate, as your deputy, once.</p>
+      </div>
+      <div class="an-col ends">
+        <div class="an-title">It ends with</div>
+        {"".join(f'<div class="an-item {who}"><b>{t}</b></div>' for who, t in anatomy_ends)}
+      </div>
+    </div>
+    <div class="credo">
+      <span><i class="code"></i>Code where code will do</span>
+      <span><i class="model"></i>A model where it is needed</span>
+      <span><i class="person"></i>A person where it matters</span>
+    </div>
+    <div class="sec-foot"><a class="link-arrow" href="platform.html">How the platform is built&nbsp;&rarr;</a></div>
+  </div>
+</section>
+
+<section class="sec sec-white rule-t rule-b" id="work">
+  <div class="wrap">
+    {sec_head("What it takes off your desk", "Six kinds of work. Answering the phone is one of them.", "Most of what fills a small business's day is the same few jobs, done again. Each of these runs today.")}
+    <div class="g3 kinds">
+      {"".join(f'<div class="kind"><span class="kind-n">0{i}</span><h3>{t}</h3><p>{b}</p></div>' for i, (t, b) in enumerate(kinds, 1))}
+    </div>
+    <div class="sec-foot"><a class="link-arrow" href="workflows.html">Every workflow, and how each one runs&nbsp;&rarr;</a></div>
+  </div>
+</section>
+
+<section class="sec" id="fit">
+  <div class="wrap">
+    {sec_head("Tailored", "Built around your business, not the other way round.", "No two deputies are the same. Each is assembled from four things, and any one of them can change without touching the others.")}
+    <div class="four">
+      {"".join(f'<div class="four-item"><span class="kind-n">0{i}</span><h3>{t}</h3><p>{b}</p></div>' for i, (t, b) in enumerate(four_things, 1))}
+    </div>
+    <div class="g3 fits">
+      {fits_html()}
     </div>
   </div>
 </section>
 
-<section class="sec sec-white rule-t rule-b" id="call">
-  <div class="wrap">
-    {sec_head("Smart Call Handling", "What happens when the phone rings.", "Your deputy covers for your team and backs it up. It takes no one's place. Where a step belongs to a person, it stops and waits.")}
-    {callmap_html()}
-    <div class="sec-foot"><a class="link-arrow" href="business.html#smart-call-handling">Smart Call Handling in full&nbsp;&rarr;</a></div>
+<section class="sec sec-tint rule-t rule-b" id="write">
+  <div class="wrap split start wide-right">
+    <div>
+      <div class="kicker">Your own workflows</div>
+      <h2>Write the simple ones yourself. We build the rest.</h2>
+      <p class="prose" style="margin-top:18px">Describe what should happen and when, as you would to a member of staff. Your deputy names it, draws how it would run, and builds it from the parts it already has. You turn it on.</p>
+      <p class="prose">When a workflow needs a part it lacks, such as a way into a supplier's site, the drawing says so. What it has can go on today; the rest comes to us as one request, with your words attached.</p>
+      <p class="prose"><strong>Your deputy never writes its own code.</strong> What you build is made only of tested parts, and anything new is built, tested and signed by a person before it runs.</p>
+      <p style="margin-top:20px">{status("built")}</p>
+      <div class="sec-foot"><a class="link-arrow" href="workflows.html#write">How writing your own works, and why&nbsp;&rarr;</a></div>
+    </div>
+    {draft_demo()}
   </div>
 </section>
 
@@ -618,7 +941,7 @@ home_body = f"""
     <div>
       <div class="kicker you">You stay in charge</div>
       <h2>One word from your phone.</h2>
-      <p class="prose" style="margin-top:18px">Drafts wait for you. Reply ok to accept one, drop to bin it, or just say what to change and it comes back as a new version. From WhatsApp, a text, or your own pages.</p>
+      <p class="prose" style="margin-top:18px">Every workflow stops where a person should decide. Reply ok to accept a draft, drop to bin it, or just say what to change and it comes back as a new version. From WhatsApp, a text, or your own pages.</p>
       <div class="words">
         <div class="word"><code>ok P14</code><span>accept it</span></div>
         <div class="word"><code>drop P14</code><span>bin it</span></div>
@@ -633,38 +956,15 @@ home_body = f"""
   </div>
 </section>
 
-<section class="sec sec-white rule-t rule-b" id="work">
-  <div class="wrap">
-    {sec_head("Workflows", "Work it already does.", "Each of these is running or built today, and each carries its true status. More are added with you, one at a time, drawn before they are built.")}
-    <div class="g3">
-      {workflow_cards()}
-    </div>
-    <div class="sec-foot"><a class="link-arrow" href="features.html">Everything it does, and where each thing stands&nbsp;&rarr;</a></div>
-  </div>
-</section>
-
-<section class="sec">
-  <div class="wrap split">
-    <div>
-      <div class="kicker">A deputy of your own</div>
-      <h2>And one for you.</h2>
-      <p class="prose" style="margin-top:18px">For your mail, your diary and the things you'd forget. Ring it or message it. It drafts and reminds and looks things up, and it never sends anything in your name without your say-so.</p>
-      <div class="sec-foot"><a class="link-arrow" href="personal.html">A deputy of your own&nbsp;&rarr;</a></div>
-    </div>
-    <div class="card">
-      {ticks(personal_teaser)}
-    </div>
-  </div>
-</section>
-
-<section class="sec sec-tint rule-t" id="learns">
+<section class="sec sec-white rule-t" id="learns">
   <div class="wrap split">
     <div>
       <div class="kicker">It learns how you work</div>
       <h2>The more you use it, the more it works your way.</h2>
-      <p class="prose" style="margin-top:18px">Each night your deputy looks back over what you changed. When you make the same change to its drafts three times in five, it proposes a lesson. You keep it, make it a rule, or dismiss it for good.</p>
-      <p class="prose">Nothing about how it works changes without your say.</p>
+      <p class="prose" style="margin-top:18px">Each night your deputy looks back over what you changed. Make the same change to its drafts three times in five and it proposes a lesson. Ask for the same work the same way twice and it proposes a skill.</p>
+      <p class="prose">It always proposes the smallest change that does the job, and nothing about how it works changes without your say.</p>
       <p style="margin-top:20px">{status("built")}</p>
+      <div class="sec-foot"><a class="link-arrow" href="workflows.html#ladder">The ladder: what you approve, and what we build&nbsp;&rarr;</a></div>
     </div>
     <div class="lesson" aria-label="An example of a proposed lesson">
       <span class="mono-label">Noticed &middot; 3 of your last 5 estimates</span>
@@ -681,7 +981,7 @@ home_body = f"""
 
 <section class="sec band-dark">
   <div class="wrap">
-    {sec_head("Trust &amp; Security", "Your numbers and your data stay yours.", "Plain answers for whoever has to sign this off, including which suppliers handle a call outside the UK.")}
+    {sec_head("Trust &amp; Security", "Your numbers and your data stay yours.", "Plain answers for whoever has to sign this off, including which suppliers handle your work outside the UK.")}
     <div class="facts">
       {"".join(f'<div class="fact"><div class="big">{t}</div><p>{b}</p></div>' for t, b in facts_home)}
     </div>
@@ -693,7 +993,7 @@ home_body = f"""
   <div class="wrap split start">
     <div>
       <h2>No logo wall. Not yet.</h2>
-      <p class="prose" style="margin-top:18px">We're a new company, and we won't decorate this page with invented numbers or testimonials we don't have. What we do have: deputies answering a live UK number today, a record you can audit for every call and every draft, and a rule that your data leaves with you if you do.</p>
+      <p class="prose" style="margin-top:18px">We're a new company, and we won't decorate this page with invented numbers or testimonials we don't have. What we do have: deputies running real workflows today, a record you can audit for every job and every draft, and a rule that your data leaves with you if you do.</p>
       <p class="prose">We are taking on our first businesses as founding clients: closer attention and a say in what gets built next, in return for straight feedback. <a class="link-arrow" href="contact.html">Talk to us&nbsp;&rarr;</a></p>
     </div>
     <div class="results-panel">
@@ -705,23 +1005,52 @@ home_body = f"""
     </div>
   </div>
 </section>
-
-<section class="sec sec-white rule-t">
-  <div class="wrap">
-    {sec_head("How it starts", "Drawn first. Tested on us. Live when you say.")}
-    <div class="steps">
-      {"".join(f'<div class="step{" you" if you else ""}"><div class="meta">{n}</div><h3>{t}</h3><p>{b}</p></div>' for you, n, t, b in home_steps)}
-    </div>
-    <div class="sec-foot"><a class="link-arrow" href="how-it-works.html">How it works, step by step&nbsp;&rarr;</a></div>
-  </div>
-</section>
 """ + cta_band("See it against your own process.", "Forty-five minutes, one workflow of your choosing, no deck.")
 
 write_page("index.html", SITE_TITLE, SITE_DESC, "home", home_body)
 
 # ==================================================================
-# BUSINESS
+# PLATFORM - how a deputy is built, and how one job runs
 # ==================================================================
+layers = [
+    ("The deputy", "The one voice people hear",
+     "Only your deputy talks to people: on the phone, on WhatsApp, by text. It answers what is simple itself and hands the rest to its squad."),
+    ("The squad", "Specialists, each with its own tools",
+     "A specialist looks things up, keeps records and drafts, with its own tools and nobody else's. It cannot send. Every message leaves through one gate, as your deputy, once."),
+    ("The workflows", "Known work, drawn as steps",
+     "A piece of routine work is a drawn graph: who does each step, what each step is given, and what counts as done. Steps can run side by side."),
+    ("The record", "Every job, kept",
+     "Each job is one durable row: which tool ran, what it returned, what was drafted, who approved it and when. A job is never silently run again."),
+]
+
+automation = [
+    ("Follow-ups", "When this happens, do that.",
+     "Plain code, with no AI model in the engine. Who gets told is fixed in your configuration and is never chosen by a model.",
+     [("trigger", "A message is taken"), ("code", "A card to the owner"), ("code", "A text to the caller, if they said yes")]),
+    ("Watches", "On a schedule, a check in plain code.",
+     "It costs nothing when nothing has changed. A model runs only when something has, and you hear only when there is something to say.",
+     [("trigger", "Every 30 minutes"), ("code", "Anything new?"), ("model", "Can it wait?"), ("person", "You are told")]),
+    ("Squad workflows", "Steps for a model, for code, and for a person.",
+     "The model reads and drafts. Code does the arithmetic and the sending. A person decides wherever a mistake would reach a customer or a payment.",
+     [("trigger", "A call ends"), ("model", "Looked up and drafted"), ("code", "Totals checked"), ("person", "You approve")]),
+]
+
+job_run = [
+    ("Routed", "A quick, cheap choice first: one specialist, a known workflow, or the squad together when the work spans several."),
+    ("Budgeted", "Each job runs to a deadline and a spending cap. If it reaches either, it stops and hands over what it has."),
+    ("Checked in code", "No model marks its own work. A figure must trace to a tool's result and a total must be the sum of the records. One more try with the failure spelled out, then it is handed over as partial."),
+    ("Reviewed", "Anything a customer will see becomes a draft that waits for one of your named people."),
+    ("Traced", "Every step is kept: which tool ran and what it said. &ldquo;Where did that figure come from?&rdquo; always has an answer."),
+    ("Drilled", "The squad is drilled like software is tested: scripted jobs graded by code and by a second model, run on every change and against the live models every night."),
+]
+
+doors = [
+    ("phone", "Phone", "live", "A UK number answered in your business's name. Or keep the number your customers know and forward it when you're busy or closed.", ""),
+    ("chat", "WhatsApp", "live", "Customers message the business and get an answer. Your notes, drafts and approvals arrive on your own WhatsApp.", "Meta checks each business before its number goes on WhatsApp. It takes a few days and we handle it."),
+    ("text", "Text", "live", "What was agreed on the call, sent to your customer in writing, only if they said yes. STOP is honoured at once.", ""),
+    ("page", "Your pages", "built", "Sign in with a code sent to your phone. What waits for you, your workflows, what it has learned, and your usage.", ""),
+]
+
 modes_full = [
     ("Out of hours", "live", "Every call answered.",
      "When you close, your deputy picks up: evenings, weekends and bank holidays. It answers from your own business information, takes proper details and promises a call back, which waits for you as an item due at your next opening."),
@@ -736,18 +1065,10 @@ voice_caps = [
     "Follows your standing rules, written in your words",
     "Knows a returning customer: the last call, the notes, what was promised",
     "Greets your staff by name and takes work from them",
-    "Takes the message and captures the lead",
+    "Starts the workflow the call needs: an estimate, a search, a call back",
     "Asks before texting your customer what was agreed",
     "Puts a caller through to a named person",
     "Says so when it doesn't know, and takes a message",
-]
-
-message_points = [
-    "<b>Customers message the business</b> on WhatsApp and get an answer, on the same record as their calls.",
-    "<b>Your own WhatsApp</b> carries the notes, the drafts and your approvals.",
-    "<b>The text after a call</b> goes once, with the caller's yes.",
-    "<b>STOP is honoured at once.</b> START brings texts back.",
-    "<b>No WhatsApp?</b> Your people get the same by text.",
 ]
 
 commands = [
@@ -757,29 +1078,73 @@ commands = [
     ("P14 labour is 2 hours", "Say what to change. A new version comes back for your ok."),
     ("resend P14", "Try again a send that failed. Only a person can."),
     ("send", "Send your latest email draft as it stands."),
-    ("rate &pound;75 &nbsp; markup 20%", "For a garage: the labour rate and parts markup your estimates use."),
+    ("remember that&hellip;", "Keep a fact or a rule. It holds on every job from then on."),
     ("new workflow: when&hellip;", "Describe a workflow. Your deputy draws it for you to turn on."),
 ]
 
-next_business = [
-    "Bookings into your diary, on the call",
-    "A weekly digest of calls and call backs kept",
-    "&ldquo;On a job until three&rdquo;: a busy flag from your phone",
-    "Licensed parts and labour data, through your own access",
-]
-
-business_body = page_hero(
-    "For your business",
-    "Every call answered in your name. Every decision still yours.",
-    "Smart Call Handling, WhatsApp and the paperwork that follows a call. Run for you as a service, approved by you from your phone.",
+platform_body = page_hero(
+    "The platform",
+    "One deputy. A squad behind it. Your workflows on top.",
+    "Deputable is an orchestration platform for agentic workflows. Each business gets its own deputy: an orchestrator people talk to, a squad of AI specialists with their own tools, and the workflows that put them to work. Assembled around the business, and run by us as a service.",
     """
     <div class="hero-ctas">
       <a class="btn btn-primary" href="contact.html">Book a demo call <span class="arr" aria-hidden="true">&rarr;</span></a>
-      <a class="btn btn-secondary" href="features.html">Everything it does</a>
+      <a class="btn btn-secondary" href="workflows.html">See the workflows</a>
     </div>""") + f"""
-<section class="sec" id="smart-call-handling">
+<section class="sec" id="built">
+  <div class="wrap split start">
+    <div>
+      {sec_head("How a deputy is built", "Four layers, each doing one job.", "The layers are separate on purpose. The part that talks cannot act on its own, the parts that act cannot send, and all of it leaves a record.")}
+    </div>
+    <ol class="layers">
+      {"".join(f'<li><span class="kind-n">0{i}</span><div><h3>{t}</h3><div class="layer-sub">{s}</div><p>{b}</p></div></li>' for i, (t, s, b) in enumerate(layers, 1))}
+    </ol>
+  </div>
+</section>
+
+<section class="sec sec-white rule-t rule-b" id="squad">
   <div class="wrap">
-    {sec_head("Smart Call Handling", "The phone, handled. Three ways.", "Jobs are won and lost on the phone, and most are lost quietly: after hours, on a busy line, in a voicemail nobody checks. Your deputy covers for your team and backs it up. It takes no one's place.")}
+    {sec_head("The squad", "Specialists on the shelf.", "Your squad is picked from these, and a new one is built when a business needs it. Each works only with its own tools, on your deputy's own record.")}
+    <div class="shelf">
+      {"".join(f'<div class="shelf-item"><h3>{n}</h3><p>{w}</p><span class="shelf-with">Works with: {s}</span></div>' for n, w, s in SHELF)}
+      <a class="shelf-item more" href="workflows.html#more"><h3>The one you need</h3><p>A way into your own system, built with you, tested and signed before it runs.</p><span class="link-arrow">How a new one is built&nbsp;&rarr;</span></a>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="automation">
+  <div class="wrap">
+    {sec_head("Three kinds of automation", "Code where code will do. A model where it is needed. A person where it matters.", "Not everything needs an AI model, and what doesn't need one doesn't get one. That keeps the work predictable, and the bill small.")}
+    <div class="g3">
+      {"".join(f'<div class="card"><div class="for">{k}</div><h3>{t}</h3><p>{b}</p>{strip(steps)}</div>' for k, t, b, steps in automation)}
+    </div>
+    {who_key()}
+  </div>
+</section>
+
+<section class="sec sec-tint rule-t rule-b" id="job">
+  <div class="wrap split start">
+    <div>
+      {sec_head("How one job runs", "Six things happen to every job.", "This is the part a demo never shows, and the part that decides whether you can rely on it.")}
+    </div>
+    <div class="cmd-table">
+      {"".join(f'<div class="cmd-row"><code>{t}</code><span>{b}</span></div>' for t, b in job_run)}
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="doors">
+  <div class="wrap">
+    {sec_head("The doors", "One deputy, every way people reach you.", "The same deputy on every line, working from one record. A customer who rang on Monday and messages on Thursday never has to start again.")}
+    <div class="doors">
+      {"".join(f'<div class="door"><div class="door-top"><div class="ic">{ICONS[ic]}</div>{status(st)}</div><h3>{t}</h3><p>{b}</p>' + (f'<p class="fine">{fine}</p>' if fine else "") + '</div>' for ic, t, st, b, fine in doors)}
+    </div>
+  </div>
+</section>
+
+<section class="sec sec-white rule-t rule-b" id="smart-call-handling">
+  <div class="wrap">
+    {sec_head("Smart Call Handling", "The phone, handled. Three ways.", "The phone is one door, and for many small businesses the one where work is lost quietly: after hours, on a busy line, in a voicemail nobody checks. Your deputy covers for your team and backs it up. It takes no one's place.")}
     <div class="g3">
       {"".join(f'<div class="mode"><div class="top"><span class="when">{k}</span>{status(st)}</div><h3>{t}</h3><p>{b}</p></div>' for k, st, t, b in modes_full)}
     </div>
@@ -802,52 +1167,11 @@ business_body = page_hero(
   </div>
 </section>
 
-<section class="sec sec-white rule-t rule-b" id="messages">
-  <div class="wrap split">
-    <div>
-      <div class="kicker">WhatsApp and text</div>
-      <h2>The same deputy, in writing.</h2>
-      <p class="prose" style="margin-top:18px">The enquiry that starts as a message is the same enquiry that would have been a phone call, so it is treated the same way: answered from your business information, written up, and put in front of the right person.</p>
-      <p class="prose small">Meta checks each business before its own number goes on WhatsApp. It takes a few days and we handle it. Calls from the WhatsApp chat are built and in testing.</p>
-    </div>
-    <div class="card">
-      {ticks(message_points)}
-    </div>
-  </div>
-</section>
-
-<section class="sec" id="note">
-  <div class="wrap split">
-    <div class="thread" aria-label="An example of a note after a call">
-      <div class="thread-head">
-        <div class="thread-avatar"><img src="assets/icon-192.png?v={ASSET_VER}" alt="" width="26" height="26"></div>
-        <div>
-          <div class="thread-name">Your deputy</div>
-          <div class="thread-via">Note &middot; call ended 18:42 &middot; 4 min</div>
-        </div>
-      </div>
-      <div class="thread-panels"><div class="thread-panel is-active">
-        <div class="msg deputy" style="max-width:100%"><span class="who">Summary</span>Jo Reed rang about a two-bed flat to rent near the station, from January. Three listings read out. Wants a viewing on Saturday morning.</div>
-        <div class="msg deputy" style="max-width:100%"><span class="who">Promised</span>A call back tomorrow before noon to fix the viewing.</div>
-        <div class="msg deputy" style="max-width:100%"><span class="who">Lead</span>Jo Reed, 07700 900118. Renting, two beds, up to &pound;1,600 a month. Said yes to a text.</div>
-        <div class="sys you">Call back owed &middot; due tomorrow 09:00</div>
-      </div></div>
-    </div>
-    <div>
-      <div class="kicker">After every contact</div>
-      <h2>A note, not a voicemail.</h2>
-      <p class="prose" style="margin-top:18px">Every call and every quiet message thread ends with a note on your phone: who it was, what they wanted, what was promised and whether a call back is owed. The note says a thing was done only when the record shows it was.</p>
-      <p class="prose">A promised call back becomes an item at your next opening, created by code whatever the note says. It waits until someone has made the call.</p>
-      <p class="demo-caption" style="text-align:left">An illustration. The caller and the details are made up.</p>
-    </div>
-  </div>
-</section>
-
-<section class="sec sec-white rule-t rule-b" id="approve">
+<section class="sec" id="approve">
   <div class="wrap split start">
     <div>
       <div class="kicker you">Approvals</div>
-      <h2>Approve with one word.</h2>
+      <h2>Every workflow stops where a person should decide.</h2>
       <p class="prose" style="margin-top:18px">Every draft has a short name, like P14. You answer it the way you would answer a colleague, from WhatsApp or by text. Or tap Approve, Drop or Change it on your own pages.</p>
       <div style="margin-top:28px">
         {guarantees_html()}
@@ -858,56 +1182,97 @@ business_body = page_hero(
     </div>
   </div>
 </section>
-
-<section class="sec" id="workflows">
-  <div class="wrap">
-    {sec_head("Workflows", "The work behind the call.", "A workflow is a known piece of work with its steps drawn out and an approval wherever a mistake would reach a customer or a payment. These exist today.")}
-    <div class="g3">
-      {workflow_cards()}
-    </div>
-    <div class="split start" style="margin-top:56px">
-      <div class="panel">
-        <h3>Built around one process of yours</h3>
-        <p>Your estimates, your paperwork and your follow-ups don't run off the shelf, so a workflow only your business needs is drawn with you first, reviewed, and then built. One at a time, each with its approval steps marked before a line of it exists.</p>
-        <p>Where a site you rely on has no way in for software, the plan is for your deputy to use it as you do, in a browser you sign in to yourself, reading and never buying.</p>
-      </div>
-      <div class="card dashed">
-        <div class="top"><span class="for">Agreed, not built yet</span>{status("next")}</div>
-        {ticks(next_business, "todo")}
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="sec sec-tint rule-t" id="team">
-  <div class="wrap">
-    {sec_head("Your team", "It knows who is who.", "A customer, a member of staff and the owner are different people to your deputy, and it treats them differently.")}
-    <div class="g3">
-      <div class="card">
-        <h3>Your people</h3>
-        <p>Owner, staff, technician. Your people are greeted by name when they ring, can hand work to the deputy, and only the ones you name may approve what reaches a customer.</p>
-      </div>
-      <div class="card">
-        <div class="top"><h3>Your pages</h3>{status("built")}</div>
-        <p>Sign in with a code sent to your phone. What waits for you, recent conversations, calls, workflows, and every minute you pay for.</p>
-      </div>
-      <div class="card">
-        <h3>Your rules</h3>
-        <p>Write &ldquo;remember that we close at one on Saturdays&rdquo; and it does, on every call from then on. Your standing rules are plain sentences you can read, not settings in a menu.</p>
-      </div>
-    </div>
-  </div>
-</section>
-""" + cta_band("Hear it answer as your business.", "Forty-five minutes, one workflow of your choosing, no deck.")
+""" + cta_band("See the platform run your own work.", "Forty-five minutes, one workflow of your choosing, no deck.")
 
 write_page(
-    "business.html",
-    "A Deputy for Your Business - Smart Call Handling, WhatsApp & Workflows | Deputable AI",
-    "Calls answered in your business's name out of hours and on a busy line, a note after every one, drafts that wait for your ok, and workflows such as estimates and property search.",
-    "business", business_body)
+    "platform.html",
+    "The Platform - Agentic Workflow Orchestration for SMEs | Deputable AI",
+    "How a deputy is built: an orchestrator, a squad of AI specialists with their own tools, workflows drawn as steps, and a record of every job. Smart Call Handling is one of its doors.",
+    "platform", platform_body)
 
 # The old Services page: its links and search results keep working.
-write_redirect("services.html", "business.html", "A deputy for your business - Deputable AI")
+write_redirect("services.html", "platform.html", "The platform - Deputable AI")
+
+# ==================================================================
+# WORKFLOWS - the catalogue, writing your own, and what we build
+# ==================================================================
+workflows_body = page_hero(
+    "Workflows",
+    "Every piece of routine work, as a workflow you can see.",
+    "A workflow has a start, steps, and someone who does each step: plain code, an AI model, or one of your people. The ones below exist today. Write the simple ones yourself in a sentence; we build the bigger ones with you.",
+    who_key()) + f"""
+<section class="sec" id="catalogue">
+  <div class="wrap">
+    {sec_head("The catalogue", "Workflows that exist today.", "Each row is drawn the way your own Workflows page draws it: what starts it, then each step and who does it. They start in six different ways. A phone call is one.")}
+    <div class="starts-row">
+      {"".join(f'<span class="starts">{s}</span>' for s in STARTS)}
+    </div>
+    {catalogue_html()}
+  </div>
+</section>
+
+<section class="sec sec-tint rule-t rule-b" id="write">
+  <div class="wrap">
+    <div class="split start wide-right">
+      <div>
+        <div class="kicker">Write your own</div>
+        <h2>The simple ones, you write yourself.</h2>
+        <p class="prose" style="margin-top:18px">One box. Describe what should happen and when, as you would to a member of staff, on your Workflows page or by sending <code class="inline">new workflow: when&hellip;</code> on WhatsApp.</p>
+        <p class="prose">Your deputy proposes a name and draws the workflow: what starts it, each step, and who does each one. You can't edit the drawing. You edit the words, and it redraws. When it reads right, you turn it on.</p>
+        <p style="margin-top:20px">{status("built")}</p>
+      </div>
+      {draft_demo()}
+    </div>
+    <div class="parts">
+      <div class="parts-col">
+        <div class="mono-label">It can start</div>
+        {"".join(f'<div class="part"><span class="node trigger mini"><span class="who">Starts it</span></span><div><h3>{t}</h3><p>{b}</p></div></div>' for t, b in PARTS_STARTS)}
+      </div>
+      <div class="parts-col">
+        <div class="mono-label">And then</div>
+        {"".join(f'<div class="part"><span class="node {who} mini"><span class="who">{WHO[who]}</span></span><div><h3>{t}</h3><p>{b}</p></div></div>' for who, t, b in PARTS_STEPS)}
+      </div>
+    </div>
+    <p class="prose small parts-note">That list is short on purpose, and it is closed: the drafting model may use only these parts and must name anything else as missing. It grows as parts are built.</p>
+  </div>
+</section>
+
+<section class="sec" id="more">
+  <div class="wrap">
+    {sec_head("The bigger ones", "When a workflow needs more, it says so, and asks us.", "A step your deputy has no part for is drawn as a dashed &ldquo;Not yet&rdquo; box. You choose: turn on the parts it has today, send us the rest as one request, or both.")}
+    <div class="g4">
+      {"".join(f'<div class="card dashed"><h3>{t}</h3><p>{b}</p></div>' for t, b in PARTS_MISSING)}
+    </div>
+    <div class="reqpath" aria-label="What happens to a request">
+      {"".join(f'<div class="req-step"><span class="kind-n">0{i}</span>{s}</div>' for i, s in enumerate(REQUEST_STEPS, 1))}
+    </div>
+    <p class="prose small" style="margin-top:22px">Your request arrives with your own words and the drawing attached, so nobody has to ask you twice. A person at Deputable decides what it takes, and each decision is written into your record and told to you on your phone.</p>
+  </div>
+</section>
+
+<section class="sec sec-white rule-t rule-b" id="why">
+  <div class="wrap">
+    {sec_head("Why the line is drawn there", "Easy where it is safe. Careful where it isn't.", "Plenty of tools let an AI write its own automations. We chose not to, and these are the reasons.", you=True)}
+    <div class="g3">
+      {"".join(f'<div class="principle"><span class="kind-n">0{i}</span><h3>{t}</h3><p>{b}</p></div>' for i, (t, b) in enumerate(PRINCIPLES, 1))}
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="ladder">
+  <div class="wrap">
+    {sec_head("The ladder", "It proposes the smallest change that does the job.", "The same idea runs through how a deputy learns. Each night it looks over the day's work and proposes what it noticed, always on the lowest rung that would do. You approve the first three yourself. The last two are ours to build.")}
+    {ladder_html()}
+    <p style="margin-top:22px">{status("built")}</p>
+  </div>
+</section>
+""" + cta_band("Bring one process. We'll draw it.", "Forty-five minutes, one workflow of your choosing, no deck.")
+
+write_page(
+    "workflows.html",
+    "Workflows - Write the Simple Ones Yourself, We Build the Rest | Deputable AI",
+    "The workflows a deputy runs today, drawn step by step with who does each. Describe a simple one in a sentence and turn it on; anything bigger is built, tested and signed by us.",
+    "workflows", workflows_body)
 
 # ==================================================================
 # PERSONAL
@@ -1005,7 +1370,9 @@ write_page(
 # Every row carries the id of its entry in the Deputy platform's master
 # feature list (docs/features.md in the deputy repo). The id is not
 # shown; it is written into the HTML as data-id so this page can be
-# checked against that list. A row's status must match the list:
+# checked against that list. Rows marked CORE-* describe the engine
+# itself (the squad, the checks, the record), which that list does not
+# number. A row's status must match the list:
 #   live  = in production and used on real calls or messages
 #   built = built and tested; switched on with the first clients
 #   next  = agreed and drawn; not built
@@ -1020,7 +1387,7 @@ FEATURES = [
         ("DOOR-05", "WhatsApp calls", "built", "The call button in the chat rings your deputy, on the same record as the phone."),
         ("ACC-13", "Your own pages", "built", "Sign in with a code sent to your phone, then a passkey or Google. What waits for you, recent conversations, your diary and what it knows."),
     ]),
-    ("On the call", "Smart Call Handling: out of hours, on a busy line, and through to you.", [
+    ("On the call", "Smart Call Handling, one door of several: out of hours, on a busy line, and through to you.", [
         ("REC-01", "Answers in your business's name", "live", "Your greeting, hours, services and facts, and your standing rules in plain language. It says it is an AI assistant in the opening sentence."),
         ("REC-10", "Knows the caller", "live", "A returning customer's last call, the notes, what was promised and whether they agreed to texts, read before it speaks."),
         ("REC-11", "Staff on the line", "live", "One of your people is greeted by name, can ask for texts and can hand work to the deputy."),
@@ -1098,6 +1465,25 @@ FEATURES = [
 ]
 
 
+# How the work gets done: the engine, read from the code (squad/loop.py,
+# squad/router.py, squad/checks.py, members/_base/tools.py, drills).
+FEATURES.append(("How the work gets done", "The engine under every workflow.", [
+    ("CORE-squad", "A squad of specialists", "live", "Each specialist works with its own tools and nobody else's. It looks things up, keeps records and drafts; it cannot send."),
+    ("CORE-route", "The right hands for each job", "live", "A quick, cheap choice first: one specialist, a known workflow, or the squad together when the work spans several."),
+    ("CORE-checks", "Checked in code", "live", "No model marks its own work. A figure must trace to a tool's result; a total must be the sum of the records."),
+    ("OPS-09", "A budget for every job", "live", "Each job runs to a deadline and a spending cap, and each deputy to a daily one. At the limit it stops and says so."),
+    ("CORE-record", "Every job on the record", "live", "Which tool ran, what it returned, what was drafted and who approved it. A job is never silently run again."),
+    ("OPS-13", "No model where none is needed", "live", "Follow-ups and watches are plain code. Sorting a request is a cheap judgment, not a conversation."),
+    ("OPS-05", "Drilled every night", "live", "Scripted jobs graded by code and by a second model, run on every change and nightly against the live models."),
+    ("MEM-10", "Cheaper with use", "built", "A skill that keeps passing its drill is tried on a smaller model, and offered to you with the saving. It goes back on its own if it slips."),
+]))
+
+_FEATURE_ORDER = ["Workflows", "How the work gets done", "Approvals", "It learns how you work",
+                  "Reaching your deputy", "On the call", "After the call", "A deputy of your own",
+                  "Privacy, access and the record"]
+FEATURES.sort(key=lambda g: _FEATURE_ORDER.index(g[0]))
+
+
 def features_html():
     out = ""
     for title, sub, rows in FEATURES:
@@ -1120,7 +1506,7 @@ for _t, _s, _rows in FEATURES:
 features_body = page_hero(
     "Everything it does",
     "One list. Where each thing really stands.",
-    "No roadmap dressed up as a product. Every capability is marked as live, built, or next, and the marks are kept in step with our own engineering list.",
+    "No roadmap dressed up as a product. Every capability is marked as live, built, or next, and the marks are kept in step with our own engineering list. Workflows first, because that is what the platform is.",
     f"""
     <div class="status-key">
       <div>{status("live")} In production, used on real calls and messages</div>
@@ -1155,14 +1541,14 @@ process_full = [
      "Every workflow is a drawing before it is code: what happens on a busy line, after a call, when a customer rings back. You review the drawings, and a change at this stage costs nothing.",
      "Your workflows drawn out, with every approval step marked."),
     (False, "04", "Us", "Set up, and the paperwork",
-     "Your deputy's facts and rules, your people, your number. A privacy notice for your callers and a data protection impact assessment, because your deputy cannot go live without them. The software refuses.",
+     "Your deputy's facts and rules, your people, its squad, your number. A privacy notice for your callers and a data protection impact assessment, because your deputy cannot go live without them. The software refuses.",
      "A deputy on a test line, a privacy notice, and a dated assessment."),
-    (False, "05", "Us, then you", "Test calls",
-     "We ring it as a stranger and as you. The stranger is greeted as your business and told it is an AI assistant, asks for a price and is told you will call back, and the note lands on your phone. Then you try to break it.",
-     "The notes from the test calls, and what we changed after them."),
+    (False, "05", "Us, then you", "Tested on us first",
+     "We run every workflow on made-up cases, and ring your deputy as a stranger and as you. The stranger is greeted as your business and told it is an AI assistant, asks for a price and is told you will call back, and the note lands on your phone. Then you try to break it.",
+     "The results of the test runs, and what we changed after them."),
     (True, "06", "You", "You say go",
-     "You read the facts, the rules and the drawings, and confirm. Until you do, no real caller reaches your deputy. It starts as a trial on your own calls, usually with your existing number forwarded when you're busy or closed.",
-     "A deputy answering your calls, and a restore rehearsed from its backup."),
+     "You read the facts, the rules and the drawings, and confirm. Until you do, nothing real reaches your deputy. It starts as a trial on your own work: often your existing number forwarded when you're busy or closed, and the first workflow switched on.",
+     "A deputy doing real work, and a restore rehearsed from its backup."),
 ]
 
 discovery = [
@@ -1175,8 +1561,8 @@ discovery = [
 ]
 
 process_body = page_hero(
-    "How it works",
-    "From a first call to your deputy answering.",
+    "Getting started",
+    "From a first call to your deputy at work.",
     "Six steps, and you can stop after any of them. We do the set up; your staff give approvals from their phones. Nobody at your business has to learn to prompt an AI.") + f"""
 <section class="sec">
   <div class="wrap">
@@ -1198,7 +1584,7 @@ process_body = page_hero(
   <div class="wrap g2">
     <div class="panel">
       <h3>After go-live</h3>
-      <p>We keep reading what the calls show and fix what they turn up. New workflows are added one at a time, each drawn first. Your deputy proposes lessons from the changes you make to its drafts, and you decide which to keep.</p>
+      <p>We keep reading what the record shows and fix what it turns up. You add the simple workflows yourself, in a sentence; the bigger ones we build with you, each drawn first. Your deputy proposes lessons from the changes you make to its drafts, and you decide which to keep.</p>
     </div>
     <div class="panel">
       <h3>If you leave</h3>
@@ -1224,8 +1610,8 @@ process_body = page_hero(
 
 write_page(
     "how-it-works.html",
-    "How It Works - From a First Call to Your Deputy Answering | Deputable AI",
-    "Six steps: a demo call, intake, your workflows drawn, set up and privacy paperwork, test calls, and your go-ahead. Nothing takes a real call until you have confirmed it.",
+    "Getting Started - From a First Call to Your Deputy at Work | Deputable AI",
+    "Six steps: a demo call, intake, your workflows drawn, set up and privacy paperwork, test runs, and your go-ahead. Nothing real reaches your deputy until you have confirmed it.",
     "process", process_body)
 
 # ==================================================================
@@ -1252,7 +1638,7 @@ about_body = f"""
 
 <section class="sec">
   <div class="wrap">
-    {sec_head("The line", "Some work is deputable. Some never will be.", "A good deputy takes the routine off your desk and brings you the decisions. That's the standard we hold ours to. It answers the phone at seven in the evening, takes the details down properly, drafts the estimate, chases the paperwork. Then it stops, because the next step belongs to a person.")}
+    {sec_head("The line", "Some work is deputable. Some never will be.", "A good deputy takes the routine off your desk and brings you the decisions. That's the standard we hold ours to. It reads what came in, looks up what it needs, drafts the estimate, chases the paperwork, and answers the phone at seven in the evening. Then it stops, because the next step belongs to a person.")}
     <div class="depute-grid">
       <div class="depute-col">
         <div class="depute-col-title">Deputable</div>
@@ -1274,7 +1660,7 @@ about_body = f"""
   <div class="wrap split start">
     <div>
       <h2>How we work</h2>
-      <p class="prose" style="margin-top:18px">Every business runs differently, so a deputy is set up around yours: your hours, your people, your rules in your own words. We do the intake, draw the workflows with you, handle the privacy paperwork and keep reading what the calls show. Your staff give approvals from their phones.</p>
+      <p class="prose" style="margin-top:18px">Every business runs differently, so a deputy is assembled around yours: your hours, your people, your rules in your own words, the specialists your work needs. We do the intake, draw the workflows with you, handle the privacy paperwork and keep reading what the record shows. Your staff give approvals from their phones.</p>
       <p class="prose">Most of our thinking is shaped by service businesses that live and die by the phone, such as garages, trades, property and logistics, but nothing about the approach is locked to an industry.</p>
     </div>
     <div class="mission-box">
@@ -1318,7 +1704,7 @@ trust = [
     ("Where does our data live?",
      "On our server in Oracle Cloud's London region, on disks encrypted at rest. Each business has its own folder and its own database, shared with no other client. The backups stay in London too."),
     ("Does any of it leave the UK?",
-     "Yes, and you should know exactly where. A phone call has to be carried, heard and understood, and the suppliers who do that for us process it in the United States today: the telephone network, the voice on the call, and the AI models that read and write. Each one is named in your agreement before you go live. A UK and EU only option is being built. We won't offer it until every part of a call can stay inside it."),
+     "Yes, and you should know exactly where. A call has to be carried and heard, and a document or a message has to be read, and the suppliers who do that for us process it in the United States today: the telephone network, the voice on a call, and the AI models that read and write. Each one is named in your agreement before you go live. A UK and EU only option is being built. We won't offer it until every part of the work can stay inside it."),
     ("Do you train AI models on our data?",
      "No. We don't train models at all. Your data is used to serve you and nobody else. It is never sold and never used for advertising."),
     ("Can it send something to a customer on its own?",
@@ -1330,7 +1716,7 @@ trust = [
     ("Are calls recorded, and do callers know?",
      "By default yes, and the greeting says so in its opening sentence, along with the fact that the caller is speaking with an AI assistant. You can turn recording off. Unless you choose otherwise, recordings are kept for 30 days and notes and transcripts for 90."),
     ("What happens if it gets something wrong?",
-     "Every call and every job leaves a record: what was heard, which tools were used, what was drafted, who approved it and when. An error can be traced to its step. Your record is backed up hourly, encrypted with a key our servers never hold, and we rehearse restoring from it. Recordings stay on the server and are not in the backups."),
+     "Every job leaves a record: what came in, which tools were used and what each returned, what was drafted, who approved it and when. An error can be traced to its step. Your record is backed up hourly, encrypted with a key our servers never hold, and we rehearse restoring from it. Recordings stay on the server and are not in the backups."),
     ("Can we get our data out, or have it deleted?",
      "Yes. Everything exports in full and goes with you if you leave. One person's data can be exported or erased on request: the record, the recordings and the copies our telephony supplier holds. Encrypted backups can't be edited, so they expire on their own within 90 days."),
 ]
@@ -1491,17 +1877,20 @@ llms_pages = "\n".join(
 with open(os.path.join(OUT, "llms.txt"), "w") as f:
     f.write(f"""# Deputable AI
 
-> {TAGLINE} Deputable AI builds and runs deputies for UK small and
-> mid-sized businesses. A deputy answers a business's phone and WhatsApp
-> in its name (Smart Call Handling: out of hours, on a busy line, and
-> put through to a person), writes a note after every contact, texts the
-> customer what was agreed with their consent, and drafts work such as a
-> garage estimate or a monthly invoice for a person to approve with one
-> word. Nothing customer-facing is sent without a named person's
-> approval. A person can also have a deputy of their own for mail, diary,
-> reminders and lists. Data is stored in London; some suppliers process
-> calls in the US, and the Trust page says which. No pricing is
-> published; engagement starts with a 45-minute demo call.
+> {TAGLINE} Deputable AI is an orchestration platform for agentic
+> workflows, built for UK small and mid-sized businesses and run as a
+> service. Each business gets a deputy: an orchestrator people talk to, a
+> squad of AI specialists with their own tools, and workflows that start
+> from a call, a message, a document, an email, a schedule or an event.
+> Workflows today include estimates for a garage, property search for an
+> estate agency, documents read and logged, the monthly invoice from
+> timesheets, meeting follow-ups and Smart Call Handling. A business
+> writes simple workflows itself in a sentence; anything needing a new
+> tool is built, tested and signed by Deputable. Nothing customer-facing
+> is sent without a named person's approval. A person can also have a
+> deputy of their own. Data is stored in London; some suppliers process
+> work in the US, and the Trust page says which. No pricing is published;
+> engagement starts with a 45-minute demo call.
 
 ## Pages
 {llms_pages}
