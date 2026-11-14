@@ -4,7 +4,7 @@
 
   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless \
     --screenshot=assets/og-image.png --window-size=1200,630 \
-    --hide-scrollbars "file://$PWD/scripts/og-template.html"
+    --hide-scrollbars --virtual-time-budget=4000 "file://$PWD/scripts/og-template.html"
 
   (run from the repo root; needs network for Google Fonts)
 -->
@@ -13,31 +13,37 @@
 <meta charset="utf-8">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700..800&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
   html, body { margin: 0; padding: 0; }
   body {
-    width: 1200px; height: 630px; overflow: hidden; box-sizing: border-box;
-    background: #FBFBF9;
-    font-family: "Schibsted Grotesk", Helvetica, Arial, sans-serif;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 34px;
-    border-bottom: 14px solid #0E2A4A;
+    position: relative; width: 1200px; height: 630px; overflow: hidden; box-sizing: border-box;
+    background: #FAF8F3; color: #0A1F44;
+    font-family: "Bricolage Grotesque", Helvetica, Arial, sans-serif;
+    padding: 64px 76px; display: flex; flex-direction: column; justify-content: space-between;
   }
-  .logo { height: 170px; width: auto; }
+  /* the logo's two linked rings, large and quiet */
+  .ring { position: absolute; border-radius: 50%; }
+  .ring.a { width: 620px; height: 620px; right: -190px; top: -210px; border: 78px solid #EAF0FF; }
+  .ring.b { width: 420px; height: 420px; right: 230px; bottom: -290px; border: 56px solid #EFEAE0; }
+  .logo { position: relative; height: 104px; width: auto; align-self: flex-start; }
   .line {
-    font-size: 34px; font-weight: 600; letter-spacing: -0.02em;
-    color: #0E2A4A; text-align: center; max-width: 900px; line-height: 1.25;
+    position: relative; font-size: 86px; font-weight: 800; letter-spacing: -0.045em; line-height: 0.98;
+    font-variation-settings: "opsz" 96;
   }
+  .line span { display: block; white-space: nowrap; }
+  .line .yours { display: inline; background: linear-gradient(transparent 68%, #F96A4B 68%, #F96A4B 92%, transparent 92%); padding: 0 0.06em; margin: 0 -0.06em; }
   .kicker {
-    font-family: "IBM Plex Mono", monospace; font-size: 17px; letter-spacing: 0.16em;
-    text-transform: uppercase; color: #0C6B58;
+    position: relative; font-family: "IBM Plex Mono", monospace; font-size: 19px; font-weight: 500;
+    letter-spacing: 0.14em; text-transform: uppercase; color: #1450D8;
   }
 </style>
 </head>
 <body>
+  <div class="ring a"></div>
+  <div class="ring b"></div>
   <img class="logo" src="../assets/deputable-logo.png" alt="">
-  <div class="line">Delegate the busywork. Own the decisions.</div>
-  <div class="kicker">Smart Call Handling &middot; AI Operations &middot; London</div>
+  <div class="line"><span>Delegate the busywork.</span><span>Own the <span class="yours">decisions.</span></span></div>
+  <div class="kicker">Agentic workflows for small and mid-sized businesses</div>
 </body>
 </html>

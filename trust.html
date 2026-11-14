@@ -3,104 +3,154 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Trust & Security - Your Data Is Your Own | Deputable AI</title>
-<meta name="description" content="Where your data is processed, who can act on it, and what happens when the model gets it wrong - the questions IT and procurement ask first, answered plainly.">
+<title>Trust & Security - Tenant Isolation, UK Data Residency and AI Controls | Deputable AI</title>
+<meta name="description" content="Twelve security controls built into the platform: tenant isolation, UK data residency at rest, encrypted backups, a human approval gate, prompt-injection containment and signed releases.">
 <link rel="canonical" href="https://deputable.ai/trust.html">
+<meta name="theme-color" content="#04285E">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Deputable AI">
-<meta property="og:title" content="Trust & Security - Your Data Is Your Own | Deputable AI">
-<meta property="og:description" content="Where your data is processed, who can act on it, and what happens when the model gets it wrong - the questions IT and procurement ask first, answered plainly.">
+<meta property="og:title" content="Trust & Security - Tenant Isolation, UK Data Residency and AI Controls | Deputable AI">
+<meta property="og:description" content="Twelve security controls built into the platform: tenant isolation, UK data residency at rest, encrypted backups, a human approval gate, prompt-injection containment and signed releases.">
 <meta property="og:url" content="https://deputable.ai/trust.html">
 <meta property="og:image" content="https://deputable.ai/assets/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Deputable AI - Delegate the busywork. Own the decisions.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Trust & Security - Your Data Is Your Own | Deputable AI">
-<meta name="twitter:description" content="Where your data is processed, who can act on it, and what happens when the model gets it wrong - the questions IT and procurement ask first, answered plainly.">
+<meta name="twitter:title" content="Trust & Security - Tenant Isolation, UK Data Residency and AI Controls | Deputable AI">
+<meta name="twitter:description" content="Twelve security controls built into the platform: tenant isolation, UK data residency at rest, encrypted backups, a human approval gate, prompt-injection containment and signed releases.">
 <meta name="twitter:image" content="https://deputable.ai/assets/og-image.png">
 <link rel="icon" href="assets/favicon.ico?v=2" sizes="32x32">
 <link rel="icon" type="image/png" href="assets/icon-192.png?v=2" sizes="192x192">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png?v=2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=50997f7d">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=f69b6690">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "Deputable AI", "url": "https://deputable.ai/", "logo": "https://deputable.ai/assets/deputable-logo.png", "email": "hello@deputable.ai", "slogan": "Simplify Work. Amplify People.", "address": {"@type": "PostalAddress", "addressLocality": "London", "addressCountry": "GB"}, "founder": [{"@type": "Person", "name": "Rohit Sinha", "sameAs": "https://www.linkedin.com/in/rohit-sinha-b6792715/"}, {"@type": "Person", "name": "Prashant Tiwari", "sameAs": "https://www.linkedin.com/in/prashanttiwari247/"}]}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Where is our data processed?", "acceptedAnswer": {"@type": "Answer", "text": "In the UK or EU by default. Where a workflow requires a model hosted elsewhere, we say so in writing before deployment and you decide whether to proceed."}}, {"@type": "Question", "name": "Do you train models on our data?", "acceptedAnswer": {"@type": "Answer", "text": "No. Client data is used to serve that client only. We contract with providers on terms that exclude training on submitted data, and we can show you those terms."}}, {"@type": "Question", "name": "Who can the system act on behalf of?", "acceptedAnswer": {"@type": "Answer", "text": "Nothing that touches a customer, a payment or a record of account is sent without a named person approving it, unless you explicitly ask for an unattended step and accept that in writing."}}, {"@type": "Question", "name": "What happens if the model gets it wrong?", "acceptedAnswer": {"@type": "Answer", "text": "Every workflow logs its inputs, outputs and decisions so an error can be traced and reversed. Pilots run alongside the existing process precisely so failures surface before anyone depends on the output."}}, {"@type": "Question", "name": "What if we end the engagement?", "acceptedAnswer": {"@type": "Answer", "text": "You keep the workflow, the documentation and the accounts it runs on. We do not hold your integrations hostage, and there is no proprietary layer you have to keep paying us for."}}, {"@type": "Question", "name": "Which other companies touch our data?", "acceptedAnswer": {"@type": "Answer", "text": "The third-party services we use to run your workflow - for example the telephony provider and the model provider. We keep a current, named list of them for every client, with where each one processes data, and we work to UK GDPR throughout. Our data-processing terms are shared on request."}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Where is our data stored?", "acceptedAnswer": {"@type": "Answer", "text": "In Oracle Cloud's London region, on disks encrypted at rest. Each client has a dedicated directory and a dedicated database, and backups are held in London too."}}, {"@type": "Question", "name": "Which suppliers process our data?", "acceptedAnswer": {"@type": "Answer", "text": "Your data is stored in the UK. Telephony, speech and the AI models are provided by specialist suppliers, and each one is named, with its processing region, in your data processing agreement before you go live. If you need processing kept within the UK or EU, tell us at the outset and we scope the suppliers and models to that requirement."}}, {"@type": "Question", "name": "Do you train AI models on our data?", "acceptedAnswer": {"@type": "Answer", "text": "No. We do not train models at all. Your data is used to provide your service and for nothing else. It is never sold and never used for advertising."}}, {"@type": "Question", "name": "Can the AI send something to a customer on its own?", "acceptedAnswer": {"@type": "Answer", "text": "No. Anything customer-facing waits for a named, authorised person at your business, and their approval is bound to the version they read. Each message is sent exactly once; if delivery cannot be confirmed, a person decides before it is tried again. These are controls in the code, each held by an automated test, not instructions we hope a model follows."}}, {"@type": "Question", "name": "How do you defend against prompt injection?", "acceptedAnswer": {"@type": "Answer", "text": "Content from outside, such as what a caller says, an email or a web page, is marked as untrusted the moment it arrives. It can inform a draft for a person to read. It cannot trigger a send or change a record, and who a follow-up goes to is fixed in your configuration, never chosen by a model."}}, {"@type": "Question", "name": "Who at Deputable can access our data?", "acceptedAnswer": {"@type": "Answer", "text": "You decide, per client. None. A limited view, which is the default: the steps your deputy took and the written messages it exchanged with customers, but no call transcripts and nothing it read in your mail or diary. Or full access, with the person, the reason and the end date recorded."}}, {"@type": "Question", "name": "Are calls recorded, and are callers told?", "acceptedAnswer": {"@type": "Answer", "text": "By default yes, and the greeting says so in its opening sentence, along with the fact that the caller is speaking with an AI assistant. Recording can be switched off. Unless you set your own schedule, recordings are kept for 30 days and notes and transcripts for 90."}}, {"@type": "Question", "name": "What is your audit trail and recovery position?", "acceptedAnswer": {"@type": "Answer", "text": "Every job records its inputs, each tool call and its result, the draft, the approver and the time, so an error can be traced to its step. Records are backed up hourly, encrypted with a key our servers never hold, and restores are rehearsed. Recordings are held on the server only and are not included in backups."}}, {"@type": "Question", "name": "Can we export or delete our data?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Your data exports in full and goes with you if you leave. One person's data can be exported or erased on request across the record, the recordings and the copies our telephony supplier holds. Encrypted backups cannot be edited, so they expire on their own within 90 days."}}]}</script>
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to content</a>
 <div class="page-shell">
   <header class="site-header">
     <div class="wrap header-inner">
       <a class="logo-link" href="index.html">
-        <img src="assets/deputable-logo.png?v=2" alt="Deputable AI - Simplify Work. Amplify People.">
+        <img src="assets/deputable-logo.png?v=2" alt="Deputable AI - Simplify Work. Amplify People." width="231" height="60">
       </a>
-      <button class="mobile-toggle" aria-label="Toggle menu">Menu</button>
-      <nav class="main-nav">
-        <a class="nav-link" href="services.html">Services</a>
-        <a class="nav-link" href="how-it-works.html">How It Works</a>
+      <button class="mobile-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+      <nav class="main-nav" id="site-nav" aria-label="Main">
+        <a class="nav-link" href="platform.html">Platform</a>
+        <a class="nav-link" href="workflows.html">Workflows</a>
+        <a class="nav-link" href="personal.html">Personal</a>
+        <a class="nav-link" href="features.html">Features</a>
+        <a class="nav-link" href="how-it-works.html">Getting started</a>
+        <a class="nav-link active" aria-current="page" href="trust.html">Trust</a>
         <a class="nav-link" href="about.html">About</a>
-        <a class="nav-link active" href="trust.html">Trust & Security</a>
-        <a class="nav-link" href="contact.html">Contact</a>
-        <a class="btn-nav" href="contact.html">Book a Demo</a>
+        <a class="btn-nav" href="contact.html">Book a demo</a>
       </nav>
     </div>
   </header>
-<main>
+<main id="main">
 
-<section class="border-b bg-white">
-  <div class="wrap page-hero">
-    <div class="eyebrow">Trust &amp; Security</div>
-    <h1 class="hw-narrow">Your data is your own.</h1>
-    <p class="lede">Where does it go, and who can act on it? The questions IT and procurement ask us first - answered plainly.</p>
-  </div>
-</section>
-<section>
-  <div class="trust-list">
-    <div class="trust-item"><h2>Where is our data processed?</h2><p>In the UK or EU by default. Where a workflow requires a model hosted elsewhere, we say so in writing before deployment and you decide whether to proceed.</p></div><div class="trust-item"><h2>Do you train models on our data?</h2><p>No. Client data is used to serve that client only. We contract with providers on terms that exclude training on submitted data, and we can show you those terms.</p></div><div class="trust-item"><h2>Who can the system act on behalf of?</h2><p>Nothing that touches a customer, a payment or a record of account is sent without a named person approving it, unless you explicitly ask for an unattended step and accept that in writing.</p></div><div class="trust-item"><h2>What happens if the model gets it wrong?</h2><p>Every workflow logs its inputs, outputs and decisions so an error can be traced and reversed. Pilots run alongside the existing process precisely so failures surface before anyone depends on the output.</p></div><div class="trust-item"><h2>What if we end the engagement?</h2><p>You keep the workflow, the documentation and the accounts it runs on. We do not hold your integrations hostage, and there is no proprietary layer you have to keep paying us for.</p></div><div class="trust-item"><h2>Which other companies touch our data?</h2><p>The third-party services we use to run your workflow - for example the telephony provider and the model provider. We keep a current, named list of them for every client, with where each one processes data, and we work to UK GDPR throughout. Our data-processing terms are shared on request.</p></div>
-    <div class="trust-includes">
-      <div class="mono-label">What every deployment includes</div>
-      <div class="check-list check-list-lined">
-        <div class="check-item"><span class="tick">&#10003;</span><span>Callers and users are told when they're talking to an AI</span></div><div class="check-item"><span class="tick">&#10003;</span><span>An easy route to a human, always</span></div><div class="check-item"><span class="tick">&#10003;</span><span>A named person approves anything customer-facing</span></div><div class="check-item"><span class="tick">&#10003;</span><span>Logs of every input, output and action</span></div><div class="check-item"><span class="tick">&#10003;</span><span>A documented UK GDPR lawful basis and retention period</span></div><div class="check-item"><span class="tick">&#10003;</span><span>A contractual bar on training models with your data</span></div>
-      </div>
-      <p class="prose small ico-note">The ICO publishes guidance on applying UK GDPR principles to AI systems; we work to it. <a class="link-arrow" href="https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/artificial-intelligence/" target="_blank" rel="noopener">ICO AI and data-protection guidance &rarr;</a></p>
+<section class="page-hero">
+  <div class="wrap">
+    <div class="kicker">Trust &amp; Security</div>
+    <h1>Isolated, auditable, and under your control.</h1>
+    <p class="lede">How each client's data is isolated, who can access it, and the controls that hold an AI system to account. Written for the person who has to sign it off.</p>
+    <div class="trust-nav">
+      <a href="#controls">Security controls</a>
+      <a href="#golive">Before go-live</a>
+      <a href="#questions">Procurement questions</a>
     </div>
   </div>
 </section>
 
-<section class="bg-navy">
-  <div class="wrap cta-band">
+<section class="sec" id="controls">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker">Security controls</div>
+      <h2>Twelve controls, built into the platform.</h2>
+      <p class="sub">Seven of them are enforced in code and held by an automated test, so they cannot be switched off by a prompt, a caller or a busy afternoon.</p>
+    </div>
+    <div class="g3 ctls">
+      <div class="ctl"><div class="ctl-top"><div class="ctl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.66 3.58 3 8 3s8-1.34 8-3V5"/><path d="M4 12c0 1.66 3.58 3 8 3s8-1.34 8-3"/></svg></div><span class="ctl-group">Data</span></div><h3>Tenant isolation</h3><p>Every client runs in its own data silo: a dedicated directory and a dedicated database. The tenant is resolved at the point of entry, before any AI model runs.</p><span class="ctl-test">Held by an automated test</span></div><div class="ctl"><div class="ctl-top"><div class="ctl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><span class="ctl-group">Data</span></div><h3>UK data residency at rest</h3><p>Records, documents, recordings and backups are stored in Oracle Cloud's London region, on disks encrypted at rest.</p></div><div class="ctl"><div class="ctl-top"><div class="ctl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><span class="ctl-group">Data</span></div><h3>Encrypted, rehearsed backups</h3><p>Hourly backups, encrypted with a key our servers never hold. Restores are rehearsed end to end, not assumed.</p><span class="ctl-test">Held by an automated test</span></div><div class="ctl"><div class="ctl-top"><div class="ctl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div><span class="ctl-group">Data</span></div><h3>Retention and erasure</h3><p>Recordings are kept 30 days and transcripts 90 by default, or to your own schedule. One person's data can be exported or erased on request, including the copies our telephony supplier holds.</p></div><div class="ctl"><div class="ctl-top"><div class="ctl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="m17 11 2 2 4-4"/></svg></div><span class="ctl-group">AI safety</span></div><h3>Human approval gate</h3><p>Nothing customer-facing leaves review without a named, authorised person. Approval is bound to the exact version they read.</p><span class="ctl-test">Held by an automated test</span></div><div class="ctl"><div class="ctl-top"><div class="ctl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div><span class="ctl-group">AI safety</span></div><h3>Prompt-injection containment</h3><p>Content from outside, such as a caller's words, an email or a web page, is marked untrusted. It can inform a draft. It can never trigger a send or change a record.</p><span class="ctl-test">Held by an automated test</span></div><div class="ctl"><div class="ctl-top"><div class="ctl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg></div><span class="ctl-group">AI safety</span></div><h3>A single outbound gate</h3><p>AI specialists cannot send. Every message leaves through one gate, exactly once, and an unconfirmed delivery is never retried without a person.</p><span class="ctl-test">Held by an automated test</span></div><div class="ctl"><div class="ctl-top"><div class="ctl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h6"/></svg></div><span class="ctl-group">AI safety</span></div><h3>Full audit trail</h3><p>Every job records its inputs, each tool call and its result, the draft, the approver and the time. Any figure can be traced to its source.</p></div><div class="ctl"><div class="ctl-top"><div class="ctl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.7 12.3 9.8-9.8M17 6l3 3M14 9l2 2"/></svg></div><span class="ctl-group">Access</span></div><h3>Role-based access control</h3><p>Owner, staff, technician and monitor roles decide who may ask for what, and who may approve. Your people sign in with a one-time code or a passkey.</p></div><div class="ctl"><div class="ctl-top"><div class="ctl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div><span class="ctl-group">Access</span></div><h3>Supplier access on your terms</h3><p>You set what Deputable staff can see, per client: none, a limited view with no call transcripts (the default), or full, with the person, reason and end date recorded.</p></div><div class="ctl"><div class="ctl-top"><div class="ctl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div><span class="ctl-group">Assurance</span></div><h3>Signed releases</h3><p>Production runs only software one of us has cryptographically signed, after it has run on a pre-production twin.</p><span class="ctl-test">Held by an automated test</span></div><div class="ctl"><div class="ctl-top"><div class="ctl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 13l2 2 4-4"/></svg></div><span class="ctl-group">Assurance</span></div><h3>Privacy by design</h3><p>No deputy goes live without a published privacy notice and a dated data protection impact assessment. The platform refuses to start it otherwise.</p><span class="ctl-test">Held by an automated test</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec sec-white rule-t rule-b" id="golive">
+  <div class="wrap split start">
+    <div>
+      <div class="sec-head">
+      <div class="kicker">Before go-live</div>
+      <h2>What is in place before a deputy does real work.</h2>
+      <p class="sub">Each of these is checked for every client. Two of them, the privacy notice and the impact assessment, are enforced by the platform itself.</p>
+    </div>
+      <p class="prose small">The ICO publishes guidance on applying UK GDPR principles to AI systems; we work to it. <a class="link-arrow" href="https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/artificial-intelligence/" target="_blank" rel="noopener">ICO guidance&nbsp;&rarr;</a></p>
+    </div>
+    <div class="golive">
+      <div class="golive-item"><span class="golive-tick" aria-hidden="true"></span>AI disclosure in the opening sentence of every call</div><div class="golive-item"><span class="golive-tick" aria-hidden="true"></span>Recording notice, or recording switched off</div><div class="golive-item"><span class="golive-tick" aria-hidden="true"></span>A named approver for anything customer-facing</div><div class="golive-item"><span class="golive-tick" aria-hidden="true"></span>A published privacy notice</div><div class="golive-item"><span class="golive-tick" aria-hidden="true"></span>A dated data protection impact assessment</div><div class="golive-item"><span class="golive-tick" aria-hidden="true"></span>Opt-outs honoured: STOP stops texts at once</div><div class="golive-item"><span class="golive-tick" aria-hidden="true"></span>A restore rehearsed from backup</div><div class="golive-item"><span class="golive-tick" aria-hidden="true"></span>Your list of sub-processors, by name and region</div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="questions">
+  <div class="wrap split start">
+    <div>
+      <div class="sec-head">
+      <div class="kicker">Procurement questions</div>
+      <h2>The questions IT and procurement ask first.</h2>
+      <p class="sub">Answered plainly, including the answers that are not the ones you would hope for.</p>
+    </div>
+    </div>
+    <div class="faq">
+      <details open><summary>Where is our data stored?</summary><p>In Oracle Cloud's London region, on disks encrypted at rest. Each client has a dedicated directory and a dedicated database, and backups are held in London too.</p></details><details><summary>Which suppliers process our data?</summary><p>Your data is stored in the UK. Telephony, speech and the AI models are provided by specialist suppliers, and each one is named, with its processing region, in your data processing agreement before you go live. If you need processing kept within the UK or EU, tell us at the outset and we scope the suppliers and models to that requirement.</p></details><details><summary>Do you train AI models on our data?</summary><p>No. We do not train models at all. Your data is used to provide your service and for nothing else. It is never sold and never used for advertising.</p></details><details><summary>Can the AI send something to a customer on its own?</summary><p>No. Anything customer-facing waits for a named, authorised person at your business, and their approval is bound to the version they read. Each message is sent exactly once; if delivery cannot be confirmed, a person decides before it is tried again. These are controls in the code, each held by an automated test, not instructions we hope a model follows.</p></details><details><summary>How do you defend against prompt injection?</summary><p>Content from outside, such as what a caller says, an email or a web page, is marked as untrusted the moment it arrives. It can inform a draft for a person to read. It cannot trigger a send or change a record, and who a follow-up goes to is fixed in your configuration, never chosen by a model.</p></details><details><summary>Who at Deputable can access our data?</summary><p>You decide, per client. None. A limited view, which is the default: the steps your deputy took and the written messages it exchanged with customers, but no call transcripts and nothing it read in your mail or diary. Or full access, with the person, the reason and the end date recorded.</p></details><details><summary>Are calls recorded, and are callers told?</summary><p>By default yes, and the greeting says so in its opening sentence, along with the fact that the caller is speaking with an AI assistant. Recording can be switched off. Unless you set your own schedule, recordings are kept for 30 days and notes and transcripts for 90.</p></details><details><summary>What is your audit trail and recovery position?</summary><p>Every job records its inputs, each tool call and its result, the draft, the approver and the time, so an error can be traced to its step. Records are backed up hourly, encrypted with a key our servers never hold, and restores are rehearsed. Recordings are held on the server only and are not included in backups.</p></details><details><summary>Can we export or delete our data?</summary><p>Yes. Your data exports in full and goes with you if you leave. One person's data can be exported or erased on request across the record, the recordings and the copies our telephony supplier holds. Encrypted backups cannot be edited, so they expire on their own within 90 days.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="wrap cta-inner">
     <div>
       <h2>Ask us the hard questions first.</h2>
-      <p>Bring your IT lead or your DPO to the demo call - we'd rather answer this before you commit than after.</p>
+      <p>Bring your IT lead or your DPO to the demo call. We'd rather answer this before you commit than after.</p>
     </div>
-    <a class="btn btn-teal" href="contact.html">Book a Demo Call</a>
+    <a class="btn btn-coral" href="contact.html">Book a demo call <span class="arr" aria-hidden="true">&rarr;</span></a>
   </div>
 </section>
 </main>
   <footer class="site-footer">
     <div class="wrap footer-top">
       <div class="footer-brand">
-        <img src="assets/deputable-logo.png?v=2" alt="Deputable AI">
-        <p class="footer-tagline">Simplify Work. Amplify People.</p>
-        <p>Human-centric AI for small and mid-sized businesses, from our London HQ.</p>
+        <img src="assets/deputable-logo.png?v=2" alt="Deputable AI - Simplify Work. Amplify People." width="200" height="52">
+        <p>Agentic workflows for small and mid-sized businesses, fitted to how each one works. Built and run from London, with a person in charge of every decision that matters.</p>
       </div>
       <div class="footer-col">
-        <div class="footer-col-title">Explore</div>
+        <div class="footer-col-title">Product</div>
         <div class="footer-nav">
-          <a href="services.html">Services</a>
-          <a href="how-it-works.html">How It Works</a>
+          <a href="platform.html">The platform</a>
+          <a href="workflows.html">Workflows</a>
+          <a href="platform.html#smart-call-handling">Smart Call Handling</a>
+          <a href="personal.html">A deputy of your own</a>
+          <a href="features.html">Everything it does</a>
+          <a href="how-it-works.html">Getting started</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Company</div>
+        <div class="footer-nav">
           <a href="about.html">About</a>
-          <a href="trust.html">Trust & Security</a>
-          <a href="contact.html">Contact</a>
+          <a href="trust.html">Trust &amp; Security</a>
+          <a href="privacy.html">Privacy</a>
         </div>
       </div>
       <div class="footer-col">
         <div class="footer-col-title">Contact</div>
-        <div class="footer-contact">
+        <div class="footer-nav">
           <a href="mailto:hello@deputable.ai">hello@deputable.ai</a>
-          <div>London, UK</div>
+          <a href="contact.html">Book a demo call</a>
+          <span>London, UK</span>
         </div>
       </div>
     </div>
@@ -112,6 +162,6 @@
     </div>
   </footer>
 </div>
-<script src="js/main.js?v=510e4935"></script>
+<script src="js/main.js?v=7ee9b1cc"></script>
 </body>
 </html>
