@@ -37,7 +37,7 @@ it is proven. **The site may claim only what that list supports.**
 - `FEATURES` (the Features page) and `CATALOGUE` (the Workflows page) in the generator
   carry each row's id (written into the HTML as `data-id`) and one of three statuses,
   which must match the list: **live** (in production, used on real calls or messages),
-  **built** (built and tested, switched on with the first clients), **next** (agreed and
+  **built** (built and tested, switched on for a client that needs it), **next** (agreed and
   drawn, not built). Rows with a `CORE-*` id describe the engine itself, read from the
   code (`squad/`, `members/_base/tools.py`), which the list does not number.
 - Workflow steps on the site use the platform's own words and the platform's own way of
@@ -70,9 +70,13 @@ it is proven. **The site may claim only what that list supports.**
   specialist, step. Internal names (officer, console, captain, pipeline, playbook,
   requisition) never appear on the site.
 - **No pricing** on the site. **No invented social proof** - no testimonials, stats, client
-  names or case studies until real ones exist (the homepage "Pilot results" panel is the
-  designated slot). Example threads are illustrations and say so; they use made-up
-  people and the 07700 900xxx drama range.
+  names or case studies until real ones exist. Example threads are illustrations and say
+  so; they use made-up people and the 07700 900xxx drama range.
+- **Never describe the company as new** (Prashant 2026-11-14: "we like to think we have a
+  mature product and established workflows"). No "we're a new company", "no logo wall
+  yet", "founding clients", "first clients" or "when our first pilots finish"; the home
+  page's "No logo wall" section and its "Pilot results" panel were removed for this. Where
+  proof is missing, say nothing rather than apologise for it.
 - **WhatsApp and text are claimed** (revised 2026-11-13: both are live in the platform).
   Channels and features that are not built are either absent or marked **next** on the
   Features page - never described as available. No "what we don't do" walls; positives
@@ -114,7 +118,10 @@ The palette is the logo's. Two accents, one meaning each, everywhere:
 messages, the step that is theirs, the call to action on dark). A workflow step adds two
 neutrals: navy for what starts it and plain ink for code, so a step reads as navy
 (starts it), neutral (code), blue (an AI model) or coral (a person); a dashed box is a
-part the deputy lacks.
+part the deputy lacks. Steps are joined by **the arrow from the logo** (`arrow()` in the
+generator, `--arrow` in the CSS): grey between steps, coral only where it hands the work
+to a person. A row of steps never wraps, so no arrow points at nothing; on a phone the
+steps stack and the arrows point down.
 
 Fonts: Bricolage Grotesque (headings), IBM Plex Sans (body, as the platform's own pages),
 IBM Plex Mono (labels, commands such as `ok P14`).

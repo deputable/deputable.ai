@@ -287,8 +287,8 @@ STATUS_LABEL = {"live": "Live", "built": "Built", "next": "Next"}
 
 def status(s):
     """The three honest states. live: running in production and used on
-    real calls or messages. built: built and tested, switched on with
-    the first clients. next: agreed and drawn, not built."""
+    real calls or messages. built: built and tested, switched on for
+    a client that needs it. next: agreed and drawn, not built."""
     cls = "status" if s == "live" else f"status {s}"
     return f'<span class="{cls}">{STATUS_LABEL[s]}</span>'
 
@@ -374,6 +374,16 @@ def who_key(kinds=("trigger", "code", "model", "person")):
         f'<span><i class="{k}"></i>{words[k]}</span>' for k in kinds) + "</div>"
 
 
+# The arrow between two steps is the arrow from the logo (a thick shaft and
+# a right-angled head). It is coral only where it hands the work to a person.
+ARROW_PATH = "M0 5.5H15V0L24 9 15 18V12.5H0z"
+
+
+def arrow(cls=""):
+    return (f'<svg class="arr{cls}" viewBox="0 0 24 18" aria-hidden="true" focusable="false">'
+            f'<path d="{ARROW_PATH}"/></svg>')
+
+
 def chart(steps):
     """A workflow drawn left to right. `steps`: (who, what) or
     (who, what, label) where label replaces the who word."""
@@ -382,7 +392,7 @@ def chart(steps):
         who, what = step[0], step[1]
         label = step[2] if len(step) > 2 else WHO[who]
         if i:
-            out.append('<span class="arr" aria-hidden="true">&rarr;</span>')
+            out.append(arrow(" to-person" if who == "person" else ""))
         out.append(f'<div class="node {who}"><span class="who">{label}</span><span class="what">{what}</span></div>')
     return '<div class="chart">' + "".join(out) + "</div>"
 
@@ -765,7 +775,6 @@ assure_items = [
     "Your data leaves with you if you do",
 ]
 
-result_metrics = ["Calls answered", "Response time", "Hours saved", "Error rate"]
 
 # Four rules held in the platform's code, each with its own automated
 # test (see the Deputy repo's invariants). Do not add a fifth here
@@ -967,6 +976,16 @@ home_body = f"""
   </div>
 </section>
 
+<section class="sec band-dark">
+  <div class="wrap">
+    {sec_head("Trust &amp; Security", "Isolated, auditable, and under your control.", "The controls behind every deputy, written for whoever has to sign it off.")}
+    <div class="facts">
+      {"".join(f'<div class="fact"><div class="fact-ic">{ICONS[ic]}</div><div class="big">{t}</div><p>{b}</p></div>' for ic, t, b in facts_home)}
+    </div>
+    <div class="sec-foot"><a class="link-arrow" href="trust.html">The twelve security controls&nbsp;&rarr;</a></div>
+  </div>
+</section>
+
 <section class="sec sec-white rule-t" id="learns">
   <div class="wrap split">
     <div>
@@ -985,33 +1004,6 @@ home_body = f"""
         <span class="lesson-act">Keep the lesson</span>
         <span class="lesson-act">Make it a rule</span>
         <span class="lesson-act quiet">Dismiss</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="sec band-dark">
-  <div class="wrap">
-    {sec_head("Trust &amp; Security", "Isolated, auditable, and under your control.", "The controls behind every deputy, written for whoever has to sign it off.")}
-    <div class="facts">
-      {"".join(f'<div class="fact"><div class="fact-ic">{ICONS[ic]}</div><div class="big">{t}</div><p>{b}</p></div>' for ic, t, b in facts_home)}
-    </div>
-    <div class="sec-foot"><a class="link-arrow" href="trust.html">The twelve security controls&nbsp;&rarr;</a></div>
-  </div>
-</section>
-
-<section class="sec">
-  <div class="wrap split start">
-    <div>
-      <h2>No logo wall. Not yet.</h2>
-      <p class="prose" style="margin-top:18px">We're a new company, and we won't decorate this page with invented numbers or testimonials we don't have. What we do have: deputies running real workflows today, a record you can audit for every job and every draft, and a rule that your data leaves with you if you do.</p>
-      <p class="prose">We are taking on our first businesses as founding clients: closer attention and a say in what gets built next, in return for straight feedback. <a class="link-arrow" href="contact.html">Talk to us&nbsp;&rarr;</a></p>
-    </div>
-    <div class="results-panel">
-      <div class="mono-label">Pilot results &middot; published as they complete</div>
-      <p>This space is reserved for real measurements. When our first pilots finish, the before-and-after numbers go here, with the client's sign-off, and whether or not they flatter us.</p>
-      <div class="pill-row">
-        {"".join(f'<span class="pill">{m}</span>' for m in result_metrics)}
       </div>
     </div>
   </div>
@@ -1385,7 +1377,7 @@ write_page(
 # itself (the squad, the checks, the record), which that list does not
 # number. A row's status must match the list:
 #   live  = in production and used on real calls or messages
-#   built = built and tested; switched on with the first clients
+#   built = built and tested; switched on for a client that needs it
 #   next  = agreed and drawn; not built
 # ==================================================================
 FEATURES = [
@@ -1521,7 +1513,7 @@ features_body = page_hero(
     f"""
     <div class="status-key">
       <div>{status("live")} In production, used on real calls and messages</div>
-      <div>{status("built")} Built and tested, switched on with our first clients</div>
+      <div>{status("built")} Built and tested, switched on for each client that needs it</div>
       <div>{status("next")} Agreed and drawn, not built yet</div>
     </div>""") + f"""
 <section class="sec">

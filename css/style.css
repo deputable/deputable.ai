@@ -50,6 +50,10 @@
   --wrap:1160px;
   --gutter:28px;
   --shadow:0 1px 0 rgba(4,40,94,0.04), 0 18px 40px -24px rgba(4,40,94,0.28);
+
+  /* the arrow from the logo, drawn between two steps of a workflow */
+  --arrow:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 18'%3E%3Cpath d='M0 5.5H15V0L24 9 15 18V12.5H0z'/%3E%3C/svg%3E");
+  --arrow-ink:#A7B3C9;
   --shadow-lg:0 2px 0 rgba(4,40,94,0.04), 0 40px 80px -40px rgba(4,40,94,0.45);
 }
 
@@ -262,7 +266,8 @@ nav.main-nav a.nav-link.active{ color:var(--ink); font-weight:600; box-shadow:in
 
 /* a workflow drawn left to right */
 .chart{ display:flex; flex-wrap:wrap; align-items:stretch; gap:8px; }
-.chart .arr{ align-self:center; color:var(--faint); font-size:15px; }
+.chart .arr{ align-self:center; flex:none; width:17px; height:13px; fill:var(--arrow-ink); }
+.chart .arr.to-person{ fill:var(--coral); }
 .node{
   flex:1 1 128px; max-width:230px; min-width:0; display:flex; flex-direction:column; gap:4px;
   padding:9px 12px 10px; border-radius:12px; background:var(--white); border:1px solid var(--line-2);
@@ -279,7 +284,7 @@ nav.main-nav a.nav-link.active{ color:var(--ink); font-weight:600; box-shadow:in
 .node.mini{ flex:none; padding:5px 9px; border-radius:8px; }
 
 /* the same steps as a compact strip, in lists and cards */
-.strip{ margin:0; padding:0; list-style:none; display:grid; gap:6px; }
+.strip{ margin:0; padding:0; list-style:none; display:grid; gap:17px; }
 .strip li{
   position:relative; padding:6px 10px 7px 12px; border-radius:9px; font-size:13.5px; line-height:1.35;
   background:var(--paper); border:1px solid var(--line); color:var(--ink-2);
@@ -295,6 +300,13 @@ nav.main-nav a.nav-link.active{ color:var(--ink); font-weight:600; box-shadow:in
 .strip li.person{ background:var(--coral-soft); border-color:var(--coral-line); }
 .strip li.person::before{ background:var(--coral); }
 .strip li.person .who{ color:var(--coral-ink); }
+/* the logo's arrow between steps: down a stacked strip, across a row */
+.strip li:not(:last-child)::after, .rstep:not(:last-child)::after{
+  content:""; position:absolute; left:16px; bottom:-14px; width:13px; height:10px; z-index:1;
+  background:var(--arrow-ink); transform:rotate(90deg);
+  -webkit-mask:var(--arrow) center / contain no-repeat; mask:var(--arrow) center / contain no-repeat;
+}
+.strip li:has(+ li.person)::after, .rstep:has(+ .rstep.person)::after{ background:var(--coral); }
 .card .strip{ margin-top:10px; }
 
 /* ===================== Demos (shared) ===================== */
@@ -350,7 +362,7 @@ nav.main-nav a.nav-link.active{ color:var(--ink); font-weight:600; box-shadow:in
 .run-panels{ display:grid; }
 .run-panel{ grid-area:1 / 1; display:flex; flex-direction:column; visibility:hidden; }
 .run-panel.is-active{ visibility:visible; }
-.run-steps{ margin:0; padding:16px 16px 14px 18px; list-style:none; display:grid; gap:7px; position:relative; }
+.run-steps{ margin:0; padding:16px 16px 14px 18px; list-style:none; display:grid; gap:17px; position:relative; }
 .rstep{
   position:relative; display:grid; grid-template-columns:74px 1fr; gap:10px; align-items:baseline;
   padding:8px 12px 9px; border-radius:11px; font-size:13.5px; line-height:1.36;
@@ -382,8 +394,9 @@ nav.main-nav a.nav-link.active{ color:var(--ink); font-weight:600; box-shadow:in
 .an-title{ font:500 11.5px var(--font-mono); letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin-bottom:14px; }
 .an-col, .an-mid{ position:relative; }
 .an-col:first-child::after, .an-mid::after{
-  content:""; position:absolute; right:-28px; top:50%; width:11px; height:11px; margin-top:-6px;
-  border-top:2px solid var(--line-2); border-right:2px solid var(--line-2); transform:rotate(45deg);
+  content:""; position:absolute; right:-33px; top:50%; width:22px; height:17px; margin-top:-8px;
+  background:var(--coral);
+  -webkit-mask:var(--arrow) center / contain no-repeat; mask:var(--arrow) center / contain no-repeat;
 }
 .an-col{ display:flex; flex-direction:column; gap:8px; }
 .an-item{ padding:10px 14px 11px; border-radius:12px; background:var(--white); border:1px solid var(--line); }
@@ -485,7 +498,9 @@ a.shelf-item.more:hover{ border-color:var(--ink); color:inherit; }
 .wf-main h3{ font-size:1.1rem; line-height:1.25; margin-bottom:10px; }
 .wf-meta{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
 .wf-meta .for{ font:500 10.5px var(--font-mono); letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); }
-.wfrow .strip{ grid-template-columns:repeat(auto-fit, minmax(114px, 1fr)); }
+/* one row, never wrapped, so no arrow is left pointing at nothing */
+.wfrow .strip{ grid-auto-flow:column; grid-auto-columns:minmax(0, 210px); gap:0 22px; }
+.wfrow .strip li:not(:last-child)::after{ left:auto; right:-19px; top:50%; bottom:auto; margin-top:-5px; width:15px; height:11px; transform:none; }
 
 .reqpath{ display:grid; grid-template-columns:repeat(5, minmax(0,1fr)); gap:0; margin-top:26px; border:1px solid var(--line); border-radius:var(--r); background:var(--white); overflow:hidden; }
 .req-step{ position:relative; padding:16px 18px 18px; border-right:1px solid var(--line); font-weight:600; font-size:0.96rem; line-height:1.35; color:var(--ink); }
@@ -636,10 +651,6 @@ ul.ticks.two{ grid-template-columns:repeat(2, minmax(0,1fr)); column-gap:36px; }
 .fact-ic svg{ width:22px; height:22px; }
 .fact .big{ font-family:var(--font-display); font-size:1.45rem; font-weight:700; letter-spacing:-0.02em; color:#fff; line-height:1.1; margin-bottom:10px; }
 .fact p{ font-size:0.96rem; line-height:1.55; color:var(--night-muted); }
-
-/* ===================== Honesty / results ===================== */
-.results-panel{ border:1.5px dashed var(--line-2); border-radius:var(--r); padding:28px; background:var(--paper); }
-.results-panel p{ font-size:0.97rem; line-height:1.6; color:var(--ink-2); margin:12px 0 18px; }
 
 /* ===================== CTA band ===================== */
 .cta{ background:var(--navy); color:#fff; position:relative; overflow:hidden; overflow:clip; }
@@ -822,6 +833,8 @@ footer.site-footer{ border-top:1px solid var(--line); background:var(--white); }
 
 /* ===================== Responsive ===================== */
 @media (max-width: 1080px){
+  .wfrow{ grid-template-columns:minmax(0,1fr) auto; gap:16px 22px; }
+  .wfrow .strip{ grid-column:1 / -1; grid-row:2; }
   .doors{ grid-template-columns:repeat(2, minmax(0,1fr)); }
   .door:nth-child(2n){ border-right:none; }
   .door:nth-child(-n+2){ border-bottom:1px solid var(--line); }
@@ -857,12 +870,11 @@ footer.site-footer{ border-top:1px solid var(--line); background:var(--white); }
   .split, .split.wide-left, .split.wide-right{ grid-template-columns:1fr; gap:36px; }
   .g3{ grid-template-columns:1fr; }
   .anatomy{ grid-template-columns:1fr; gap:38px; }
-  .an-col:first-child::after, .an-mid::after{ right:auto; left:30px; top:auto; bottom:-25px; margin-top:0; transform:rotate(135deg); }
+  .an-col:first-child::after, .an-mid::after{ right:auto; left:30px; top:auto; bottom:-28px; margin-top:0; transform:rotate(90deg); }
   .an-col{ display:grid; grid-template-columns:1fr 1fr; }
   .an-col .an-title{ grid-column:1 / -1; margin-bottom:4px; }
   .parts{ grid-template-columns:1fr; }
-  .wfrow{ grid-template-columns:1fr; gap:14px; }
-  .wf-status{ order:-1; }
+  .wf-status{ align-self:start; }
   .ladder{ grid-template-columns:1fr; }
   .rung, .rung:nth-child(n){ min-height:0; }
   .reqpath{ grid-template-columns:1fr; }
@@ -890,8 +902,10 @@ footer.site-footer{ border-top:1px solid var(--line); background:var(--white); }
   .an-col{ grid-template-columns:1fr; }
   .rstep{ grid-template-columns:1fr; gap:2px; }
   .part{ grid-template-columns:1fr; gap:6px; }
+  .wfrow .strip{ grid-auto-flow:row; grid-auto-columns:auto; gap:17px; }
+  .wfrow .strip li:not(:last-child)::after{ left:16px; right:auto; top:auto; bottom:-14px; margin-top:0; width:13px; height:10px; transform:rotate(90deg); }
   .chart{ flex-direction:column; }
-  .chart .arr{ transform:rotate(90deg); align-self:flex-start; margin-left:14px; }
+  .chart .arr{ transform:rotate(90deg); align-self:flex-start; margin-left:16px; }
   .node, .draftcard .node{ max-width:none; flex:none; }
   .credo{ font-size:1.02rem; }
   .doors{ grid-template-columns:1fr; }
