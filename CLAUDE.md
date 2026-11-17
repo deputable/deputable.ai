@@ -34,8 +34,8 @@ The product is the Deputy platform (`~/code/deputy`). Its master feature list,
 `docs/features.md`, gives every feature a stable id and says where it runs and whether
 it is proven. **The site may claim only what that list supports.**
 
-- `FEATURES` (the Features page) and `CATALOGUE` (the Workflows page) in the generator
-  carry each row's id (written into the HTML as `data-id`) and one of three statuses,
+- `FEATURES` (the Features page) in the generator
+  carries each row's id (written into the HTML as `data-id`) and one of three statuses,
   which must match the list: **live** (in production, used on real calls or messages),
   **built** (built and tested, switched on for a client that needs it), **next** (agreed and
   drawn, not built). Rows with a `CORE-*` id describe the engine itself, read from the
@@ -84,6 +84,9 @@ it is proven. **The site may claim only what that list supports.**
 - **The Trust page names no suppliers and shows no data-flow map** (Prashant 2026-11-13:
   confusing and concerning to a client; UK or EU processing can be scoped for a client
   that needs it). Sub-processors are named per client in the agreement, not on the site.
+- **The Workflows page gives the general idea, not a list** (Prashant 2026-11-17: "we
+  should not have to list all or specific workflows"). One generic drawing, writing your
+  own, what we build, and three reasons. The detail lives on the Features page.
 - **Not claimed yet**, deliberately: UK-only processing as a standing feature, the AI suppliers'
   no-training terms (ours is stated; theirs waits on the confirmed contracts), website
   chat, bookings, CRM logging, a student deputy.
@@ -120,8 +123,7 @@ neutrals: navy for what starts it and plain ink for code, so a step reads as nav
 (starts it), neutral (code), blue (an AI model) or coral (a person); a dashed box is a
 part the deputy lacks. Steps are joined by **the arrow from the logo** (`arrow()` in the
 generator, `--arrow` in the CSS): grey between steps, coral only where it hands the work
-to a person. A row of steps never wraps, so no arrow points at nothing; on a phone the
-steps stack and the arrows point down.
+to a person; on a phone the steps stack and the arrows point down.
 
 Fonts: Bricolage Grotesque (headings), IBM Plex Sans (body, as the platform's own pages),
 IBM Plex Mono (labels, commands such as `ok P14`).

@@ -7,8 +7,8 @@ Plain HTML/CSS/JS site, no build step. All pages are **generated** by
   write your own, approvals, learning, trust, honesty section)
 - `platform.html` - The platform (the four layers, the specialists on the shelf, three
   kinds of automation, how one job runs, the doors, Smart Call Handling, approvals)
-- `workflows.html` - the catalogue of workflows that exist, writing your own in a
-  sentence, what Deputable builds, why the line is drawn there, the ladder
+- `workflows.html` - the general idea: the shape of a workflow, writing your own in a
+  sentence, what Deputable builds and why
 - `personal.html` - A deputy of your own (mail, diary, reminders, lists, errands)
 - `features.html` - everything it does, each row marked live, built or next and tied
   to an id in the Deputy platform's `docs/features.md`
