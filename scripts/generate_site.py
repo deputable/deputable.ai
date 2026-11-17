@@ -512,94 +512,18 @@ def run_demo():
 
 
 # ------------------------------------------------------------------
-# The catalogue: workflows that exist today, as the platform lists them
-# (one row each: what starts it, the steps, who does each). The id is
-# the feature's in the Deputy repo's docs/features.md; the status must
-# match that list (see FEATURES below).
+# The shape of a workflow, drawn once in general terms. The site lists
+# no specific workflows (Prashant 2026-11-17); the Features page carries
+# the detail.
 # ------------------------------------------------------------------
 STARTS = ["A call", "A document", "An email", "A time", "Something happens", "You ask"]
-
-CATALOGUE = [
-    ("REC-14", "Estimate from a call or a message", "A call", "live", "Garages", [
-        ("trigger", "A registration and a fault arrive"),
-        ("model", "The vehicle identified and the repair named"),
-        ("model", "The parts it needs, with live offers"),
-        ("code", "Totals and VAT added up and checked"),
-        ("person", "Staff approve it before the customer hears a figure")]),
-    ("REC-15", "Property search on the call", "A call", "live", "Estate agents", [
-        ("trigger", "A caller asks what is for sale or to rent"),
-        ("code", "The agency's own live listings searched"),
-        ("model", "The matches read back, the lead taken"),
-        ("person", "Staff ring back")]),
-    ("REC-02", "The note after every contact", "A call", "live", "Any business", [
-        ("trigger", "A call ends, or a message thread goes quiet"),
-        ("code", "Every action taken is listed from the record"),
-        ("model", "Summary, open items, promises, the lead"),
-        ("code", "Checked complete, then sent to the owner's phone")]),
-    ("REC-04", "Call backs owed", "Something happens", "live", "Any business", [
-        ("trigger", "A call back is promised"),
-        ("code", "Raised as an item due at your next opening"),
-        ("person", "Someone makes the call and closes it")]),
-    ("REC-03", "The text to your customer", "Something happens", "live", "Any business", [
-        ("trigger", "A message is taken"),
-        ("code", "Only if the caller said yes to a text"),
-        ("code", "One text with what was agreed, never twice")]),
-    ("DOC-01", "A document sent in is read and kept", "A document", "built", "Any business", [
-        ("trigger", "A photo, PDF or file arrives"),
-        ("model", "Read, and its kind named"),
-        ("code", "Kept in the record"),
-        ("person", "An invoice waits for your ok, never paid")]),
-    ("COMP-26", "Meeting follow-ups", "A document", "built", "Any business", [
-        ("trigger", "A recording arrives"),
-        ("code", "Transcribed, each speaker named"),
-        ("model", "Summary, decisions, who owes what by when"),
-        ("person", "You approve each follow-up before anyone hears of it")]),
-    ("DOC-01b", "Timesheets by email: the month's invoice", "An email", "live", "Contractors", [
-        ("trigger", "An email from your client, sender confirmed"),
-        ("code", "Its screenshots, each read as a timesheet"),
-        ("model", "The month's invoice drafted on last month's"),
-        ("person", "You check the figures and send it")]),
-    ("COMP-04", "Mail that can't wait", "A time", "live", "One person", [
-        ("trigger", "Every 30 minutes"),
-        ("code", "New mail checked for. Nothing new, nothing runs"),
-        ("model", "Only when something changed: can it wait?"),
-        ("person", "Told on your phone when there is something to say")]),
-    ("COMP-05", "Diary clashes", "A time", "built", "One person", [
-        ("trigger", "Every hour"),
-        ("code", "Every calendar read and compared"),
-        ("person", "Each new overlap said once, on your phone")]),
-    ("COMP-18", "The morning summary", "A time", "built", "One person", [
-        ("trigger", "07:30 every day"),
-        ("model", "Diaries, mail that needs you, reminders, what waits"),
-        ("code", "Emailed once, from your deputy's mailbox")]),
-    ("COMP-08", "Reminders", "A time", "live", "One person", [
-        ("trigger", "The time you set"),
-        ("code", "A text, or a call. No AI model involved")]),
-    ("COMP-13", "A call made from a brief", "You ask", "built", "One person", [
-        ("trigger", "You ask it to ring someone"),
-        ("model", "A brief drafted: who, what to say, what it may agree"),
-        ("person", "You approve the brief"),
-        ("code", "It rings inside calling hours, with one retry"),
-        ("model", "The outcome read against the brief and told to you")]),
-    ("COMP-24", "A voice note, heard and answered", "You ask", "built", "Any business", [
-        ("trigger", "A voice note arrives on WhatsApp"),
-        ("code", "Transcribed"),
-        ("model", "Answered as a text would be")]),
-    ("COMP-14", "What a call owed, settled", "A call", "built", "One person", [
-        ("trigger", "A call ends"),
-        ("code", "What was promised is compared with what was done"),
-        ("model", "What it can do itself, it does"),
-        ("person", "The rest waits on your word")]),
+WORKFLOW_SHAPE = [
+    ("trigger", "A call, an email, a document, a time of day"),
+    ("code", "Your records are looked up and the sums are checked"),
+    ("model", "It reads, works out what is needed and drafts"),
+    ("person", "Anything a customer will see waits for your ok"),
+    ("code", "Sent once, and kept in your record"),
 ]
-
-
-def catalogue_html():
-    rows = "".join(
-        f'<div class="wfrow" data-id="{fid}"><div class="wf-main"><h3>{name}</h3>'
-        f'<div class="wf-meta"><span class="starts">{starts}</span><span class="for">{who}</span></div></div>'
-        f'{strip(steps)}<div class="wf-status">{status(st)}</div></div>'
-        for fid, name, starts, st, who, steps in CATALOGUE)
-    return f'<div class="wflist">{rows}</div>'
 
 
 # ------------------------------------------------------------------
@@ -675,63 +599,26 @@ def draft_demo():
 
 # What a business can build for itself today: the platform's closed
 # parts catalogue (config/workflow_parts.yaml in the Deputy repo).
-PARTS_STARTS = [
-    ("At a time", "Every day, on weekdays, or every hour."),
-    ("When something happens", "A message is taken, a call ends, a voicemail is left, a document is read, a draft is approved, two diary entries overlap, a send fails."),
-    ("When an email arrives", "From a sender you name, with timesheets attached."),
-]
-PARTS_STEPS = [
-    ("code", "Tell one of your people", "In the words you wrote, with the details filled in."),
-    ("person", "Raise work for someone's ok", "A call back, a promise, a draft: it waits for a person."),
-    ("code", "Text the customer", "Only in the words you wrote, only about the customer it concerns."),
-]
 # The four kinds of part it will not build from words (`missing:` in the
-# same file), and the path a request takes (requisitions.STEPS).
+# same file).
 PARTS_MISSING = [
     ("A new tool", "A site, an API or a lookup your deputy has no way into yet."),
     ("A new specialist", "A member of the squad with its own access to one of your systems."),
     ("A new kind of document", "Paperwork it cannot read yet."),
     ("Anything that pays or signs", "Never built from words. Built with you, with a person approving each one."),
 ]
-REQUEST_STEPS = ["You asked", "Deputable is reviewing", "A decision and a price, if any", "Built and tested", "On your deputy"]
 
 # Why the line is drawn there. Each of these is how the platform is
 # built, not a promise: see docs/workflows.md ("Invariants held") and
 # docs/learning.md ("Invariants this keeps") in the Deputy repo.
 PRINCIPLES = [
     ("Your deputy never writes its own code.",
-     "A workflow you describe is assembled only from parts that already exist and have been tested. It cannot do something nobody has checked."),
-    ("The drawing is the agreement.",
-     "It draws exactly what it will do and who does each step. You change the words and it redraws. Turning it on builds what the drawing shows and nothing else."),
+     "A workflow you describe is assembled only from parts that already exist and have been tested."),
     ("A model may read. It may not send.",
-     "Every message, and every change to a record, is plain code or a person. A text to a customer goes in the exact words you wrote; the model never picks who is told or what is said."),
-    ("Money is never built from words.",
-     "Anything that pays, signs or moves money is built with you by people, with an approval on every one."),
-    ("New parts are built once, by people.",
-     "A tool your deputy lacks is reviewed, built with its tests and signed by one of us before it runs. The next business that needs it gets it from the shelf."),
-    ("Every version is kept.",
-     "Pause a workflow, remove it, restore it. What it was on any day is in your record."),
+     "Every message and every change to a record is plain code or a person. Customers are texted only in the words you wrote."),
+    ("New parts are built by people.",
+     "Anything new, and anything that pays or signs, is built with you, tested and signed by one of us before it runs."),
 ]
-
-# The ladder (docs/learning.md, "Five kinds of proposal, on one ladder"):
-# the deputy always proposes the lowest rung that does the job.
-LADDER = [
-    ("you", "A lesson", "A habit in how something is written or done.", "The person it came from"),
-    ("you", "A rule", "A line your whole deputy holds, on every call and every job.", "The business owner"),
-    ("you", "A skill", "A known sequence of steps over tools it already has, dry-run in front of you first.", "You"),
-    ("us", "A new tool", "A way into a system it cannot reach yet.", "Deputable builds and signs"),
-    ("us", "A new specialist", "A new member of the squad with its own access.", "Deputable builds and signs"),
-]
-
-
-def ladder_html():
-    rungs = "".join(
-        f'<li class="rung {side}"><span class="rung-n">0{i}</span><div><h3>{name}</h3><p>{what}</p>'
-        f'<span class="rung-by">{by}</span></div></li>'
-        for i, (side, name, what, by) in enumerate(LADDER, 1))
-    return f"""<ol class="ladder">{rungs}</ol>
-    <div class="ladder-key"><span class="you">Rungs 1 to 3: you approve, and it takes effect on the next job</span><span class="us">Rungs 4 and 5: we build, test and sign</span></div>"""
-
 
 # The shelf: the specialists a squad is assembled from, with what each
 # can do and what it works with (src/deputy/members/ in the Deputy
@@ -994,7 +881,7 @@ home_body = f"""
       <p class="prose" style="margin-top:18px">Each night your deputy looks back over what you changed. Make the same change to its drafts three times in five and it proposes a lesson. Ask for the same work the same way twice and it proposes a skill.</p>
       <p class="prose">It always proposes the smallest change that does the job, and nothing about how it works changes without your say.</p>
       <p style="margin-top:20px">{status("built")}</p>
-      <div class="sec-foot"><a class="link-arrow" href="workflows.html#ladder">The ladder: what you approve, and what we build&nbsp;&rarr;</a></div>
+      <div class="sec-foot"><a class="link-arrow" href="workflows.html#more">What you write, and what we build&nbsp;&rarr;</a></div>
     </div>
     <div class="lesson" aria-label="An example of a proposed lesson">
       <span class="mono-label">Noticed &middot; 3 of your last 5 estimates</span>
@@ -1197,20 +1084,24 @@ write_page(
 write_redirect("services.html", "platform.html", "The platform - Deputable AI")
 
 # ==================================================================
-# WORKFLOWS - the catalogue, writing your own, and what we build
+# WORKFLOWS - the general idea: the shape, writing your own, what we build
+# (Prashant 2026-11-17: no list of specific workflows; a general idea is enough)
 # ==================================================================
 workflows_body = page_hero(
     "Workflows",
     "Every piece of routine work, as a workflow you can see.",
-    "A workflow has a start, steps, and someone who does each step: plain code, an AI model, or one of your people. The ones below exist today. Write the simple ones yourself in a sentence; we build the bigger ones with you.",
+    "A workflow has a start, steps, and someone who does each step: plain code, an AI model, or one of your people. Write the simple ones yourself in a sentence; we build the bigger ones with you.",
     who_key()) + f"""
-<section class="sec" id="catalogue">
+<section class="sec" id="shape">
   <div class="wrap">
-    {sec_head("The catalogue", "Workflows that exist today.", "Each row is drawn the way your own Workflows page draws it: what starts it, then each step and who does it. They start in six different ways. A phone call is one.")}
-    <div class="starts-row">
+    {sec_head("The shape of one", "Something starts it. Your deputy does the steps. A person decides.", "Whatever the work is, it is drawn the same way, so you can see what happens and who does it before it runs.")}
+    <div class="shapecard">
+      {chart(WORKFLOW_SHAPE)}
+    </div>
+    <div class="starts-row below">
+      <span class="mono-label">It can start with</span>
       {"".join(f'<span class="starts">{s}</span>' for s in STARTS)}
     </div>
-    {catalogue_html()}
   </div>
 </section>
 
@@ -1220,53 +1111,29 @@ workflows_body = page_hero(
       <div>
         <div class="kicker">Write your own</div>
         <h2>The simple ones, you write yourself.</h2>
-        <p class="prose" style="margin-top:18px">One box. Describe what should happen and when, as you would to a member of staff, on your Workflows page or by sending <code class="inline">new workflow: when&hellip;</code> on WhatsApp.</p>
-        <p class="prose">Your deputy proposes a name and draws the workflow: what starts it, each step, and who does each one. You can't edit the drawing. You edit the words, and it redraws. When it reads right, you turn it on.</p>
+        <p class="prose" style="margin-top:18px">Describe what should happen and when, as you would to a member of staff. Your deputy names it and draws it, and when the drawing reads right, you turn it on.</p>
         <p style="margin-top:20px">{status("built")}</p>
       </div>
       {draft_demo()}
     </div>
-    <div class="parts">
-      <div class="parts-col">
-        <div class="mono-label">It can start</div>
-        {"".join(f'<div class="part"><span class="node trigger mini"><span class="who">Starts it</span></span><div><h3>{t}</h3><p>{b}</p></div></div>' for t, b in PARTS_STARTS)}
-      </div>
-      <div class="parts-col">
-        <div class="mono-label">And then</div>
-        {"".join(f'<div class="part"><span class="node {who} mini"><span class="who">{WHO[who]}</span></span><div><h3>{t}</h3><p>{b}</p></div></div>' for who, t, b in PARTS_STEPS)}
-      </div>
-    </div>
-    <p class="prose small parts-note">That list is short on purpose, and it is closed: the drafting model may use only these parts and must name anything else as missing. It grows as parts are built.</p>
   </div>
 </section>
 
 <section class="sec" id="more">
   <div class="wrap">
-    {sec_head("The bigger ones", "When a workflow needs more, it says so, and asks us.", "A step your deputy has no part for is drawn as a dashed &ldquo;Not yet&rdquo; box. You choose: turn on the parts it has today, send us the rest as one request, or both.")}
+    {sec_head("The bigger ones", "When a workflow needs more, we build it with you.", "If a step needs something your deputy does not have, the drawing says so, and the request comes to us with your own words attached. We draw it with you, then build, test and sign it.")}
     <div class="g4">
       {"".join(f'<div class="card dashed"><h3>{t}</h3><p>{b}</p></div>' for t, b in PARTS_MISSING)}
     </div>
-    <div class="reqpath" aria-label="What happens to a request">
-      {"".join(f'<div class="req-step"><span class="kind-n">0{i}</span>{s}</div>' for i, s in enumerate(REQUEST_STEPS, 1))}
-    </div>
-    <p class="prose small" style="margin-top:22px">Your request arrives with your own words and the drawing attached, so nobody has to ask you twice. A person at Deputable decides what it takes, and each decision is written into your record and told to you on your phone.</p>
   </div>
 </section>
 
 <section class="sec sec-white rule-t rule-b" id="why">
   <div class="wrap">
-    {sec_head("Why the line is drawn there", "Easy where it is safe. Careful where it isn't.", "Plenty of tools let an AI write its own automations. We chose not to, and these are the reasons.", you=True)}
+    {sec_head("Why it works this way", "Easy where it is safe. Careful where it isn't.", "", you=True)}
     <div class="g3">
       {"".join(f'<div class="principle"><span class="kind-n">0{i}</span><h3>{t}</h3><p>{b}</p></div>' for i, (t, b) in enumerate(PRINCIPLES, 1))}
     </div>
-  </div>
-</section>
-
-<section class="sec" id="ladder">
-  <div class="wrap">
-    {sec_head("The ladder", "It proposes the smallest change that does the job.", "The same idea runs through how a deputy learns. Each night it looks over the day's work and proposes what it noticed, always on the lowest rung that would do. You approve the first three yourself. The last two are ours to build.")}
-    {ladder_html()}
-    <p style="margin-top:22px">{status("built")}</p>
   </div>
 </section>
 """ + cta_band("Bring one process. We'll draw it.", "Forty-five minutes, one workflow of your choosing, no deck.")
@@ -1274,7 +1141,7 @@ workflows_body = page_hero(
 write_page(
     "workflows.html",
     "Workflows - Write the Simple Ones Yourself, We Build the Rest | Deputable AI",
-    "The workflows a deputy runs today, drawn step by step with who does each. Describe a simple one in a sentence and turn it on; anything bigger is built, tested and signed by us.",
+    "How a deputy runs routine work: every workflow drawn step by step with who does each. Describe a simple one in a sentence and turn it on; anything bigger is built, tested and signed by us.",
     "workflows", workflows_body)
 
 # ==================================================================
